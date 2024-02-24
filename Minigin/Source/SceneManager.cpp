@@ -1,5 +1,5 @@
-#include "SceneManager.h"
-#include "Scene.h"
+#include "Header\SceneManager.h"
+#include "Header\Scene.h"
 
 void dae::SceneManager::Update()
 {

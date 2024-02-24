@@ -1,4 +1,4 @@
-#include "Transform.h"
+#include "Header/GameObject.h"
 
 void dae::Transform::SetPosition(const float x, const float y, const float z)
 {

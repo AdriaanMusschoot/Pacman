@@ -1,8 +1,9 @@
 #include <stdexcept>
 #include <SDL_ttf.h>
-#include "Font.h"
+#include "Header\Font.h"
 
-TTF_Font* dae::Font::GetFont() const {
+TTF_Font* dae::Font::GetFont() const
+{
 	return m_font;
 }
 

@@ -1,7 +1,8 @@
 #include <stdexcept>
-#include "Renderer.h"
-#include "SceneManager.h"
-#include "Texture2D.h"
+#include <cstring>
+#include "Header\Renderer.h"
+#include "Header\SceneManager.h"
+#include "Header\Texture2D.h"
 
 int GetOpenGLDriverIndex()
 {
