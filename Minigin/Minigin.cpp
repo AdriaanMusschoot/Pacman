@@ -118,16 +118,6 @@ void dae::Minigin::RunOneFrame()
 {
 	Time::GetInstance().Update();
 
-	const std::chrono::high_resolution_clock::time_point currentTime = std::chrono::high_resolution_clock::now();
-	/////////////
-	//FOR PHYSICS
-	/////////////
-	//m_Lag += Time::GetInstance().GetDeltaTime();
-	//while()
-	//{
-	//	
-	//}
-	
 	m_Quit = !InputManager::GetInstance().ProcessInput();
 	SceneManager::GetInstance().Update();
 	Renderer::GetInstance().Render();

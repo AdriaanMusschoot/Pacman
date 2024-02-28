@@ -7,7 +7,7 @@ dae::GameObject::~GameObject() = default;
 
 void dae::GameObject::Update()
 {
-    for (const auto& component : m_ComponentPtrVec)
+    for (const auto& component : m_ComponentUPtrVec)
     {
         component->Update();
     }
@@ -15,7 +15,7 @@ void dae::GameObject::Update()
 
 void dae::GameObject::Render() const
 {
-    for(const auto & component: m_ComponentPtrVec)
+    for(const auto & component: m_ComponentUPtrVec)
     {
         component->Render();
     }

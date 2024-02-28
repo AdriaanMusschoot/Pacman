@@ -5,9 +5,11 @@
 
 namespace dae
 {
-	class Transform final
+	class TransformComponent final : public Component
 	{
 	public:
+		TransformComponent();
+
 		const glm::vec3& GetPosition() const { return m_position; }
 		void SetPosition(float x, float y, float z);
 	private:

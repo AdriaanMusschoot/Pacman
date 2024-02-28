@@ -26,13 +26,13 @@ void load()
 	auto& scene = dae::SceneManager::GetInstance().CreateScene("Programming 4 Assignment");
 
 	std::shared_ptr<dae::GameObject> gameObject = std::make_shared<dae::GameObject>();
-	gameObject->AddComponent<TextureComponent>();
-	if (gameObject->ComponentAdded<TextureComponent>())
+	gameObject->AddComponent<dae::TextureComponent>();
+	if (gameObject->ComponentAdded<dae::TextureComponent>())
 	{
 		//ASK TOM IF THIS IS THEN THE CORRECT WAY TO HANDLE AN EXCEPTION
 		//try
 		//{
-			gameObject->GetComponent<TextureComponent>()->SetTexture("background.tga");
+			gameObject->GetComponent<dae::TextureComponent>()->SetTexture("background.tga");
 		//}
 		//catch(...)
 		//{
@@ -42,29 +42,29 @@ void load()
 	scene.Add(gameObject);
 	
 	gameObject = std::make_shared<dae::GameObject>();
-	gameObject->AddComponent<TextureComponent>();
-	if (gameObject->ComponentAdded<TextureComponent>())
+	gameObject->AddComponent<dae::TextureComponent>();
+	if (gameObject->ComponentAdded<dae::TextureComponent>())
 	{
-		gameObject->GetComponent<TextureComponent>()->SetTexture("logo.tga");
-		gameObject->GetComponent<TextureComponent>()->SetPosition(216, 180);
+		gameObject->GetComponent<dae::TextureComponent>()->SetTexture("logo.tga");
+		gameObject->GetComponent<dae::TextureComponent>()->SetPosition(216, 180);
 	}
 	scene.Add(gameObject);
 
 	gameObject = std::make_shared<dae::GameObject>();
-	gameObject->AddComponent<TextComponent>("Programming 4 Assignment", "Lingua.otf", 36);
-	if (gameObject->ComponentAdded<TextComponent>())
+	gameObject->AddComponent<dae::TextComponent>("Programming 4 Assignment", "Lingua.otf", 36);
+	if (gameObject->ComponentAdded<dae::TextComponent>())
 	{
-		gameObject->GetComponent<TextComponent>()->SetPosition(80, 20);
+		gameObject->GetComponent<dae::TextComponent>()->SetPosition(80, 20);
 	}
 	scene.Add(gameObject);
 
 	gameObject = std::make_shared<dae::GameObject>();
-	gameObject->AddComponent<TextComponent>("60", "Lingua.otf", 36);
-	if (gameObject->ComponentAdded<TextComponent>())
+	gameObject->AddComponent<dae::TextComponent>("60", "Lingua.otf", 36);
+	if (gameObject->ComponentAdded<dae::TextComponent>())
 	{
-		gameObject->GetComponent<TextComponent>()->SetPosition(0, 0);
+		gameObject->GetComponent<dae::TextComponent>()->SetPosition(0, 0);
 	}
-	gameObject->AddComponent<FPSComponent>(gameObject);
+	gameObject->AddComponent<dae::FPSComponent>(gameObject);
 	scene.Add(gameObject);
 }
 

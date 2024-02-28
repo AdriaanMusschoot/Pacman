@@ -3,40 +3,31 @@
 #include <string>
 
 #include "Component.h"
+#include "Texture2D.h"
+#include "TransformComponent.h"
 
 namespace dae
 {
-	class Texture2D;
+
+	class TextureComponent final : public Component
+	{
+	public:
+		TextureComponent();
+		~TextureComponent() override = default;
+	
+		TextureComponent(const TextureComponent&) = delete;
+		TextureComponent& operator= (const TextureComponent&) = delete;
+		TextureComponent(TextureComponent&&) = delete;
+		TextureComponent& operator= (const TextureComponent&&) = delete;
+	
+		void Render() const override;
+
+		void SetPosition(float x, float y, float z = 0);
+
+		void SetTexture(const std::string& fileName);
+	private:
+		std::unique_ptr<dae::TransformComponent> m_TransformUPtr;
+		std::shared_ptr<dae::Texture2D> m_Texture{};
+	};
+
 }
-
-class TextureComponent final : public Component
-{
-public:
-	TextureComponent() = default;
-	~TextureComponent() override = default;
-
-	TextureComponent(const TextureComponent&) = delete;
-	TextureComponent& operator= (const TextureComponent&) = delete;
-	TextureComponent(TextureComponent&&) = delete;
-	TextureComponent& operator= (const TextureComponent&&) = delete;
-
-	void Render() const override;
-
-	void SetTexture(const std::string& fileName);
-private:
-	std::shared_ptr<dae::Texture2D> m_Texture{};
-};
-//ASK TOM IF THIS IS HOW YOU WOULD THEN THROW THE ERROR
-//class FileNotFoundException : public std::exception
-//{
-//public:
-//	FileNotFoundException(const std::string& fileName)
-//		: m_FileName{ fileName }
-//	{}
-//	std::string GetExceptionMessage()
-//	{
-//		return m_FileName + " was not found";
-//	}
-//private:
-//	std::string m_FileName;
-//};

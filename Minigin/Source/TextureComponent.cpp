@@ -3,21 +3,26 @@
 #include "Header\Renderer.h"
 #include "Header\ResourceManager.h"
 
-void TextureComponent::Render() const
+dae::TextureComponent::TextureComponent()
+	: m_TransformUPtr{ std::make_unique<TransformComponent>() }
+{
+}
+
+void dae::TextureComponent::Render() const
 {
 	if (m_Texture != nullptr)
 	{
-		dae::Renderer::GetInstance().RenderTexture(*m_Texture, m_Transform.GetPosition().x, m_Transform.GetPosition().y);
+		dae::Renderer::GetInstance().RenderTexture(*m_Texture, m_TransformUPtr->GetPosition().x, m_TransformUPtr->GetPosition().y);
 	}
 }
 
+void dae::TextureComponent::SetPosition(float x, float y, float z)
+{
+	m_TransformUPtr->SetPosition(x, y, z);
+}
 
-void TextureComponent::SetTexture(const std::string& fileName)
+
+void dae::TextureComponent::SetTexture(const std::string& fileName)
 {
 	m_Texture = dae::ResourceManager::GetInstance().LoadTexture(fileName);
-
-	//if (m_Texture == nullptr)
-	//{
-	//	throw FileNotFoundException{ fileName };
-	//}
 }

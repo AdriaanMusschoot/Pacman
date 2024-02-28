@@ -6,15 +6,16 @@
 #include "Header/Renderer.h"
 
 
-TextComponent::TextComponent(const std::string& textToDisplay, const std::string& fontPath, const unsigned size)
+dae::TextComponent::TextComponent(const std::string& textToDisplay, const std::string& fontPath, const unsigned size)
 	: m_NeedsUpdate{ true }
 	, m_Text{ textToDisplay }
 	, m_FontUPtr{ dae::ResourceManager::GetInstance().LoadFont(fontPath, size) }
 	, m_TextTextureSPtr{ nullptr }
+	, m_TransformUPtr{ std::make_unique<TransformComponent>() }
 {
 }
 
-void TextComponent::Update()
+void dae::TextComponent::Update()
 {
 	if (m_NeedsUpdate)
 	{
@@ -35,15 +36,20 @@ void TextComponent::Update()
 	}
 }
 
-void TextComponent::Render() const
+void dae::TextComponent::Render() const
 {
 	if (m_TextTextureSPtr != nullptr)
 	{
-		dae::Renderer::GetInstance().RenderTexture(*m_TextTextureSPtr, m_Transform.GetPosition().x, m_Transform.GetPosition().y);
+		dae::Renderer::GetInstance().RenderTexture(*m_TextTextureSPtr, m_TransformUPtr->GetPosition().x, m_TransformUPtr->GetPosition().y);
 	}
 }
 
-void TextComponent::SetText(const std::string& textToDisplay)
+void dae::TextComponent::SetPosition(float x, float y, float z)
+{
+	m_TransformUPtr->SetPosition(x, y, z);
+}
+
+void dae::TextComponent::SetText(const std::string& textToDisplay)
 {
 	m_Text = textToDisplay;
 	m_NeedsUpdate = true;

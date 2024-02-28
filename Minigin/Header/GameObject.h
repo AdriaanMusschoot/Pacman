@@ -3,16 +3,16 @@
 #include <vector>
 
 #include "Component.h"
-#include "Transform.h"
+#include "TransformComponent.h"
 
 namespace dae
 {
 	class Texture2D;
 	class GameObject final
 	{
-		Transform m_transform{};
+		TransformComponent m_transform{};
 
-		std::vector<std::unique_ptr<Component>> m_ComponentPtrVec;
+		std::vector<std::unique_ptr<Component>> m_ComponentUPtrVec;
 	public:
 		void Update();
 		void Render() const;
@@ -22,29 +22,29 @@ namespace dae
 		template <typename T, typename... Args>
 		void AddComponent(Args&&... args)
 		{
-			m_ComponentPtrVec.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
+			m_ComponentUPtrVec.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
 		}
 
 		template <typename T>
 		void RemoveComponent()
 		{
 			//erase removes element from start iterator (given by remove_if) to end iterator
-			m_ComponentPtrVec.erase
+			m_ComponentUPtrVec.erase
 			(
 				//moves elements to be removed to the back 
-				std::remove_if(m_ComponentPtrVec.begin(), m_ComponentPtrVec.end(),
+				std::remove_if(m_ComponentUPtrVec.begin(), m_ComponentUPtrVec.end(),
 					[](const auto& component)
 					{
 						return dynamic_cast<T*>(component.get()) != nullptr;
 					}),
-				m_ComponentPtrVec.end()
+				m_ComponentUPtrVec.end()
 			);
 		}
 
 		template <typename T> 
 		T* GetComponent()
 		{
-			for (const auto& component : m_ComponentPtrVec)
+			for (const auto& component : m_ComponentUPtrVec)
 			{
 				if (const auto neededComponent = dynamic_cast<T*>(component.get()); neededComponent != nullptr)
 				{
@@ -57,7 +57,7 @@ namespace dae
 		template <typename T>
 		bool ComponentAdded() const
 		{
-			for (const auto& component : m_ComponentPtrVec)
+			for (const auto& component : m_ComponentUPtrVec)
 			{
 				if (const auto neededComponent = dynamic_cast<T*>(component.get()); neededComponent != nullptr)
 				{

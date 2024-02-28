@@ -1,5 +1,4 @@
 #pragma once
-#include "Transform.h"
 
 namespace dae
 {
@@ -20,7 +19,5 @@ public:
 	virtual void Update() {}
 	virtual void Render() const {}
 
-	void SetPosition(float x, float y, float z = 0);
 protected:
-	dae::Transform m_Transform;
 };

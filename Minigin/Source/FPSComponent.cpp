@@ -6,12 +6,12 @@
 #include "Header/TextComponent.h"
 #include "Header/Time.h"
 
-FPSComponent::FPSComponent(const std::weak_ptr<dae::GameObject>& gameObject)
+dae::FPSComponent::FPSComponent(const std::weak_ptr<dae::GameObject>& gameObject)
 	: m_GameObject(gameObject)
 {
 }
 
-void FPSComponent::Update()
+void dae::FPSComponent::Update()
 {
 	m_CurrentRefreshTime += Time::GetInstance().GetDeltaTime();
 	m_TicksPassed++;
