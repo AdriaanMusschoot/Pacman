@@ -8,7 +8,7 @@ namespace dae
 	class TransformComponent final : public Component
 	{
 	public:
-		TransformComponent();
+		TransformComponent(const std::shared_ptr<GameObject>& parentObjectSPtr, const glm::vec3& pos = { 0, 0, 0 });
 
 		const glm::vec3& GetPosition() const { return m_position; }
 		void SetPosition(float x, float y, float z);

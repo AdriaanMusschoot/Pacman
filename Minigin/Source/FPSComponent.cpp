@@ -6,8 +6,8 @@
 #include "Header/TextComponent.h"
 #include "Header/Time.h"
 
-dae::FPSComponent::FPSComponent(const std::weak_ptr<dae::GameObject>& gameObject)
-	: m_GameObject(gameObject)
+dae::FPSComponent::FPSComponent(const std::shared_ptr<dae::GameObject>& gameObjectSPtr)
+	: Component(gameObjectSPtr)
 {
 }
 
@@ -19,7 +19,7 @@ void dae::FPSComponent::Update()
 	{
 		return;
 	}
-	if(const auto gameObject = m_GameObject.lock())
+	if(const auto gameObject = GetParentGameObject().lock())
 	{
 		if (gameObject->ComponentAdded<TextComponent>())
 		{

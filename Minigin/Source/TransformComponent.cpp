@@ -1,8 +1,9 @@
 #include "Header/GameObject.h"
 #include "Header/TransformComponent.h"
 
-dae::TransformComponent::TransformComponent()
-	: m_position{ 0, 0, 0 }
+dae::TransformComponent::TransformComponent(const std::shared_ptr<GameObject>& parentObjectSPtr, const glm::vec3& pos)
+	: Component(parentObjectSPtr)
+	, m_position{ pos }
 {
 
 }

@@ -10,8 +10,6 @@ namespace dae
 	class Texture2D;
 	class GameObject final
 	{
-		TransformComponent m_transform{};
-
 		std::vector<std::unique_ptr<Component>> m_ComponentUPtrVec;
 	public:
 		void Update();

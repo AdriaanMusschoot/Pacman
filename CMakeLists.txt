@@ -42,10 +42,10 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   "Minigin/Header/TextureComponent.h"
   "Minigin/Source/TextComponent.cpp"
   "Minigin/Header/TextComponent.h "
-  "Minigin/Header/Time.h" 
   "Minigin/Source/Time.cpp" 
-  "Minigin/Header/FPSComponent.h" 
-  "Minigin/Source/FPSComponent.cpp")
+  "Minigin/Header/Time.h" 
+  "Minigin/Source/FPSComponent.cpp"
+  "Minigin/Header/FPSComponent.h")
 
 # enable c++20 features
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)

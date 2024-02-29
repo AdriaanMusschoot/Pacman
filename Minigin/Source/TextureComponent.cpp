@@ -2,9 +2,11 @@
 
 #include "Header\Renderer.h"
 #include "Header\ResourceManager.h"
+#include "Header\GameObject.h"
+dae::TextureComponent::TextureComponent(const std::shared_ptr<GameObject>& parentObjectSPtr)
+	: Component(parentObjectSPtr)
+	, m_TransformPtr{ parentObjectSPtr->GetComponent<TransformComponent>() }
 
-dae::TextureComponent::TextureComponent()
-	: m_TransformUPtr{ std::make_unique<TransformComponent>() }
 {
 }
 
@@ -12,15 +14,9 @@ void dae::TextureComponent::Render() const
 {
 	if (m_Texture != nullptr)
 	{
-		dae::Renderer::GetInstance().RenderTexture(*m_Texture, m_TransformUPtr->GetPosition().x, m_TransformUPtr->GetPosition().y);
+		dae::Renderer::GetInstance().RenderTexture(*m_Texture, m_TransformPtr->GetPosition().x, m_TransformPtr->GetPosition().y);
 	}
 }
-
-void dae::TextureComponent::SetPosition(float x, float y, float z)
-{
-	m_TransformUPtr->SetPosition(x, y, z);
-}
-
 
 void dae::TextureComponent::SetTexture(const std::string& fileName)
 {

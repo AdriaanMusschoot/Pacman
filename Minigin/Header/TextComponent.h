@@ -13,7 +13,7 @@ namespace dae
 	class TextComponent final : public Component
 	{
 	public:
-		TextComponent(const std::string& textToDisplay, const std::string& fontPath, unsigned int size);
+		TextComponent(const std::shared_ptr<GameObject>& parentObjectSPtr, const std::string& textToDisplay, const std::string& fontPath, unsigned int size = 10);
 		~TextComponent() override = default;
 	
 		TextComponent(const TextComponent&) = delete;
@@ -24,16 +24,14 @@ namespace dae
 		void Update() override;
 		void Render() const override;
 		
-		void SetPosition(float x, float y, float z = 0);
-
 		void SetText(const std::string& textToDisplay);
 	private:
-		std::unique_ptr<TransformComponent> m_TransformUPtr;
-
 		bool m_NeedsUpdate;
 		std::string m_Text;
 		std::shared_ptr<dae::Font> m_FontUPtr;
 		std::unique_ptr<dae::Texture2D> m_TextTextureSPtr;
+
+		TransformComponent* m_TransformPtr;
 	};
 
 }

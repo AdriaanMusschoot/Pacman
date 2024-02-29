@@ -26,7 +26,8 @@ void load()
 	auto& scene = dae::SceneManager::GetInstance().CreateScene("Programming 4 Assignment");
 
 	std::shared_ptr<dae::GameObject> gameObject = std::make_shared<dae::GameObject>();
-	gameObject->AddComponent<dae::TextureComponent>();
+	gameObject->AddComponent<dae::TransformComponent>(gameObject);
+	gameObject->AddComponent<dae::TextureComponent>(gameObject);
 	if (gameObject->ComponentAdded<dae::TextureComponent>())
 	{
 		//ASK TOM IF THIS IS THEN THE CORRECT WAY TO HANDLE AN EXCEPTION
@@ -42,27 +43,27 @@ void load()
 	scene.Add(gameObject);
 	
 	gameObject = std::make_shared<dae::GameObject>();
-	gameObject->AddComponent<dae::TextureComponent>();
+	gameObject->AddComponent<dae::TransformComponent>(gameObject, glm::vec3{ 216, 180, 0 });
+	gameObject->AddComponent<dae::TextureComponent>(gameObject);
 	if (gameObject->ComponentAdded<dae::TextureComponent>())
 	{
 		gameObject->GetComponent<dae::TextureComponent>()->SetTexture("logo.tga");
-		gameObject->GetComponent<dae::TextureComponent>()->SetPosition(216, 180);
 	}
 	scene.Add(gameObject);
 
 	gameObject = std::make_shared<dae::GameObject>();
-	gameObject->AddComponent<dae::TextComponent>("Programming 4 Assignment", "Lingua.otf", 36);
+	gameObject->AddComponent<dae::TransformComponent>(gameObject, glm::vec3{ 80, 20, 0 });
+	gameObject->AddComponent<dae::TextComponent>(gameObject, "Programming 4 Assignment", "Lingua.otf", 36);
 	if (gameObject->ComponentAdded<dae::TextComponent>())
 	{
-		gameObject->GetComponent<dae::TextComponent>()->SetPosition(80, 20);
 	}
 	scene.Add(gameObject);
 
 	gameObject = std::make_shared<dae::GameObject>();
-	gameObject->AddComponent<dae::TextComponent>("60", "Lingua.otf", 36);
+	gameObject->AddComponent<dae::TransformComponent>(gameObject);
+	gameObject->AddComponent<dae::TextComponent>(gameObject, "60", "Lingua.otf", 36);
 	if (gameObject->ComponentAdded<dae::TextComponent>())
 	{
-		gameObject->GetComponent<dae::TextComponent>()->SetPosition(0, 0);
 	}
 	gameObject->AddComponent<dae::FPSComponent>(gameObject);
 	scene.Add(gameObject);

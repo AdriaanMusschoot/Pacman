@@ -10,7 +10,7 @@ namespace dae
 	class FPSComponent final : public Component
 	{
 	public:
-		FPSComponent(const std::weak_ptr<dae::GameObject>& gameObject);
+		FPSComponent(const std::shared_ptr<GameObject>& gameObjectSPtr);
 		~FPSComponent() override = default;
 	
 		FPSComponent(const FPSComponent& other) = delete;
@@ -20,7 +20,6 @@ namespace dae
 	
 		void Update() override;
 	private:
-		std::weak_ptr<dae::GameObject> m_GameObject;
 		std::string m_FPSCountToDisplay;
 	
 		int m_TicksPassed{ 0 };

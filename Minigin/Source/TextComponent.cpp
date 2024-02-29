@@ -4,14 +4,15 @@
 
 #include "Header/ResourceManager.h"
 #include "Header/Renderer.h"
+#include "Header/GameObject.h"
 
-
-dae::TextComponent::TextComponent(const std::string& textToDisplay, const std::string& fontPath, const unsigned size)
-	: m_NeedsUpdate{ true }
+dae::TextComponent::TextComponent(const std::shared_ptr<GameObject>& parentObjectSPtr, const std::string& textToDisplay, const std::string& fontPath, const unsigned size)
+	: Component(parentObjectSPtr)
+	, m_NeedsUpdate{ true }
 	, m_Text{ textToDisplay }
 	, m_FontUPtr{ dae::ResourceManager::GetInstance().LoadFont(fontPath, size) }
 	, m_TextTextureSPtr{ nullptr }
-	, m_TransformUPtr{ std::make_unique<TransformComponent>() }
+	, m_TransformPtr{ parentObjectSPtr->GetComponent<TransformComponent>() }
 {
 }
 
@@ -40,13 +41,8 @@ void dae::TextComponent::Render() const
 {
 	if (m_TextTextureSPtr != nullptr)
 	{
-		dae::Renderer::GetInstance().RenderTexture(*m_TextTextureSPtr, m_TransformUPtr->GetPosition().x, m_TransformUPtr->GetPosition().y);
+		dae::Renderer::GetInstance().RenderTexture(*m_TextTextureSPtr, m_TransformPtr->GetPosition().x, m_TransformPtr->GetPosition().y);
 	}
-}
-
-void dae::TextComponent::SetPosition(float x, float y, float z)
-{
-	m_TransformUPtr->SetPosition(x, y, z);
 }
 
 void dae::TextComponent::SetText(const std::string& textToDisplay)
