@@ -16,20 +16,25 @@ namespace dae
 		Component& operator=(Component&& other) = delete;
 	
 	protected:
-		Component(const std::shared_ptr<GameObject>& parentGameObjectSPtr)
+		explicit Component(const std::shared_ptr<GameObject>& parentGameObjectSPtr)
 			: m_ParentGameObjectWPtr{ parentGameObjectSPtr.get() }
+			, m_ToBeDestroyed{ false }
 		{
-
 		}
 	
 		virtual void Update() {}
 		virtual void Render() const {}
 
 		GameObject* GetParentGameObject() const { return m_ParentGameObjectWPtr; }
+
+		void EnableToBeDestroyed() { m_ToBeDestroyed = true; }
+		[[nodiscard]] bool GetToBeDestroyed() const { return m_ToBeDestroyed; }
 	private:
 		friend class GameObject;
 
 		GameObject* m_ParentGameObjectWPtr;
+
+		bool m_ToBeDestroyed;
 	};
 
 }

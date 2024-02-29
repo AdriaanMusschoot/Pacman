@@ -32,6 +32,11 @@ void Scene::Update()
 	{
 		object->Update();
 	}
+	std::erase_if(m_objects,
+		[&](const std::shared_ptr<GameObject>& objectUPtr)
+		{
+			return objectUPtr->GetToBeDestroyed();
+		});
 }
 
 void Scene::Render() const

@@ -1,9 +1,4 @@
-#include <string>
 #include "Header\GameObject.h"
-#include "Header\ResourceManager.h"
-#include "Header\Renderer.h"
-
-dae::GameObject::~GameObject() = default;
 
 void dae::GameObject::Update()
 {
@@ -11,6 +6,11 @@ void dae::GameObject::Update()
     {
         component->Update();
     }
+    std::erase_if(m_ComponentUPtrVec,
+        [&](const std::unique_ptr<Component>& componentUPtr)
+        {
+            return componentUPtr->GetToBeDestroyed();
+        });
 }
 
 void dae::GameObject::Render() const

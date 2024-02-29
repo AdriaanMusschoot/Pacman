@@ -11,7 +11,6 @@ dae::TextComponent::TextComponent(const std::shared_ptr<GameObject>& parentObjec
 	, m_NeedsUpdate{ true }
 	, m_Text{ textToDisplay }
 	, m_FontUPtr{ dae::ResourceManager::GetInstance().LoadFont(fontPath, size) }
-	, m_TextTextureSPtr{ nullptr }
 	, m_TransformPtr{ GetParentGameObject()->GetComponent<TransformComponent>()}
 	, m_TextureComponentUPtr{ std::make_unique<TextureComponent>(parentObjectSPtr) }
 {
@@ -33,7 +32,7 @@ void dae::TextComponent::Update()
 			throw std::runtime_error(std::string("Create text texture from surface failed: ") + SDL_GetError());
 		}
 		SDL_FreeSurface(surf);
-		m_TextureComponentUPtr->SetTexture(std::make_shared<Texture2D>(texture));
+		m_TextureComponentUPtr->SetTexture(std::make_unique<Texture2D>(texture));
 		m_NeedsUpdate = false;
 	}
 }

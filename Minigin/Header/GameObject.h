@@ -3,19 +3,25 @@
 #include <vector>
 
 #include "Component.h"
-#include "TransformComponent.h"
 
 namespace dae
 {
-	class Texture2D;
 	class GameObject final
 	{
-		std::vector<std::unique_ptr<Component>> m_ComponentUPtrVec;
 	public:
+		GameObject()
+			: m_ComponentUPtrVec{}
+			, m_ToBeDestroyed{ false }
+		{
+		}
+		~GameObject() = default;
+		GameObject(const GameObject& other) = delete;
+		GameObject(GameObject&& other) = delete;
+		GameObject& operator=(const GameObject& other) = delete;
+		GameObject& operator=(GameObject&& other) = delete;
+
 		void Update();
 		void Render() const;
-
-		void SetPosition(float x, float y);
 
 		template <typename T, typename... Args>
 		void AddComponent(Args&&... args)
@@ -29,7 +35,7 @@ namespace dae
 			//erase removes element from start iterator (given by remove_if) to end iterator
 			m_ComponentUPtrVec.erase
 			(
-				//moves elements to be removed to the back 
+				//moves element to be removed to the back 
 				std::remove_if(m_ComponentUPtrVec.begin(), m_ComponentUPtrVec.end(),
 					[](const auto& component)
 					{
@@ -65,11 +71,14 @@ namespace dae
 			return false;
 		}
 
-		GameObject() = default;
-		~GameObject();
-		GameObject(const GameObject& other) = delete;
-		GameObject(GameObject&& other) = delete;
-		GameObject& operator=(const GameObject& other) = delete;
-		GameObject& operator=(GameObject&& other) = delete;
+		void EnableToBeDestroyed() { m_ToBeDestroyed = true; }
+		bool GetToBeDestroyed() const { return m_ToBeDestroyed; }
+
+	private:
+		std::vector<std::unique_ptr<Component>> m_ComponentUPtrVec;
+
+		bool m_ToBeDestroyed;
 	};
+
+	
 }
