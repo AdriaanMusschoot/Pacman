@@ -4,8 +4,8 @@
 
 #include "Component.h"
 #include "TextureComponent.h"
-#include "Header\Font.h"
-#include "Header\Texture2D.h"
+#include "Font.h"
+#include "Texture2D.h"
 
 namespace dae
 {
@@ -29,9 +29,10 @@ namespace dae
 		bool m_NeedsUpdate;
 		std::string m_Text;
 		std::shared_ptr<dae::Font> m_FontUPtr;
-		std::unique_ptr<dae::Texture2D> m_TextTextureSPtr;
 
 		TransformComponent* m_TransformPtr;
+
+		std::unique_ptr<TextureComponent> m_TextureComponentUPtr;
 	};
 
 }

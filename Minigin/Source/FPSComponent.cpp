@@ -6,8 +6,9 @@
 #include "Header/TextComponent.h"
 #include "Header/Time.h"
 
-dae::FPSComponent::FPSComponent(const std::shared_ptr<dae::GameObject>& gameObjectSPtr)
-	: Component(gameObjectSPtr)
+dae::FPSComponent::FPSComponent(const std::shared_ptr<dae::GameObject>& parentObjectSPtr)
+	: Component(parentObjectSPtr)
+	, m_TextPtr{ GetParentGameObject()->GetComponent<TextComponent>() }
 {
 }
 
@@ -19,15 +20,14 @@ void dae::FPSComponent::Update()
 	{
 		return;
 	}
-	if(const auto gameObject = GetParentGameObject().lock())
+	double currentFPS{ m_TicksPassed / m_CurrentRefreshTime };
+	if (currentFPS != m_PreviousFPSCount)
 	{
-		if (gameObject->ComponentAdded<TextComponent>())
+		if(m_TextPtr)
 		{
-			std::stringstream tempSS;
-			tempSS << std::fixed << std::setprecision(1) << m_TicksPassed / m_CurrentRefreshTime;
-			m_FPSCountToDisplay = tempSS.str();
-			gameObject->GetComponent<TextComponent>()->SetText(m_FPSCountToDisplay);
+			m_TextPtr->SetText(std::format("{:.1f}", currentFPS));
 		}
+		m_PreviousFPSCount = currentFPS;
 	}
 	m_CurrentRefreshTime = 0.0;
 	m_TicksPassed = 0;

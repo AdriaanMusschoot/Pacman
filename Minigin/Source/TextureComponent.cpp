@@ -5,7 +5,7 @@
 #include "Header\GameObject.h"
 dae::TextureComponent::TextureComponent(const std::shared_ptr<GameObject>& parentObjectSPtr)
 	: Component(parentObjectSPtr)
-	, m_TransformPtr{ parentObjectSPtr->GetComponent<TransformComponent>() }
+	, m_TransformPtr{ GetParentGameObject()->GetComponent<TransformComponent>() }
 
 {
 }
@@ -18,7 +18,10 @@ void dae::TextureComponent::Render() const
 	}
 }
 
-void dae::TextureComponent::SetTexture(const std::string& fileName)
+void dae::TextureComponent::SetTexture(const std::string& fm_Texture = dae::ResourceManager::GetInstance().LoadTexture(fileName);
+}
+
+void dae::TextureComponent::SetTexture(const std::shared_ptr<Texture2D>& textureSPtr)
 {
-	m_Texture = dae::ResourceManager::GetInstance().LoadTexture(fileName);
+	m_Texture = textureSPtr;
 }

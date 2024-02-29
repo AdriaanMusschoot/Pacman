@@ -17,7 +17,7 @@ namespace dae
 	
 	protected:
 		Component(const std::shared_ptr<GameObject>& parentGameObjectSPtr)
-			: m_ParentGameObjectWPtr{ parentGameObjectSPtr }
+			: m_ParentGameObjectWPtr{ parentGameObjectSPtr.get() }
 		{
 
 		}
@@ -25,11 +25,11 @@ namespace dae
 		virtual void Update() {}
 		virtual void Render() const {}
 
-		std::weak_ptr<GameObject> GetParentGameObject() const { return m_ParentGameObjectWPtr; }
+		GameObject* GetParentGameObject() const { return m_ParentGameObjectWPtr; }
 	private:
 		friend class GameObject;
 
-		std::weak_ptr<GameObject> m_ParentGameObjectWPtr;
+		GameObject* m_ParentGameObjectWPtr;
 	};
 
 }

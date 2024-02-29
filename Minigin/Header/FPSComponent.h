@@ -2,7 +2,8 @@
 #include <memory>
 #include <string>
 
-#include "Header/Component.h"
+#include "Component.h"
+#include "TextComponent.h"
 
 namespace dae
 {
@@ -10,7 +11,7 @@ namespace dae
 	class FPSComponent final : public Component
 	{
 	public:
-		FPSComponent(const std::shared_ptr<GameObject>& gameObjectSPtr);
+		FPSComponent(const std::shared_ptr<GameObject>& parentObjectSPtr);
 		~FPSComponent() override = default;
 	
 		FPSComponent(const FPSComponent& other) = delete;
@@ -26,5 +27,9 @@ namespace dae
 	
 		const double m_MaxRefreshTime{ 0.2 };
 		double m_CurrentRefreshTime{ 0.0 };
+
+		double m_PreviousFPSCount{};
+
+		TextComponent* m_TextPtr;
 	};
 }
