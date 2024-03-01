@@ -6,13 +6,13 @@
 #include "Header/Renderer.h"
 #include "Header/GameObject.h"
 
-dae::TextComponent::TextComponent(const std::shared_ptr<GameObject>& parentObjectSPtr, const std::string& textToDisplay, const std::string& fontPath, const unsigned size)
-	: Component(parentObjectSPtr)
+dae::TextComponent::TextComponent(const std::shared_ptr<GameObject>& ownerObjectSPtr, const std::string& textToDisplay, const std::string& fontPath, const unsigned size)
+	: Component(ownerObjectSPtr)
 	, m_NeedsUpdate{ true }
 	, m_Text{ textToDisplay }
 	, m_FontUPtr{ dae::ResourceManager::GetInstance().LoadFont(fontPath, size) }
 	, m_TransformPtr{ GetParentGameObject()->GetComponent<TransformComponent>()}
-	, m_TextureComponentUPtr{ std::make_unique<TextureComponent>(parentObjectSPtr) }
+	, m_TextureComponentUPtr{ std::make_unique<TextureComponent>(ownerObjectSPtr) }
 {
 }
 

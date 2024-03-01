@@ -6,8 +6,8 @@
 #include "Header/TextComponent.h"
 #include "Header/Time.h"
 
-dae::FPSComponent::FPSComponent(const std::shared_ptr<dae::GameObject>& parentObjectSPtr)
-	: Component(parentObjectSPtr)
+dae::FPSComponent::FPSComponent(const std::shared_ptr<dae::GameObject>& ownerObjectSPtr)
+	: Component(ownerObjectSPtr)
 	, m_TextPtr{ GetParentGameObject()->GetComponent<TextComponent>() }
 {
 }

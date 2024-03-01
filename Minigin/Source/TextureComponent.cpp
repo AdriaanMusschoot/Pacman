@@ -5,8 +5,8 @@
 #include "Header\ResourceManager.h"
 #include "Header\GameObject.h"
 
-dae::TextureComponent::TextureComponent(const std::shared_ptr<GameObject>& parentObjectSPtr)
-	: Component(parentObjectSPtr)
+dae::TextureComponent::TextureComponent(const std::shared_ptr<GameObject>& ownerObjectSPtr)
+	: Component(ownerObjectSPtr)
 	, m_TransformPtr{ GetParentGameObject()->GetComponent<TransformComponent>() }
 
 {

@@ -12,7 +12,7 @@ namespace dae
 	class TextureComponent final : public Component
 	{
 	public:
-		TextureComponent(const std::shared_ptr<GameObject>& parentObjectSPtr);
+		TextureComponent(const std::shared_ptr<GameObject>& ownerObjectSPtr);
 		~TextureComponent() override = default;
 	
 		TextureComponent(const TextureComponent&) = delete;

@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "Component.h"
+#include "TransformComponent.h"
 
 namespace dae
 {
@@ -10,8 +11,7 @@ namespace dae
 	{
 	public:
 		GameObject()
-			: m_ComponentUPtrVec{}
-			, m_ToBeDestroyed{ false }
+			: m_ToBeDestroyed{ false }
 		{
 		}
 		~GameObject() = default;
@@ -74,10 +74,21 @@ namespace dae
 		void EnableToBeDestroyed() { m_ToBeDestroyed = true; }
 		bool GetToBeDestroyed() const { return m_ToBeDestroyed; }
 
+		GameObject* GetParent() const { return m_ParentObjectPtr; }
+		void SetParent(GameObject* newParentObjectPtr, bool keepWorldPosition);
+		size_t GetChildCount() const { return m_ChildObjectPtrVec.size(); }
+		GameObject* GetChildAt(unsigned int idx) const{ return m_ChildObjectPtrVec.at(idx); }
 	private:
 		std::vector<std::unique_ptr<Component>> m_ComponentUPtrVec;
 
 		bool m_ToBeDestroyed;
+
+		GameObject* m_ParentObjectPtr;
+		std::vector<GameObject*> m_ChildObjectPtrVec;
+
+		bool IsChild(const GameObject* gameObjectPtr) const;
+		void RemoveChild(GameObject* gameObjectPtr);
+		void AddChild(GameObject* gameObjectPtr);
 	};
 
 	
