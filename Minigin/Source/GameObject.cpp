@@ -2,6 +2,8 @@
 
 #include <algorithm>
 
+#include "SDL_egl.h"
+
 void dae::GameObject::Update()
 {
     for (const auto& component : m_ComponentUPtrVec)
@@ -29,8 +31,24 @@ void dae::GameObject::SetParent(GameObject* newParentObjectPtr, bool keepWorldPo
     {
         return;
     }
+
+    if (newParentObjectPtr == nullptr)
+    {
+        SetLocalPosition(GetWorldPosition());
+    }
+    else
+    {
+	    if (keepWorldPosition)
+	    {
+            SetLocalPosition(GetWorldPosition() - newParentObjectPtr->GetWorldPosition());
+	    }
+        m_TransformDirty = true;
+    }
+
     if (m_ParentObjectPtr) m_ParentObjectPtr->RemoveChild(this);
+
     m_ParentObjectPtr = newParentObjectPtr;
+
     if (m_ParentObjectPtr) m_ParentObjectPtr->AddChild(this);
 }
 
@@ -51,6 +69,45 @@ void dae::GameObject::RemoveChild(GameObject* gameObject)
 void dae::GameObject::AddChild(GameObject* gameObjectPtr)
 {
     m_ChildObjectPtrVec.emplace_back(gameObjectPtr);
+}
+
+glm::vec3 dae::GameObject::GetWorldPosition() const
+{
+    if (m_TransformDirty)
+    {
+    	const_cast<GameObject*>(this)->UpdateWorldPosition();
+    }
+    return GetComponent<TransformComponent>()->GetWorldPosition();
+}
+
+glm::vec3 dae::GameObject::GetLocalPosition() const
+{
+    return GetComponent<TransformComponent>()->GetLocalPosition();
+}
+
+void dae::GameObject::SetLocalPosition(const glm::vec3& newPosition)
+{
+	GetComponent<TransformComponent>()->SetLocalPosition(newPosition);
+    
+    m_TransformDirty = true;
+}
+
+void dae::GameObject::UpdateWorldPosition()
+{
+    if (m_ParentObjectPtr == nullptr)
+    {
+        GetComponent<TransformComponent>()->SetWorldPosition(GetComponent<TransformComponent>()->GetLocalPosition());
+    }
+    else
+    {
+        GetComponent<TransformComponent>()->SetWorldPosition
+        (
+            m_ParentObjectPtr->GetComponent<TransformComponent>()->GetWorldPosition()
+            +
+            GetComponent<TransformComponent>()->GetLocalPosition()
+        );
+    }
+    m_TransformDirty = false;
 }
 
 

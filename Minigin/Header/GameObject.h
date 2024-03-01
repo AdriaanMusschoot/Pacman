@@ -46,11 +46,11 @@ namespace dae
 		}
 
 		template <typename T> 
-		T* GetComponent()
+		T* GetComponent() const
 		{
 			for (const auto& component : m_ComponentUPtrVec)
 			{
-				if (const auto neededComponent = dynamic_cast<T*>(component.get()); neededComponent != nullptr)
+				if (const auto & neededComponent = dynamic_cast<T*>(component.get()); neededComponent != nullptr)
 				{
 					return neededComponent;
 				}
@@ -86,9 +86,17 @@ namespace dae
 		GameObject* m_ParentObjectPtr;
 		std::vector<GameObject*> m_ChildObjectPtrVec;
 
+		bool m_TransformDirty;
+
 		bool IsChild(const GameObject* gameObjectPtr) const;
 		void RemoveChild(GameObject* gameObjectPtr);
 		void AddChild(GameObject* gameObjectPtr);
+
+		glm::vec3 GetWorldPosition() const;
+		glm::vec3 GetLocalPosition() const;
+
+		void SetLocalPosition(const glm::vec3& newPosition);
+		void UpdateWorldPosition();
 	};
 
 	

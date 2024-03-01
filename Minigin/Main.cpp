@@ -62,9 +62,6 @@ void load()
 	gameObject = std::make_shared<dae::GameObject>();
 	gameObject->AddComponent<dae::TransformComponent>(gameObject);
 	gameObject->AddComponent<dae::TextComponent>(gameObject, "60", "Lingua.otf", 36);
-	if (gameObject->ComponentAdded<dae::TextComponent>())
-	{
-	}
 	gameObject->AddComponent<dae::FPSComponent>(gameObject);
 	scene.Add(gameObject);
 }
