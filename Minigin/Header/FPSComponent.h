@@ -5,7 +5,7 @@
 #include "Component.h"
 #include "TextComponent.h"
 
-namespace dae
+namespace amu
 {
 
 	class FPSComponent final : public Component

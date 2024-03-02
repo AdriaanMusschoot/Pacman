@@ -7,7 +7,7 @@
 #include "Font.h"
 #include "Texture2D.h"
 
-namespace dae
+namespace amu
 {
 
 	class TextComponent final : public Component
@@ -28,7 +28,7 @@ namespace dae
 	private:
 		bool m_NeedsUpdate;
 		std::string m_Text;
-		std::shared_ptr<dae::Font> m_FontUPtr;
+		std::shared_ptr<amu::Font> m_FontUPtr;
 
 		TransformComponent* m_TransformPtr;
 

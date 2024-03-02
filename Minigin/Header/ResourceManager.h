@@ -4,7 +4,7 @@
 #include <memory>
 #include "Singleton.h"
 
-namespace dae
+namespace amu
 {
 	class Texture2D;
 	class Font;

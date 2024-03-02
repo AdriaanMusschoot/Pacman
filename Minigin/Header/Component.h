@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 
-namespace dae
+namespace amu
 {
 	class GameObject;
 
@@ -17,7 +17,7 @@ namespace dae
 	
 	protected:
 		explicit Component(const std::shared_ptr<GameObject>& ownerGameObjectSPtr)
-			: m_ParentGameObjectWPtr{ ownerGameObjectSPtr.get() }
+			: m_OwnerGameObjectPtr{ ownerGameObjectSPtr.get() }
 			, m_ToBeDestroyed{ false }
 		{
 		}
@@ -25,14 +25,14 @@ namespace dae
 		virtual void Update() {}
 		virtual void Render() const {}
 
-		GameObject* GetParentGameObject() const { return m_ParentGameObjectWPtr; }
+		GameObject* GetOwnerGameObject() const { return m_OwnerGameObjectPtr; }
 
 		void EnableToBeDestroyed() { m_ToBeDestroyed = true; }
 		bool GetToBeDestroyed() const { return m_ToBeDestroyed; }
 	private:
 		friend class GameObject;
 
-		GameObject* m_ParentGameObjectWPtr;
+		GameObject* m_OwnerGameObjectPtr;
 
 		bool m_ToBeDestroyed;
 	};

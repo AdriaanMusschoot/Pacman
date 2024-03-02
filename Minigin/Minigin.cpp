@@ -19,7 +19,7 @@
 #include "Header\SceneManager.h"
 #include "Header\Renderer.h"
 #include "Header\ResourceManager.h"
-
+#include "Parameters.h"
 SDL_Window* g_window{};
 
 void LogSDLVersion(const std::string& message, const SDL_version& v)
@@ -38,7 +38,7 @@ void LogSDLVersion(const std::string& message, const SDL_version& v)
 
 void LoopCallback(void* arg)
 {
-	static_cast<dae::Minigin*>(arg)->RunOneFrame();
+	static_cast<amu::Minigin*>(arg)->RunOneFrame();
 }
 #endif
 
@@ -67,7 +67,7 @@ void PrintSDLVersion()
 	LogSDLVersion("We linked against SDL_ttf version ", version);
 }
 
-dae::Minigin::Minigin(const std::filesystem::path &dataPath)
+amu::Minigin::Minigin(const std::filesystem::path &dataPath)
 {
 	PrintSDLVersion();
 	
@@ -75,13 +75,13 @@ dae::Minigin::Minigin(const std::filesystem::path &dataPath)
 	{
 		throw std::runtime_error(std::string("SDL_Init Error: ") + SDL_GetError());
 	}
-
+	
 	g_window = SDL_CreateWindow(
 		"Programming 4 assignment",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
-		640,
-		480,
+		WINDOW_WIDTH,
+		WINDOW_HEIGHT,
 		SDL_WINDOW_OPENGL
 	);
 	if (g_window == nullptr) 
@@ -95,7 +95,7 @@ dae::Minigin::Minigin(const std::filesystem::path &dataPath)
 	SDL_RenderSetVSync(Renderer::GetInstance().GetSDLRenderer(), true);
 }
 
-dae::Minigin::~Minigin()
+amu::Minigin::~Minigin()
 {
 	Renderer::GetInstance().Destroy();
 	SDL_DestroyWindow(g_window);
@@ -103,7 +103,7 @@ dae::Minigin::~Minigin()
 	SDL_Quit();
 }
 
-void dae::Minigin::Run(const std::function<void()>& load)
+void amu::Minigin::Run(const std::function<void()>& load)
 {
 	load();
 #ifndef __EMSCRIPTEN__
@@ -114,7 +114,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 #endif
 }
 
-void dae::Minigin::RunOneFrame()
+void amu::Minigin::RunOneFrame()
 {
 	Time::GetInstance().Update();
 

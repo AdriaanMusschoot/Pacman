@@ -6,7 +6,7 @@
 #include "Texture2D.h"
 #include "TransformComponent.h"
 
-namespace dae
+namespace amu
 {
 
 	class TextureComponent final : public Component
@@ -25,9 +25,9 @@ namespace dae
 		void SetTexture(const std::string& fileName);
 		void SetTexture(const std::shared_ptr<Texture2D>& textureSPtr);
 	private:
-		std::shared_ptr<dae::Texture2D> m_Texture{};
+		std::shared_ptr<amu::Texture2D> m_Texture{ nullptr };
 
-		TransformComponent* m_TransformPtr;
+		TransformComponent* m_TransformPtr{ nullptr };
 	};
 
 }

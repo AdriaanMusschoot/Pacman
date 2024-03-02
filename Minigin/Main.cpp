@@ -12,58 +12,72 @@
 #include "Header\ResourceManager.h"
 #include "Header\GameObject.h"
 #include "Header\Scene.h"
-
 #include <filesystem>
 
-#include "SDL_egl.h"
+#include "Header/AutoRotateComponent.h"
 #include "Header/FPSComponent.h"
 #include "Header/TextComponent.h"
 #include "Header/TextureComponent.h"
+#include "Parameters.h"
+
 namespace fs = std::filesystem;
 
 void load()
 {
-	auto& scene = dae::SceneManager::GetInstance().CreateScene("Programming 4 Assignment");
+	auto& scene = amu::SceneManager::GetInstance().CreateScene("Programming 4 Assignment");
 
-	std::shared_ptr<dae::GameObject> gameObject = std::make_shared<dae::GameObject>();
-	gameObject->AddComponent<dae::TransformComponent>(gameObject);
-	gameObject->AddComponent<dae::TextureComponent>(gameObject);
-	if (gameObject->ComponentAdded<dae::TextureComponent>())
+	std::shared_ptr backgroundSPtr{ std::make_shared<amu::GameObject>() };
+	backgroundSPtr->AddComponent<amu::TransformComponent>(backgroundSPtr, glm::vec3{ 0, 0, 0 });
+	backgroundSPtr->AddComponent<amu::TextureComponent>(backgroundSPtr);
+	if (backgroundSPtr->ComponentAdded<amu::TextureComponent>())
 	{
-		//ASK TOM IF THIS IS THEN THE CORRECT WAY TO HANDLE AN EXCEPTION
-		//try
-		//{
-			gameObject->GetComponent<dae::TextureComponent>()->SetTexture("background.tga");
-		//}
-		//catch(...)
-		//{
-			//display some text on the window??
-		//}
+		backgroundSPtr->GetComponent<amu::TextureComponent>()->SetTexture("background.tga");
 	}
-	scene.Add(gameObject);
+	scene.Add(backgroundSPtr);
 	
-	gameObject = std::make_shared<dae::GameObject>();
-	gameObject->AddComponent<dae::TransformComponent>(gameObject, glm::vec3{ 216, 180, 0 });
-	gameObject->AddComponent<dae::TextureComponent>(gameObject);
-	if (gameObject->ComponentAdded<dae::TextureComponent>())
+	std::shared_ptr daeLogoSPtr{ std::make_shared<amu::GameObject>() };
+	daeLogoSPtr->AddComponent<amu::TransformComponent>(daeLogoSPtr, glm::vec3{ WINDOW_WIDTH / 2 - 103, WINDOW_HEIGHT / 2 - 24, 0 });
+	daeLogoSPtr->AddComponent<amu::TextureComponent>(daeLogoSPtr);
+	if (daeLogoSPtr->ComponentAdded<amu::TextureComponent>())
 	{
-		gameObject->GetComponent<dae::TextureComponent>()->SetTexture("logo.tga");
+		daeLogoSPtr->GetComponent<amu::TextureComponent>()->SetTexture("logo.tga");
 	}
-	scene.Add(gameObject);
+ 	daeLogoSPtr->SetParent(backgroundSPtr.get(), false);
+	scene.Add(daeLogoSPtr);
 
-	gameObject = std::make_shared<dae::GameObject>();
-	gameObject->AddComponent<dae::TransformComponent>(gameObject, glm::vec3{ 80, 20, 0 });
-	gameObject->AddComponent<dae::TextComponent>(gameObject, "Programming 4 Assignment", "Lingua.otf", 36);
-	if (gameObject->ComponentAdded<dae::TextComponent>())
+	std::shared_ptr titleSPtr{ std::make_shared<amu::GameObject>() };
+	titleSPtr->AddComponent<amu::TransformComponent>(titleSPtr, glm::vec3{ 80, 20, 0 });
+	titleSPtr->AddComponent<amu::TextComponent>(titleSPtr, "Programming 4 Assignment", "Lingua.otf", 36);
+ 	titleSPtr->SetParent(backgroundSPtr.get(), false);
+	scene.Add(titleSPtr);
+	
+	std::shared_ptr fpsCounterSPtr{ std::make_shared<amu::GameObject>() };
+	fpsCounterSPtr->AddComponent<amu::TransformComponent>(fpsCounterSPtr, glm::vec3{ 0, 50, 0 });
+	fpsCounterSPtr->AddComponent<amu::TextComponent>(fpsCounterSPtr, "60", "Lingua.otf", 36);
+	fpsCounterSPtr->AddComponent<amu::FPSComponent>(fpsCounterSPtr);
+ 	fpsCounterSPtr->SetParent(backgroundSPtr.get(), false);
+	scene.Add(fpsCounterSPtr);
+
+	std::shared_ptr pacman1SPtr{ std::make_shared<amu::GameObject>() };
+	pacman1SPtr->AddComponent<amu::TransformComponent>(pacman1SPtr, glm::vec3{ WINDOW_WIDTH / 2 - 16, WINDOW_HEIGHT / 2 - 16, 0 });
+	pacman1SPtr->AddComponent<amu::TextureComponent>(pacman1SPtr);
+	if (pacman1SPtr->ComponentAdded<amu::TextureComponent>())
 	{
+		pacman1SPtr->GetComponent<amu::TextureComponent>()->SetTexture("PacMan.png");
 	}
-	scene.Add(gameObject);
+	pacman1SPtr->AddComponent<amu::AutoRotateComponent>(pacman1SPtr, 100, 3.0);
+	scene.Add(pacman1SPtr);
 
-	gameObject = std::make_shared<dae::GameObject>();
-	gameObject->AddComponent<dae::TransformComponent>(gameObject);
-	gameObject->AddComponent<dae::TextComponent>(gameObject, "60", "Lingua.otf", 36);
-	gameObject->AddComponent<dae::FPSComponent>(gameObject);
-	scene.Add(gameObject);
+	std::shared_ptr pacman2SPtr{ std::make_shared<amu::GameObject>() };
+	pacman2SPtr->AddComponent<amu::TransformComponent>(pacman2SPtr, glm::vec3{ 0, 0, 0 });
+	pacman2SPtr->SetParent(pacman1SPtr.get(), false);
+	pacman2SPtr->AddComponent<amu::TextureComponent>(pacman2SPtr);
+	if (pacman2SPtr->ComponentAdded<amu::TextureComponent>())
+	{
+		pacman2SPtr->GetComponent<amu::TextureComponent>()->SetTexture("PacMan.png");
+	}
+	pacman2SPtr->AddComponent<amu::AutoRotateComponent>(pacman2SPtr, 50, 5.0);
+	scene.Add(pacman2SPtr);
 }
 
 int main(int, char*[]) {
@@ -74,7 +88,7 @@ int main(int, char*[]) {
 	if(!fs::exists(data_location))
 		data_location = "../Data/";
 #endif
-	dae::Minigin engine(data_location);
+	amu::Minigin engine(data_location);
 	engine.Run(load);
     return 0;
 }

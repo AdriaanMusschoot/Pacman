@@ -6,17 +6,17 @@
 #include "Header/Renderer.h"
 #include "Header/GameObject.h"
 
-dae::TextComponent::TextComponent(const std::shared_ptr<GameObject>& ownerObjectSPtr, const std::string& textToDisplay, const std::string& fontPath, const unsigned size)
+amu::TextComponent::TextComponent(const std::shared_ptr<GameObject>& ownerObjectSPtr, const std::string& textToDisplay, const std::string& fontPath, const unsigned size)
 	: Component(ownerObjectSPtr)
 	, m_NeedsUpdate{ true }
 	, m_Text{ textToDisplay }
-	, m_FontUPtr{ dae::ResourceManager::GetInstance().LoadFont(fontPath, size) }
-	, m_TransformPtr{ GetParentGameObject()->GetComponent<TransformComponent>()}
+	, m_FontUPtr{ amu::ResourceManager::GetInstance().LoadFont(fontPath, size) }
+	, m_TransformPtr{ GetOwnerGameObject()->GetComponent<TransformComponent>()}
 	, m_TextureComponentUPtr{ std::make_unique<TextureComponent>(ownerObjectSPtr) }
 {
 }
 
-void dae::TextComponent::Update()
+void amu::TextComponent::Update()
 {
 	if (m_NeedsUpdate)
 	{
@@ -26,7 +26,7 @@ void dae::TextComponent::Update()
 		{
 			throw std::runtime_error(std::string("Render text failed: ") + SDL_GetError());
 		}
-		auto texture = SDL_CreateTextureFromSurface(dae::Renderer::GetInstance().GetSDLRenderer(), surf);
+		auto texture = SDL_CreateTextureFromSurface(amu::Renderer::GetInstance().GetSDLRenderer(), surf);
 		if (texture == nullptr)
 		{
 			throw std::runtime_error(std::string("Create text texture from surface failed: ") + SDL_GetError());
@@ -37,12 +37,12 @@ void dae::TextComponent::Update()
 	}
 }
 
-void dae::TextComponent::Render() const
+void amu::TextComponent::Render() const
 {
 	m_TextureComponentUPtr->Render();
 }
 
-void dae::TextComponent::SetText(const std::string& textToDisplay)
+void amu::TextComponent::SetText(const std::string& textToDisplay)
 {
 	m_Text = textToDisplay;
 	m_NeedsUpdate = true;

@@ -4,7 +4,7 @@
 
 #include "Singleton.h"
 
-class Time final : public dae::Singleton<Time>
+class Time final : public amu::Singleton<Time>
 {
 public:
 	void Update();

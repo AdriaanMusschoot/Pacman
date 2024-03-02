@@ -5,15 +5,17 @@
 #include "Component.h"
 #include "TransformComponent.h"
 
-namespace dae
+namespace amu
 {
 	class GameObject final
 	{
 	public:
 		GameObject()
-			: m_ToBeDestroyed{ false }
+			: m_ToBeDestroyed{ false },
+			m_ParentObjectPtr{ nullptr }
 		{
 		}
+
 		~GameObject() = default;
 		GameObject(const GameObject& other) = delete;
 		GameObject(GameObject&& other) = delete;
@@ -86,17 +88,9 @@ namespace dae
 		GameObject* m_ParentObjectPtr;
 		std::vector<GameObject*> m_ChildObjectPtrVec;
 
-		bool m_TransformDirty;
-
 		bool IsChild(const GameObject* gameObjectPtr) const;
 		void RemoveChild(GameObject* gameObjectPtr);
 		void AddChild(GameObject* gameObjectPtr);
-
-		glm::vec3 GetWorldPosition() const;
-		glm::vec3 GetLocalPosition() const;
-
-		void SetLocalPosition(const glm::vec3& newPosition);
-		void UpdateWorldPosition();
 	};
 
 	

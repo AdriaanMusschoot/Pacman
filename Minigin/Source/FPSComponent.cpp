@@ -6,13 +6,13 @@
 #include "Header/TextComponent.h"
 #include "Header/Time.h"
 
-dae::FPSComponent::FPSComponent(const std::shared_ptr<dae::GameObject>& ownerObjectSPtr)
+amu::FPSComponent::FPSComponent(const std::shared_ptr<amu::GameObject>& ownerObjectSPtr)
 	: Component(ownerObjectSPtr)
-	, m_TextPtr{ GetParentGameObject()->GetComponent<TextComponent>() }
+	, m_TextPtr{ GetOwnerGameObject()->GetComponent<TextComponent>() }
 {
 }
 
-void dae::FPSComponent::Update()
+void amu::FPSComponent::Update()
 {
 	m_CurrentRefreshTime += Time::GetInstance().GetDeltaTime();
 	m_TicksPassed++;

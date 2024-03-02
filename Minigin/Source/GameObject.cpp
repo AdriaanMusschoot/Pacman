@@ -4,7 +4,7 @@
 
 #include "SDL_egl.h"
 
-void dae::GameObject::Update()
+void amu::GameObject::Update()
 {
     for (const auto& component : m_ComponentUPtrVec)
     {
@@ -17,7 +17,7 @@ void dae::GameObject::Update()
         });
 }
 
-void dae::GameObject::Render() const
+void amu::GameObject::Render() const
 {
     for(const auto & component: m_ComponentUPtrVec)
     {
@@ -25,34 +25,41 @@ void dae::GameObject::Render() const
     }
 }
 
-void dae::GameObject::SetParent(GameObject* newParentObjectPtr, bool keepWorldPosition)
+void amu::GameObject::SetParent(GameObject* newParentObjectPtr, bool keepWorldPosition)
 {
     if(IsChild(newParentObjectPtr) || newParentObjectPtr == this || m_ParentObjectPtr == newParentObjectPtr)
     {
         return;
     }
 
+	TransformComponent* temp = GetComponent<TransformComponent>();
     if (newParentObjectPtr == nullptr)
     {
-        SetLocalPosition(GetWorldPosition());
+        temp->SetLocalPosition(temp->GetWorldPosition());
     }
     else
     {
 	    if (keepWorldPosition)
 	    {
-            SetLocalPosition(GetWorldPosition() - newParentObjectPtr->GetWorldPosition());
+            temp->SetLocalPosition(temp->GetWorldPosition() - newParentObjectPtr->GetComponent<TransformComponent>()->GetWorldPosition());
 	    }
-        m_TransformDirty = true;
+        temp->SetTransformDirty();
     }
 
-    if (m_ParentObjectPtr) m_ParentObjectPtr->RemoveChild(this);
+    if (m_ParentObjectPtr)
+    {
+        m_ParentObjectPtr->RemoveChild(this);
+    }
 
     m_ParentObjectPtr = newParentObjectPtr;
 
-    if (m_ParentObjectPtr) m_ParentObjectPtr->AddChild(this);
+    if (m_ParentObjectPtr)
+    {
+        m_ParentObjectPtr->AddChild(this);
+    }
 }
 
-bool dae::GameObject::IsChild(const GameObject* gameObjectPtr) const
+bool amu::GameObject::IsChild(const GameObject* gameObjectPtr) const
 {
     return std::ranges::any_of(m_ChildObjectPtrVec,
     [&](const GameObject* objPtr)
@@ -61,53 +68,12 @@ bool dae::GameObject::IsChild(const GameObject* gameObjectPtr) const
     });
 }
 
-void dae::GameObject::RemoveChild(GameObject* gameObject)
+void amu::GameObject::RemoveChild(GameObject* gameObject)
 {
     std::erase(m_ChildObjectPtrVec, gameObject);
 }
 
-void dae::GameObject::AddChild(GameObject* gameObjectPtr)
+void amu::GameObject::AddChild(GameObject* gameObjectPtr)
 {
     m_ChildObjectPtrVec.emplace_back(gameObjectPtr);
 }
-
-glm::vec3 dae::GameObject::GetWorldPosition() const
-{
-    if (m_TransformDirty)
-    {
-    	const_cast<GameObject*>(this)->UpdateWorldPosition();
-    }
-    return GetComponent<TransformComponent>()->GetWorldPosition();
-}
-
-glm::vec3 dae::GameObject::GetLocalPosition() const
-{
-    return GetComponent<TransformComponent>()->GetLocalPosition();
-}
-
-void dae::GameObject::SetLocalPosition(const glm::vec3& newPosition)
-{
-	GetComponent<TransformComponent>()->SetLocalPosition(newPosition);
-    
-    m_TransformDirty = true;
-}
-
-void dae::GameObject::UpdateWorldPosition()
-{
-    if (m_ParentObjectPtr == nullptr)
-    {
-        GetComponent<TransformComponent>()->SetWorldPosition(GetComponent<TransformComponent>()->GetLocalPosition());
-    }
-    else
-    {
-        GetComponent<TransformComponent>()->SetWorldPosition
-        (
-            m_ParentObjectPtr->GetComponent<TransformComponent>()->GetWorldPosition()
-            +
-            GetComponent<TransformComponent>()->GetLocalPosition()
-        );
-    }
-    m_TransformDirty = false;
-}
-
-
