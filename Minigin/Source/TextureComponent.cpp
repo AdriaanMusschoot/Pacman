@@ -5,27 +5,26 @@
 #include "Header\ResourceManager.h"
 #include "Header\GameObject.h"
 
-amu::TextureComponent::TextureComponent(GameObject* ownerObjectSPtr)
-	: Component(ownerObjectSPtr)
+amu::TextureComponent::TextureComponent(GameObject* ownerObjectPtr)
+	: Component(ownerObjectPtr)
 	, m_TransformPtr{ GetOwnerGameObject()->GetComponent<TransformComponent>() }
-
 {
 }
 
 void amu::TextureComponent::Render() const
 {
-	if (m_Texture != nullptr)
+	if (m_TextureUPtr != nullptr)
 	{
-		amu::Renderer::GetInstance().RenderTexture(*m_Texture, m_TransformPtr->GetWorldPosition().x, m_TransformPtr->GetWorldPosition().y);
+		amu::Renderer::GetInstance().RenderTexture(*m_TextureUPtr, m_TransformPtr->GetWorldPosition().x, m_TransformPtr->GetWorldPosition().y);
 	}
 }
 
 void amu::TextureComponent::SetTexture(const std::string& fileName)
 {
-	m_Texture = amu::ResourceManager::GetInstance().LoadTexture(fileName);
+	m_TextureUPtr = amu::ResourceManager::GetInstance().LoadTexture(fileName);
 }
 
-void amu::TextureComponent::SetTexture(const std::shared_ptr<Texture2D>& textureSPtr)
+void amu::TextureComponent::SetTexture(std::unique_ptr<Texture2D> textureUPtr)
 {
-	m_Texture = textureSPtr;
+	m_TextureUPtr = std::move(textureUPtr);
 }

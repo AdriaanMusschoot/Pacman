@@ -1,9 +1,9 @@
 #include "Header\SceneManager.h"
-#include "Header\Scene.h"
+#include "Header/Scene.h"
 
 void amu::SceneManager::Update()
 {
-	for(auto& scene : m_scenes)
+	for(auto& scene : m_ScenesUPtrVec)
 	{
 		scene->Update();
 	}
@@ -11,7 +11,7 @@ void amu::SceneManager::Update()
 
 void amu::SceneManager::Render()
 {
-	for (const auto& scene : m_scenes)
+	for (const auto& scene : m_ScenesUPtrVec)
 	{
 		scene->Render();
 	}
@@ -19,7 +19,7 @@ void amu::SceneManager::Render()
 
 amu::Scene& amu::SceneManager::CreateScene(const std::string& name)
 {
-	const auto& scene = std::shared_ptr<Scene>(new Scene(name));
-	m_scenes.push_back(scene);
-	return *scene;
+	std::unique_ptr scene = std::make_unique<Scene>(name);
+	m_ScenesUPtrVec.emplace_back(std::move(scene));
+	return *m_ScenesUPtrVec[m_ScenesUPtrVec.size() - 1];
 }

@@ -9,8 +9,8 @@ namespace amu
 	class AutoRotateComponent final : public amu::Component
 	{
 	public:
-		explicit AutoRotateComponent(amu::GameObject* ownerObjectSPtr, int radius, double speed, double angle = 0);
-		explicit AutoRotateComponent(amu::GameObject* ownerObjectSPtr);
+		explicit AutoRotateComponent(amu::GameObject* ownerObjectPtr, int radius, double speed, double angle = 0);
+		explicit AutoRotateComponent(amu::GameObject* ownerObjectPtr);
 		~AutoRotateComponent() override = default;
 	
 		AutoRotateComponent(const AutoRotateComponent& other) = delete;
@@ -20,14 +20,14 @@ namespace amu
 	
 		void Update() override;
 	private:
-		glm::vec3 m_CenterPosition{ 0, 0, 0 };
+		glm::vec3 m_CenterPosition = glm::vec3{ 0, 0, 0 };
 
-		int m_Radius{ 10 };
-		double m_Speed{ 2 };
+		int m_Radius = 0;
+		double m_Speed = 2;
 
-		double m_Angle{ 0 };
+		double m_Angle = 0;
 
-		TransformComponent* m_TransformPtr{ nullptr };
+		TransformComponent* m_TransformPtr = nullptr;
 	};
 
 }

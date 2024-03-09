@@ -81,12 +81,12 @@ namespace amu
 		size_t GetChildCount() const { return m_ChildObjectPtrVec.size(); }
 		GameObject* GetChildAt(unsigned int idx) const{ return m_ChildObjectPtrVec.at(idx); }
 	private:
-		std::vector<std::unique_ptr<Component>> m_ComponentUPtrVec;
+		std::vector<std::unique_ptr<Component>> m_ComponentUPtrVec{};
 
-		bool m_ToBeDestroyed;
+		bool m_ToBeDestroyed = false;
 
-		GameObject* m_ParentObjectPtr;
-		std::vector<GameObject*> m_ChildObjectPtrVec;
+		GameObject* m_ParentObjectPtr = nullptr;
+		std::vector<GameObject*> m_ChildObjectPtrVec{};
 
 		bool IsChild(const GameObject* parentObjectPtr) const;
 		void RemoveChild(GameObject* gameObjectPtr);

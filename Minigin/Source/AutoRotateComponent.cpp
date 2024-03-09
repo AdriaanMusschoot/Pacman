@@ -3,15 +3,15 @@
 #include "Header/GameObject.h"
 #include "Header/Time.h"
 
-amu::AutoRotateComponent::AutoRotateComponent(GameObject * ownerObjectSPtr)
-	: Component(ownerObjectSPtr)
+amu::AutoRotateComponent::AutoRotateComponent(GameObject * ownerObjectPtr)
+	: Component(ownerObjectPtr)
 	, m_TransformPtr{ GetOwnerGameObject()->GetComponent<TransformComponent>() }
 {
 	m_CenterPosition = m_TransformPtr->GetLocalPosition();
 }
 
-amu::AutoRotateComponent::AutoRotateComponent(amu::GameObject * ownerObjectSPtr, int radius, double speed, double angle)
-	: AutoRotateComponent(ownerObjectSPtr)
+amu::AutoRotateComponent::AutoRotateComponent(amu::GameObject * ownerObjectPtr, int radius, double speed, double angle)
+	: AutoRotateComponent(ownerObjectPtr)
 {
 	m_Radius = radius;
 	m_Speed = speed;

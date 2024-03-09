@@ -13,7 +13,7 @@ namespace amu
 	class TextComponent final : public Component
 	{
 	public:
-		TextComponent(GameObject * ownerObjectSPtr, const std::string& textToDisplay, const std::string& fontPath, unsigned int size = 10);
+		TextComponent(GameObject * ownerObjectPtr, const std::string& textToDisplay, const std::string& fontPath, unsigned int size = 10);
 		~TextComponent() override = default;
 	
 		TextComponent(const TextComponent&) = delete;
@@ -26,13 +26,15 @@ namespace amu
 		
 		void SetText(const std::string& textToDisplay);
 	private:
-		bool m_NeedsUpdate;
-		std::string m_Text;
-		std::shared_ptr<amu::Font> m_FontUPtr;
+		bool m_NeedsUpdate = true;
 
-		TransformComponent* m_TransformPtr;
+		std::string m_Text = "";
 
-		std::unique_ptr<TextureComponent> m_TextureComponentUPtr;
+		std::unique_ptr<amu::Font> m_FontUPtr = nullptr;
+
+		TransformComponent* m_TransformPtr = nullptr;
+
+		std::unique_ptr<TextureComponent> m_TextureComponentUPtr = nullptr;
 	};
 
 }

@@ -6,8 +6,8 @@
 #include "Header/TextComponent.h"
 #include "Header/Time.h"
 
-amu::FPSComponent::FPSComponent(amu::GameObject * ownerObjectSPtr)
-	: Component(ownerObjectSPtr)
+amu::FPSComponent::FPSComponent(amu::GameObject * ownerObjectPtr)
+	: Component(ownerObjectPtr)
 	, m_TextPtr{ GetOwnerGameObject()->GetComponent<TextComponent>() }
 {
 }

@@ -3,10 +3,12 @@
 #include <string>
 #include <memory>
 #include "Singleton.h"
+#include "Scene.h"
 
 namespace amu
 {
 	class Scene;
+
 	class SceneManager final : public Singleton<SceneManager>
 	{
 	public:
@@ -17,6 +19,7 @@ namespace amu
 	private:
 		friend class Singleton<SceneManager>;
 		SceneManager() = default;
-		std::vector<std::shared_ptr<Scene>> m_scenes;
+		std::vector<std::unique_ptr<Scene>> m_ScenesUPtrVec{};
 	};
+
 }

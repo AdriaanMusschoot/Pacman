@@ -10,9 +10,9 @@ namespace amu
 	 */
 	class Renderer final : public Singleton<Renderer>
 	{
-		SDL_Renderer* m_renderer{};
-		SDL_Window* m_window{};
-		SDL_Color m_clearColor{};
+		SDL_Renderer* m_renderer = nullptr;
+		SDL_Window* m_window = nullptr;
+		SDL_Color m_clearColor = SDL_Color{};
 	public:
 		void Init(SDL_Window* window);
 		void Render() const;

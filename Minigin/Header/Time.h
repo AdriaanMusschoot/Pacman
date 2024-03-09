@@ -15,6 +15,5 @@ private:
 	Time() = default;
 	std::chrono::high_resolution_clock::time_point m_PreviousTimePoint;
 
-	double m_DeltaTime{ 0 };
-	double m_FixedTimeStep{ 0.02 };
+	double m_DeltaTime = 0;
 };

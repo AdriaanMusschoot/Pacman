@@ -1,31 +1,35 @@
 #pragma once
-#include "SceneManager.h"
+#include "GameObject.h"
+#include <vector>
+#include <memory>
+#include <string>
 
 namespace amu
 {
-	class GameObject;
+	class SceneManager;
 	class Scene final
 	{
-		friend Scene& SceneManager::CreateScene(const std::string& name);
 	public:
-		void Add(std::shared_ptr<GameObject> object);
-		void Remove(std::shared_ptr<GameObject> object);
-		void RemoveAll();
-
-		void Update();
-		void Render() const;
-
+		explicit Scene(const std::string& name);
 		~Scene();
+
 		Scene(const Scene& other) = delete;
 		Scene(Scene&& other) = delete;
 		Scene& operator=(const Scene& other) = delete;
 		Scene& operator=(Scene&& other) = delete;
 
-	private: 
-		explicit Scene(const std::string& name);
+		void Add(std::unique_ptr<GameObject> object);
+		void Remove(std::unique_ptr<GameObject> object);
+		void RemoveAll();
 
-		std::string m_name;
-		std::vector < std::shared_ptr<GameObject>> m_objects{};
+		void Update();
+		void Render() const;
+
+	private:
+		friend class SceneManager;
+
+		std::string m_name = "";
+		std::vector<std::unique_ptr<GameObject>> m_GameObjectUPtrVec{};
 
 		static unsigned int m_idCounter; 
 	};

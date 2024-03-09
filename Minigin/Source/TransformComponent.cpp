@@ -1,8 +1,8 @@
 #include "Header/GameObject.h"
 #include "Header/TransformComponent.h"
 
-amu::TransformComponent::TransformComponent(GameObject* ownerObjectSPtr, const glm::vec3& pos)
-	: Component(ownerObjectSPtr)
+amu::TransformComponent::TransformComponent(GameObject* ownerObjectPtr, const glm::vec3& pos)
+	: Component(ownerObjectPtr)
 	, m_LocalPosition{ pos }
 	, m_WorldPosition{ pos }
 	, m_TransformDirty{ false }

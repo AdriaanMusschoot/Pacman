@@ -6,13 +6,12 @@
 #include "Header/Renderer.h"
 #include "Header/GameObject.h"
 
-amu::TextComponent::TextComponent(GameObject * ownerObjectSPtr, const std::string& textToDisplay, const std::string& fontPath, const unsigned size)
-	: Component(ownerObjectSPtr)
-	, m_NeedsUpdate{ true }
+amu::TextComponent::TextComponent(GameObject * ownerObjectPtr, const std::string& textToDisplay, const std::string& fontPath, const unsigned size)
+	: Component(ownerObjectPtr)
 	, m_Text{ textToDisplay }
 	, m_FontUPtr{ amu::ResourceManager::GetInstance().LoadFont(fontPath, size) }
-	, m_TransformPtr{ GetOwnerGameObject()->GetComponent<TransformComponent>()}
-	, m_TextureComponentUPtr{ std::make_unique<TextureComponent>(ownerObjectSPtr) }
+	, m_TransformPtr{ GetOwnerGameObject()->GetComponent<TransformComponent>() }
+	, m_TextureComponentUPtr{ std::make_unique<TextureComponent>(ownerObjectPtr) }
 {
 }
 

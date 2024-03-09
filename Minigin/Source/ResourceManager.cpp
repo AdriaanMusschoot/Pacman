@@ -16,7 +16,7 @@ void amu::ResourceManager::Init(const std::filesystem::path& dataPath)
 	}
 }
 
-std::shared_ptr<amu::Texture2D> amu::ResourceManager::LoadTexture(const std::string& file) const
+std::unique_ptr<amu::Texture2D> amu::ResourceManager::LoadTexture(const std::string& file) const
 {
 	const auto fullPath = m_dataPath/file;
 	auto texture = IMG_LoadTexture(Renderer::GetInstance().GetSDLRenderer(), fullPath.string().c_str());
@@ -24,11 +24,11 @@ std::shared_ptr<amu::Texture2D> amu::ResourceManager::LoadTexture(const std::str
 	{
 		throw std::runtime_error(std::string("Failed to load texture: ") + SDL_GetError());
 	}
-	return std::make_shared<Texture2D>(texture);
+	return std::make_unique<Texture2D>(texture);
 }
 
-std::shared_ptr<amu::Font> amu::ResourceManager::LoadFont(const std::string& file, unsigned int size) const
+std::unique_ptr<amu::Font> amu::ResourceManager::LoadFont(const std::string& file, unsigned int size) const
 {
 	const auto fullPath = m_dataPath/file;
-	return std::make_shared<Font>(fullPath.string(), size);
+	return std::make_unique<Font>(fullPath.string(), size);
 }

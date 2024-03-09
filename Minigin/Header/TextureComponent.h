@@ -12,7 +12,7 @@ namespace amu
 	class TextureComponent final : public Component
 	{
 	public:
-		TextureComponent(GameObject *  ownerObjectSPtr);
+		TextureComponent(GameObject *  ownerObjectPtr);
 		~TextureComponent() override = default;
 	
 		TextureComponent(const TextureComponent&) = delete;
@@ -23,11 +23,11 @@ namespace amu
 		void Render() const override;
 
 		void SetTexture(const std::string& fileName);
-		void SetTexture(const std::shared_ptr<Texture2D>& textureSPtr);
+		void SetTexture(std::unique_ptr<Texture2D> textureUPtr);
 	private:
-		std::shared_ptr<amu::Texture2D> m_Texture{ nullptr };
+		std::unique_ptr<amu::Texture2D> m_TextureUPtr = nullptr;
 
-		TransformComponent* m_TransformPtr{ nullptr };
+		TransformComponent* m_TransformPtr = nullptr;
 	};
 
 }

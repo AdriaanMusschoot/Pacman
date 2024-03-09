@@ -19,6 +19,6 @@ namespace amu
 		Font & operator= (const Font &) = delete;
 		Font & operator= (const Font &&) = delete;
 	private:
-		_TTF_Font* m_font;
+		_TTF_Font* m_font = nullptr;
 	};
 }

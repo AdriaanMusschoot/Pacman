@@ -8,7 +8,7 @@ namespace amu
 	class TransformComponent final : public Component
 	{
 	public:
-		TransformComponent(GameObject * ownerObjectSPtr, const glm::vec3& pos = { 0, 0, 0 });
+		TransformComponent(GameObject * ownerObjectPtr, const glm::vec3& pos = { 0, 0, 0 });
 
 		const glm::vec3& GetLocalPosition() const;
 		void SetLocalPosition(const glm::vec3& newPosition);
