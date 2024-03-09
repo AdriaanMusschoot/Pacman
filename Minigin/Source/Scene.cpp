@@ -15,7 +15,7 @@ void Scene::Add(std::unique_ptr<GameObject> object)
 	m_GameObjectUPtrVec.emplace_back(std::move(object));
 }
 
-void Scene::Remove(std::unique_ptr<GameObject> object)
+void Scene::Remove(const std::unique_ptr<GameObject>& object)
 {
 	m_GameObjectUPtrVec.erase(std::remove(m_GameObjectUPtrVec.begin(), m_GameObjectUPtrVec.end(), object), m_GameObjectUPtrVec.end());
 }

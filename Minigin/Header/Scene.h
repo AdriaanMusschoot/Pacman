@@ -6,7 +6,6 @@
 
 namespace amu
 {
-	class SceneManager;
 	class Scene final
 	{
 	public:
@@ -19,15 +18,13 @@ namespace amu
 		Scene& operator=(Scene&& other) = delete;
 
 		void Add(std::unique_ptr<GameObject> object);
-		void Remove(std::unique_ptr<GameObject> object);
+		void Remove(const std::unique_ptr<GameObject>& object);
 		void RemoveAll();
 
 		void Update();
 		void Render() const;
 
 	private:
-		friend class SceneManager;
-
 		std::string m_name = "";
 		std::vector<std::unique_ptr<GameObject>> m_GameObjectUPtrVec{};
 

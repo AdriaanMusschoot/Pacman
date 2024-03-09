@@ -108,7 +108,6 @@ void load()
 			pacman3SPtr->AddComponent<amu::AutoRotateComponent>(pacman3SPtr.get(), 50, 0.1 * idx1, idx1 * incAngle2);
 			//pacman3SPtr->SetParent(nullptr, true);
 			scene.Add(std::move(pacman3SPtr));
-			std::cout << idx1 + idx * nrPerCircle2 << "\n";
 		}
 		scene.Add(std::move(pacman2SPtr));
 	}
