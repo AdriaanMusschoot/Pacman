@@ -6,7 +6,7 @@
 #include "Header/Renderer.h"
 #include "Header/GameObject.h"
 
-amu::TextComponent::TextComponent(const std::shared_ptr<GameObject>& ownerObjectSPtr, const std::string& textToDisplay, const std::string& fontPath, const unsigned size)
+amu::TextComponent::TextComponent(GameObject * ownerObjectSPtr, const std::string& textToDisplay, const std::string& fontPath, const unsigned size)
 	: Component(ownerObjectSPtr)
 	, m_NeedsUpdate{ true }
 	, m_Text{ textToDisplay }

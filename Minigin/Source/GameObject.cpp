@@ -43,7 +43,10 @@ void amu::GameObject::SetParent(GameObject* newParentObjectPtr, bool keepWorldPo
 	    {
             temp->SetLocalPosition(temp->GetWorldPosition() - newParentObjectPtr->GetComponent<TransformComponent>()->GetWorldPosition());
 	    }
-        temp->SetTransformDirty();
+        else
+        {
+			temp->SetTransformDirty();
+        }
     }
 
     if (m_ParentObjectPtr)
@@ -59,12 +62,12 @@ void amu::GameObject::SetParent(GameObject* newParentObjectPtr, bool keepWorldPo
     }
 }
 
-bool amu::GameObject::IsChild(const GameObject* gameObjectPtr) const
+bool amu::GameObject::IsChild(const GameObject* parentObjectPtr) const
 {
     return std::ranges::any_of(m_ChildObjectPtrVec,
-    [&](const GameObject* objPtr)
+    [&](const GameObject* childObjectPtr)
     {
-        return objPtr == gameObjectPtr;
+    	return childObjectPtr->IsChild(parentObjectPtr);
     });
 }
 

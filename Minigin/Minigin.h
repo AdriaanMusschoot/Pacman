@@ -19,7 +19,5 @@ namespace amu
 		Minigin& operator=(Minigin&& other) = delete;
 	private:
 		bool m_Quit{};
-		double m_Lag{};
-		int m_MilliSecondsPerFrame;
 	};
 }

@@ -88,7 +88,7 @@ namespace amu
 		GameObject* m_ParentObjectPtr;
 		std::vector<GameObject*> m_ChildObjectPtrVec;
 
-		bool IsChild(const GameObject* gameObjectPtr) const;
+		bool IsChild(const GameObject* parentObjectPtr) const;
 		void RemoveChild(GameObject* gameObjectPtr);
 		void AddChild(GameObject* gameObjectPtr);
 	};

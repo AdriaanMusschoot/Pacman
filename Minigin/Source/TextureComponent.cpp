@@ -5,7 +5,7 @@
 #include "Header\ResourceManager.h"
 #include "Header\GameObject.h"
 
-amu::TextureComponent::TextureComponent(const std::shared_ptr<GameObject>& ownerObjectSPtr)
+amu::TextureComponent::TextureComponent(GameObject* ownerObjectSPtr)
 	: Component(ownerObjectSPtr)
 	, m_TransformPtr{ GetOwnerGameObject()->GetComponent<TransformComponent>() }
 

@@ -9,8 +9,8 @@ namespace amu
 	class AutoRotateComponent final : public amu::Component
 	{
 	public:
-		explicit AutoRotateComponent(const std::shared_ptr<amu::GameObject>& ownerObjectSPtr);
-		explicit AutoRotateComponent(const std::shared_ptr<amu::GameObject>& ownerObjectSPtr, int radius, double speed);
+		explicit AutoRotateComponent(amu::GameObject* ownerObjectSPtr, int radius, double speed, double angle = 0);
+		explicit AutoRotateComponent(amu::GameObject* ownerObjectSPtr);
 		~AutoRotateComponent() override = default;
 	
 		AutoRotateComponent(const AutoRotateComponent& other) = delete;
@@ -27,7 +27,6 @@ namespace amu
 
 		double m_Angle{ 0 };
 
-		TransformComponent* m_ParentTransformPtr{ nullptr };
 		TransformComponent* m_TransformPtr{ nullptr };
 	};
 

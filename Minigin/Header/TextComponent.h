@@ -13,7 +13,7 @@ namespace amu
 	class TextComponent final : public Component
 	{
 	public:
-		TextComponent(const std::shared_ptr<GameObject>& ownerObjectSPtr, const std::string& textToDisplay, const std::string& fontPath, unsigned int size = 10);
+		TextComponent(GameObject * ownerObjectSPtr, const std::string& textToDisplay, const std::string& fontPath, unsigned int size = 10);
 		~TextComponent() override = default;
 	
 		TextComponent(const TextComponent&) = delete;

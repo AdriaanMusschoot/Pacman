@@ -11,7 +11,7 @@ namespace amu
 	class FPSComponent final : public Component
 	{
 	public:
-		FPSComponent(const std::shared_ptr<GameObject>& ownerObjectSPtr);
+		FPSComponent(GameObject * ownerObjectSPtr);
 		~FPSComponent() override = default;
 	
 		FPSComponent(const FPSComponent& other) = delete;

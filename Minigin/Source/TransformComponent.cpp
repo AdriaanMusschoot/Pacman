@@ -1,7 +1,7 @@
 #include "Header/GameObject.h"
 #include "Header/TransformComponent.h"
 
-amu::TransformComponent::TransformComponent(const std::shared_ptr<GameObject>& ownerObjectSPtr, const glm::vec3& pos)
+amu::TransformComponent::TransformComponent(GameObject* ownerObjectSPtr, const glm::vec3& pos)
 	: Component(ownerObjectSPtr)
 	, m_LocalPosition{ pos }
 	, m_WorldPosition{ pos }
@@ -40,7 +40,7 @@ void amu::TransformComponent::UpdateWorldPosition()
     {
         m_WorldPosition = parentPtr->GetComponent<TransformComponent>()->GetWorldPosition() + m_LocalPosition;
     }
-    m_TransformDirty = false;
+    m_TransformDirty = true;
 }
 
 void amu::TransformComponent::SetTransformDirty()

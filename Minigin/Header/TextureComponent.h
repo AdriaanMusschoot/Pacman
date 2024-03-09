@@ -12,7 +12,7 @@ namespace amu
 	class TextureComponent final : public Component
 	{
 	public:
-		TextureComponent(const std::shared_ptr<GameObject>& ownerObjectSPtr);
+		TextureComponent(GameObject *  ownerObjectSPtr);
 		~TextureComponent() override = default;
 	
 		TextureComponent(const TextureComponent&) = delete;

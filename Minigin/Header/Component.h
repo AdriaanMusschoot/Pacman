@@ -16,8 +16,8 @@ namespace amu
 		Component& operator=(Component&& other) = delete;
 	
 	protected:
-		explicit Component(const std::shared_ptr<GameObject>& ownerGameObjectSPtr)
-			: m_OwnerGameObjectPtr{ ownerGameObjectSPtr.get() }
+		explicit Component(GameObject * ownerGameObjectSPtr)
+			: m_OwnerGameObjectPtr{ ownerGameObjectSPtr }
 			, m_ToBeDestroyed{ false }
 		{
 		}

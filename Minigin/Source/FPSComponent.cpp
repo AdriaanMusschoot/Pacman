@@ -6,7 +6,7 @@
 #include "Header/TextComponent.h"
 #include "Header/Time.h"
 
-amu::FPSComponent::FPSComponent(const std::shared_ptr<amu::GameObject>& ownerObjectSPtr)
+amu::FPSComponent::FPSComponent(amu::GameObject * ownerObjectSPtr)
 	: Component(ownerObjectSPtr)
 	, m_TextPtr{ GetOwnerGameObject()->GetComponent<TextComponent>() }
 {
