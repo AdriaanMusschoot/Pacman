@@ -32,7 +32,8 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   "${TARGET_NAME}/Components/TextComponent.cpp"
   "${TARGET_NAME}/Components/FPSComponent.cpp"
   "${TARGET_NAME}/Components/AutoRotateComponent.cpp"
-  "${TARGET_NAME}/Components/TrashTheCacheComponent.cpp")
+  "${TARGET_NAME}/Components/TrashTheCacheEx1Component.cpp" 
+  "${TARGET_NAME}/Components/TrashTheCacheEx2Component.cpp")
 
 
 add_library(imgui OBJECT

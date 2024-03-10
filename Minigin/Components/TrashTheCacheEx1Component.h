@@ -6,8 +6,7 @@
 
 namespace amu
 {
-	class GameObject;
-
+ 
 	class TrashTheCacheEx1 final : public Component
 	{
 	public:
@@ -31,7 +30,9 @@ namespace amu
 
 		bool m_Calculating{ false };
 		bool m_GraphReady{ false };
+
 		void TestEx1();
+
 		void DrawPlot();
 	};
 

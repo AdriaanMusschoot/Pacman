@@ -18,7 +18,8 @@
 #include "Components/FPSComponent.h"
 #include "Components/TextComponent.h"
 #include "Components/TextureComponent.h"
-#include "Components/TrashTheCacheComponent.h"
+#include "Components/TrashTheCacheEx1Component.h"
+#include "Components/TrashTheCacheEx2Component.h"
 #include "Parameters.h"
 #include "SDL_egl.h"
 #include <iostream>
@@ -114,9 +115,13 @@ void load()
 	}
 	scene.Add(std::move(pacman1UPtr));
 
-	std::unique_ptr TTCObjectEx1UPtr{ std::make_unique<amu::GameObject>() };
-	TTCObjectEx1UPtr->AddComponent<amu::TrashTheCacheEx1>(TTCObjectEx1UPtr.get());
-	scene.Add(std::move(TTCObjectEx1UPtr));
+	std::unique_ptr TTCObject1UPtr{ std::make_unique<amu::GameObject>() };
+	TTCObject1UPtr->AddComponent<amu::TrashTheCacheEx1>(TTCObject1UPtr.get());
+	scene.Add(std::move(TTCObject1UPtr));
+
+	std::unique_ptr TTCObject2UPtr{ std::make_unique<amu::GameObject>() };
+	TTCObject2UPtr->AddComponent<amu::TrashTheCacheEx2>(TTCObject2UPtr.get());
+	scene.Add(std::move(TTCObject2UPtr));
 }
 
 int main(int, char*[]) {

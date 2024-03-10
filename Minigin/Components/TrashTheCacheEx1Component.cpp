@@ -1,4 +1,5 @@
-#include "TrashTheCacheComponent.h"
+#include "TrashTheCacheEx1Component.h"
+
 #include "Base/GameObject.h"
 #include "imgui.h"
 #include <algorithm>
@@ -7,64 +8,20 @@
 #include <thread>
 #include "imgui_plot.h"
 
-amu::TrashTheCacheEx1::TrashTheCacheEx1(GameObject* ownerObjectPtr)
-	: Component(ownerObjectPtr)
-{
-
-}
-
-void amu::TrashTheCacheEx1::Update()
-{
-	ImGui::Begin("Exercise 1");
-
-	ImGui::InputInt("# samples", &m_SampleCount);
-
-	if (!m_Calculating)
-	{
-		if (ImGui::Button("Trash the cash"))
-		{
-			m_Promise = std::promise<void>();
-			m_Future = m_Promise.get_future();
-
-			std::thread myThread(&TrashTheCacheEx1::TestEx1, this);
-
-			myThread.detach();
-			m_Calculating = true;
-			m_GraphReady = false;
-		}
-	}
-	else
-	{
-		ImGui::Text("Wait for it...");
-	}
-	if (m_Future.valid() && m_Future.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
-	{
-		m_GraphReady = true;
-	}
-	if (m_GraphReady)
-	{
-		DrawPlot();
-	}
-
-
-
-	ImGui::End();
-}
-
 void amu::TrashTheCacheEx1::TestEx1()
 {
 	m_IntVec.clear();
 	m_TimingVec.clear();
 	m_IntVec.resize(static_cast<int>(std::pow(2, 26)), 69);
 
-	for (int stepSize = 1; stepSize <= 1024; stepSize *= 2)
+	for (const float& stepSize : m_IntervalVec)
 	{
 		std::vector<float> durationVec;
 
 		for (int idx{}; idx < m_SampleCount; ++idx)
 		{
 			auto timePointBefore = std::chrono::high_resolution_clock::now();
-			for (int i{}; i < static_cast<int>(m_IntVec.size()); i += stepSize)
+			for (int i{}; i < static_cast<int>(m_IntVec.size()); i += static_cast<int>(stepSize))
 			{
 				m_IntVec[i] *= 2;
 			}
@@ -115,4 +72,46 @@ void amu::TrashTheCacheEx1::DrawPlot()
 	ImGui::Plot("plot1", conf);
 
 	ImGui::EndChild();
+}
+
+amu::TrashTheCacheEx1::TrashTheCacheEx1(GameObject* ownerObjectPtr)
+	: Component(ownerObjectPtr)
+{
+
+}
+
+void amu::TrashTheCacheEx1::Update()
+{
+	ImGui::Begin("Exercise 1");
+
+	ImGui::InputInt("# samples", &m_SampleCount);
+
+	if (!m_Calculating)
+	{
+		if (ImGui::Button("Trash the cash"))
+		{
+			m_Promise = std::promise<void>();
+			m_Future = m_Promise.get_future();
+
+			std::thread myThread(&TrashTheCacheEx1::TestEx1, this);
+
+			myThread.detach();
+			m_Calculating = true;
+			m_GraphReady = false;
+		}
+	}
+	else
+	{
+		ImGui::Text("Wait for it...");
+	}
+	if (m_Future.valid() && m_Future.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
+	{
+		m_GraphReady = true;
+	}
+	if (m_GraphReady)
+	{
+		DrawPlot();
+	}
+
+	ImGui::End();
 }
