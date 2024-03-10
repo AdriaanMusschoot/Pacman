@@ -7,48 +7,46 @@ endif()
 
 if(EMSCRIPTEN) 
   set(TARGET_NAME minigin_web)
-  set(TARGET_PARAM )
+  set(TARGET_PARAM)
 else()
   set(TARGET_NAME minigin)
   set(TARGET_PARAM WIN32)
-endif()
+endif() 
 
 # list source files here
 add_executable(${TARGET_NAME} ${TARGET_PARAM}
-  "Minigin/Header/Font.h"
-  "Minigin/Source/Font.cpp"
-  "Minigin/Header/GameObject.h"
-  "Minigin/Source/GameObject.cpp"
-  "Minigin/Header/InputManager.h"
-  "Minigin/Source/InputManager.cpp"
-  "Minigin/Parameters.h"
-  "Minigin/Main.cpp"
-  "Minigin/Minigin.h"
-  "Minigin/Minigin.cpp"
-  "Minigin/Header/Renderer.h"
-  "Minigin/Source/Renderer.cpp"
-  "Minigin/Header/ResourceManager.h"
-  "Minigin/Source/ResourceManager.cpp"
-  "Minigin/Header/Scene.h"
-  "Minigin/Source/Scene.cpp"
-  "Minigin/Header/SceneManager.h"
-  "Minigin/Source/SceneManager.cpp"
-  "Minigin/Header/Texture2D.h"
-  "Minigin/Source/Texture2D.cpp"
-  "Minigin/Header/TransformComponent.h"
-  "Minigin/Source/TransformComponent.cpp"
-  "Minigin/Header/Component.h"
-  "Minigin/Source/Component.cpp"
-  "Minigin/Header/TextureComponent.h"
-  "Minigin/Source/TextureComponent.cpp"
-  "Minigin/Header/TextComponent.h "
-  "Minigin/Source/TextComponent.cpp"
-  "Minigin/Header/Time.h" 
-  "Minigin/Source/Time.cpp" 
-  "Minigin/Header/FPSComponent.h" 
-  "Minigin/Source/FPSComponent.cpp"
-  "Minigin/Header/AutoRotateComponent.h" 
-  "Minigin/Source/AutoRotateComponent.cpp")
+  "${TARGET_NAME}/Main.cpp"
+  "${TARGET_NAME}/Base/Scene.cpp"
+  "${TARGET_NAME}/Base/Minigin.cpp"
+  "${TARGET_NAME}/Base/GameObject.cpp"
+  "${TARGET_NAME}/Singletons/Time.cpp"
+  "${TARGET_NAME}/Wrappers/Font.cpp"
+  "${TARGET_NAME}/Wrappers/Texture2D.cpp"
+  "${TARGET_NAME}/Singletons/Renderer.cpp"
+  "${TARGET_NAME}/Singletons/InputManager.cpp"
+  "${TARGET_NAME}/Singletons/ResourceManager.cpp"
+  "${TARGET_NAME}/Singletons/SceneManager.cpp"
+  "${TARGET_NAME}/Singletons/GUI.cpp" 
+  "${TARGET_NAME}/Components/TransformComponent.cpp"
+  "${TARGET_NAME}/Components/TextureComponent.cpp"
+  "${TARGET_NAME}/Components/TextComponent.cpp"
+  "${TARGET_NAME}/Components/FPSComponent.cpp"
+  "${TARGET_NAME}/Components/AutoRotateComponent.cpp"
+  "${TARGET_NAME}/Components/TrashTheCacheComponent.cpp")
+
+
+add_library(imgui OBJECT
+  3rdParty/imgui/imgui.cpp
+  3rdParty/imgui/imgui_draw.cpp
+  3rdParty/imgui/imgui_widgets.cpp
+  3rdParty/imgui/imgui_tables.cpp
+  3rdParty/imgui/imgui_impl_sdl2.cpp
+  3rdParty/imgui/imgui_impl_sdlrenderer2.cpp
+  3rdParty/imgui/imgui_plot.cpp)
+
+target_include_directories(imgui PRIVATE 3rdParty/imgui)
+
+target_link_libraries(${TARGET_NAME} PRIVATE imgui)
 
 # enable c++20 features
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)
@@ -88,7 +86,7 @@ if (WIN32)
     set(SDL2_LIBRARIES "${sdl2_SOURCE_DIR}/lib/x86/SDL2.lib;${sdl2_SOURCE_DIR}/lib/x86/SDL2main.lib")
     set(SDL2_LIBRARY_DLL "${sdl2_SOURCE_DIR}/lib/x86/SDL2.dll")
   endif()
-  endif()
+endif()
 
   # add SDL2_image
   FetchContent_Declare(
@@ -146,6 +144,12 @@ if (WIN32)
     ${SDL2_INCLUDE_DIR} 
     ${SDL2_IMAGE_INCLUDE_DIR} 
     ${SDL2_TTF_INCLUDE_DIR})
+
+  target_include_directories(imgui PRIVATE
+    ${VLD_INCLUDE_DIR}
+    ${SDL2_INCLUDE_DIR} 
+    ${SDL2_IMAGE_INCLUDE_DIR} 
+    ${SDL2_TTF_INCLUDE_DIR})
   
   # set libraries to link with
   target_link_libraries(${TARGET_NAME} PUBLIC
@@ -199,6 +203,7 @@ endif()
 target_include_directories(${TARGET_NAME} PRIVATE
   ${CMAKE_SOURCE_DIR}/Minigin/
   ${glm_SOURCE_DIR}
+  3rdParty/imgui
 )
 
 # compile at max warning level + treat warnings as errors
