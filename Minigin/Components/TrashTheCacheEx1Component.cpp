@@ -48,7 +48,7 @@ void amu::TrashTheCacheEx1::TestEx1()
 	m_Calculating = false;
 }
 
-void amu::TrashTheCacheEx1::DrawPlot()
+void amu::TrashTheCacheEx1::DrawPlot() const
 {
 	static uint32_t selection_start = 0, selection_length = 0;
 
@@ -80,6 +80,15 @@ amu::TrashTheCacheEx1::TrashTheCacheEx1(GameObject* ownerObjectPtr)
 
 }
 
+void amu::TrashTheCacheEx1::Render() const
+{
+	if (m_GraphReady)
+	{
+		DrawPlot();
+	}
+	ImGui::End();
+}
+
 void amu::TrashTheCacheEx1::Update()
 {
 	ImGui::Begin("Exercise 1");
@@ -108,10 +117,4 @@ void amu::TrashTheCacheEx1::Update()
 	{
 		m_GraphReady = true;
 	}
-	if (m_GraphReady)
-	{
-		DrawPlot();
-	}
-
-	ImGui::End();
 }

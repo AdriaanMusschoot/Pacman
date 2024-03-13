@@ -113,15 +113,7 @@ void load()
 		}
 		scene.Add(std::move(pacman2UPtr));
 	}
-	scene.Add(std::move(pacman1UPtr));
-
-	std::unique_ptr TTCObject1UPtr{ std::make_unique<amu::GameObject>() };
-	TTCObject1UPtr->AddComponent<amu::TrashTheCacheEx1>(TTCObject1UPtr.get());
-	scene.Add(std::move(TTCObject1UPtr));
-
-	std::unique_ptr TTCObject2UPtr{ std::make_unique<amu::GameObject>() };
-	TTCObject2UPtr->AddComponent<amu::TrashTheCacheEx2>(TTCObject2UPtr.get());
-	scene.Add(std::move(TTCObject2UPtr));
+	scene.Add(std::move(pacman1UPtr));	
 }
 
 int main(int, char*[]) {

@@ -19,6 +19,7 @@ namespace amu
 		TrashTheCacheEx1& operator=(TrashTheCacheEx1&& other) = delete;
 
 		void Update() override;
+		void Render() const override;
 	private:
 		std::vector<int> m_IntVec{};
 		std::vector<float> m_TimingVec{};
@@ -33,7 +34,7 @@ namespace amu
 
 		void TestEx1();
 
-		void DrawPlot();
+		void DrawPlot() const;
 	};
 
 }
