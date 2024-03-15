@@ -3,6 +3,7 @@
 
 namespace amu
 {
+
 	class GameObject;
 
 	class Component
@@ -16,8 +17,8 @@ namespace amu
 		Component& operator=(Component&& other) = delete;
 	
 	protected:
-		explicit Component(GameObject * ownerGameObjectPtr)
-			: m_OwnerGameObjectPtr{ ownerGameObjectPtr }
+		explicit Component(GameObject * ownerObjectPtr)
+			: m_OwnerGameObjectPtr{ ownerObjectPtr }
 			, m_ToBeDestroyed{ false }
 		{
 		}

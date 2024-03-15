@@ -4,15 +4,15 @@
 
 #include "Singleton.h"
 
-class Time final : public amu::Singleton<Time>
+class GameTime final : public amu::Singleton<GameTime>
 {
 public:
 	void Update();
 
 	double GetDeltaTime() const;
 private:
-	friend class Singleton<Time>;
-	Time() = default;
+	friend class Singleton<GameTime>;
+	GameTime() = default;
 	std::chrono::high_resolution_clock::time_point m_PreviousTimePoint;
 
 	double m_DeltaTime = 0;

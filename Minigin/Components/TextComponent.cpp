@@ -11,8 +11,9 @@ amu::TextComponent::TextComponent(GameObject * ownerObjectPtr, const std::string
 	, m_Text{ textToDisplay }
 	, m_FontUPtr{ amu::ResourceManager::GetInstance().LoadFont(fontPath, size) }
 	, m_TransformPtr{ GetOwnerGameObject()->GetComponent<TransformComponent>() }
-	, m_TextureComponentUPtr{ std::make_unique<TextureComponent>(ownerObjectPtr) }
 {
+	GetOwnerGameObject()->AddComponent<TextureComponent>(GetOwnerGameObject());
+	m_TextureComponentPtr = GetOwnerGameObject()->GetComponent<TextureComponent>();
 }
 
 void amu::TextComponent::Update()
@@ -31,14 +32,14 @@ void amu::TextComponent::Update()
 			throw std::runtime_error(std::string("Create text texture from surface failed: ") + SDL_GetError());
 		}
 		SDL_FreeSurface(surf);
-		m_TextureComponentUPtr->SetTexture(std::make_unique<Texture2D>(texture));
+		m_TextureComponentPtr->SetTexture(std::make_unique<Texture2D>(texture));
 		m_NeedsUpdate = false;
 	}
 }
 
 void amu::TextComponent::Render() const
 {
-	m_TextureComponentUPtr->Render();
+	m_TextureComponentPtr->Render();
 }
 
 void amu::TextComponent::SetText(const std::string& textToDisplay)

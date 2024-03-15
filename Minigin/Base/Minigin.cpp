@@ -118,7 +118,7 @@ void amu::Minigin::Run(const std::function<void()>& load)
 
 void amu::Minigin::RunOneFrame()
 {
-	Time::GetInstance().Update();
+	GameTime::GetInstance().Update();
 
 	GUI::GetInstance().BeginFrame();
 

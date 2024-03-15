@@ -14,7 +14,7 @@ amu::FPSComponent::FPSComponent(amu::GameObject * ownerObjectPtr)
 
 void amu::FPSComponent::Update()
 {
-	m_CurrentRefreshTime += Time::GetInstance().GetDeltaTime();
+	m_CurrentRefreshTime += GameTime::GetInstance().GetDeltaTime();
 	m_TicksPassed++;
 	if (m_CurrentRefreshTime < m_MaxRefreshTime)
 	{

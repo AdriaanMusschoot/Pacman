@@ -1,6 +1,6 @@
 #include "Singletons/Time.h"
 
-void Time::Update()
+void GameTime::Update()
 {
 	const auto currentTimePoint = std::chrono::high_resolution_clock::now();
 	m_DeltaTime = std::chrono::duration<double>(currentTimePoint - m_PreviousTimePoint).count();
@@ -11,7 +11,7 @@ void Time::Update()
 	}
 }
 
-double Time::GetDeltaTime() const
+double GameTime::GetDeltaTime() const
 {
 	return m_DeltaTime;
 }

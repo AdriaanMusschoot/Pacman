@@ -19,6 +19,8 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   "${TARGET_NAME}/Base/Scene.cpp"
   "${TARGET_NAME}/Base/Minigin.cpp"
   "${TARGET_NAME}/Base/GameObject.cpp"
+  "${TARGET_NAME}/Commands/Command.h" 
+  "${TARGET_NAME}/Commands/GameActorCommands.h" 
   "${TARGET_NAME}/Singletons/Time.cpp"
   "${TARGET_NAME}/Wrappers/Font.cpp"
   "${TARGET_NAME}/Wrappers/Texture2D.cpp"
@@ -33,7 +35,8 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   "${TARGET_NAME}/Components/FPSComponent.cpp"
   "${TARGET_NAME}/Components/AutoRotateComponent.cpp"
   "${TARGET_NAME}/Components/TrashTheCacheEx1Component.cpp" 
-  "${TARGET_NAME}/Components/TrashTheCacheEx2Component.cpp")
+  "${TARGET_NAME}/Components/TrashTheCacheEx2Component.cpp" 
+  "${TARGET_NAME}/Components/MoveableComponent.cpp" "Minigin/Commands/MoveCommands.h")
 
 
 add_library(imgui OBJECT
@@ -48,6 +51,8 @@ add_library(imgui OBJECT
 target_include_directories(imgui PRIVATE 3rdParty/imgui)
 
 target_link_libraries(${TARGET_NAME} PRIVATE imgui)
+
+target_link_libraries(${TARGET_NAME} PUBLIC XInput)
 
 # enable c++20 features
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)
@@ -170,7 +175,7 @@ elseif(NOT EMSCRIPTEN)
     GIT_PROGRESS TRUE
   )
   FetchContent_MakeAvailable(SDL2)
-  
+
   FetchContent_Declare(
     SDL2_image
     GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git

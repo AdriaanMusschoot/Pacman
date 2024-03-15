@@ -27,7 +27,10 @@ namespace amu
 		template <typename T, typename... Args>
 		void AddComponent(Args&&... args)
 		{
-			m_ComponentUPtrVec.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
+			if (!ComponentAdded<T>())
+			{
+				m_ComponentUPtrVec.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
+			}
 		}
 
 		template <typename T>

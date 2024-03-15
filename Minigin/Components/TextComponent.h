@@ -34,7 +34,7 @@ namespace amu
 
 		TransformComponent* m_TransformPtr = nullptr;
 
-		std::unique_ptr<TextureComponent> m_TextureComponentUPtr = nullptr;
+		TextureComponent* m_TextureComponentPtr = nullptr;
 	};
 
 }

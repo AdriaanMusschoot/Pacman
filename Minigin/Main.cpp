@@ -8,10 +8,13 @@
 #endif
 
 #include "Base/Minigin.h"
-#include "Singletons\SceneManager.h"
-#include "Singletons\ResourceManager.h"
-#include "Base\GameObject.h"
-#include "Base\Scene.h"
+#include "Singletons/SceneManager.h"
+#include "Singletons/ResourceManager.h"
+#include "Singletons/InputManager.h"
+#include "Base/GameObject.h"
+#include "Commands/MoveCommands.h"
+#include "Parameters.h"
+#include "Base/Scene.h"
 #include <filesystem>
 
 #include "Components/AutoRotateComponent.h"
@@ -20,7 +23,7 @@
 #include "Components/TextureComponent.h"
 #include "Components/TrashTheCacheEx1Component.h"
 #include "Components/TrashTheCacheEx2Component.h"
-#include "Parameters.h"
+#include "Components/MoveableComponent.h"
 #include "SDL_egl.h"
 #include <iostream>
 
@@ -77,7 +80,7 @@ void load()
 	{
 		pacman1UPtr->GetComponent<amu::TextureComponent>()->SetTexture("PacMan.png");
 	}
-	pacman1UPtr->AddComponent<amu::AutoRotateComponent>(pacman1UPtr.get(), 20, 3.0);
+	pacman1UPtr->AddComponent<amu::MoveableComponent>(pacman1UPtr.get(), 20);
 
 	constexpr int nrPerCircle{ 20 };
 	constexpr double incAngle{ 360.0 * amu::TO_RADIANS / nrPerCircle };
@@ -113,6 +116,33 @@ void load()
 		}
 		scene.Add(std::move(pacman2UPtr));
 	}
+	/////////////////////////////
+	/////////Add commmands
+	/////////////////////////////
+	amu::InputManager::GetInstance().AddCommandController(
+		XINPUT_GAMEPAD_DPAD_RIGHT, 
+		amu::InputManager::InputState::Held, 
+		std::make_unique<amu::MoveRight>(pacman1UPtr.get()));
+
+	amu::InputManager::GetInstance().AddCommandController(
+		XINPUT_GAMEPAD_DPAD_LEFT, amu::InputManager::InputState::Held, 
+		std::make_unique<amu::MoveLeft>(pacman1UPtr.get()));
+
+	amu::InputManager::GetInstance().AddCommandController(
+		XINPUT_GAMEPAD_DPAD_UP, 
+		amu::InputManager::InputState::Held, 
+		std::make_unique<amu::MoveUp>(pacman1UPtr.get()));
+
+	amu::InputManager::GetInstance().AddCommandController(
+		XINPUT_GAMEPAD_DPAD_DOWN, 
+		amu::InputManager::InputState::Held, 
+		std::make_unique<amu::MoveDown>(pacman1UPtr.get()));
+
+	amu::InputManager::GetInstance().AddCommandKeyboard(
+		SDLK_s, 
+		amu::InputManager::InputState::Held, 
+		std::make_unique<amu::MoveDown>(pacman1UPtr.get()));
+
 	scene.Add(std::move(pacman1UPtr));	
 }
 

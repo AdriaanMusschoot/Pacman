@@ -20,7 +20,7 @@ amu::AutoRotateComponent::AutoRotateComponent(amu::GameObject * ownerObjectPtr, 
 
 void amu::AutoRotateComponent::Update()
 {
-	m_Angle += m_Speed * Time::GetInstance().GetDeltaTime();
+	m_Angle += m_Speed * GameTime::GetInstance().GetDeltaTime();
 
 	const double x = m_CenterPosition.x + m_Radius * cos(m_Angle);
 	const double y = m_CenterPosition.y + m_Radius * sin(m_Angle);
