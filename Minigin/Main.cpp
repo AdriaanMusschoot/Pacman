@@ -26,6 +26,8 @@
 #include "Components/MoveableComponent.h"
 #include "SDL_egl.h"
 #include <iostream>
+#include "windows.h"
+#include "Xinput.h"
 
 namespace fs = std::filesystem;
 
@@ -73,77 +75,69 @@ void load()
 	///////////////ROTATING PACMANS
 	//////////////////////////////////////////
 
-	std::unique_ptr pacman1UPtr{ std::make_unique<amu::GameObject>() };
-	pacman1UPtr->AddComponent<amu::TransformComponent>(pacman1UPtr.get(), glm::vec3{amu::WINDOW_WIDTH / 2 - 4, amu::WINDOW_HEIGHT / 2 - 4, 0 });
-	pacman1UPtr->AddComponent<amu::TextureComponent>(pacman1UPtr.get());
-	if (pacman1UPtr->ComponentAdded<amu::TextureComponent>())
+	std::unique_ptr pacmanUPtr{ std::make_unique<amu::GameObject>() };
+	pacmanUPtr->AddComponent<amu::TransformComponent>(pacmanUPtr.get(), glm::vec3{amu::WINDOW_WIDTH / 2 - 4, amu::WINDOW_HEIGHT / 2 - 4, 0 });
+	pacmanUPtr->AddComponent<amu::TextureComponent>(pacmanUPtr.get());
+	if (pacmanUPtr->ComponentAdded<amu::TextureComponent>())
 	{
-		pacman1UPtr->GetComponent<amu::TextureComponent>()->SetTexture("PacMan.png");
+		pacmanUPtr->GetComponent<amu::TextureComponent>()->SetTexture("PacMan.png");
 	}
-	pacman1UPtr->AddComponent<amu::MoveableComponent>(pacman1UPtr.get(), 20);
+	pacmanUPtr->AddComponent<amu::MoveableComponent>(pacmanUPtr.get(), 20);
 
-	constexpr int nrPerCircle{ 20 };
-	constexpr double incAngle{ 360.0 * amu::TO_RADIANS / nrPerCircle };
-
-	for (int idx{}; idx < nrPerCircle; ++idx)
+	std::unique_ptr blueGhostUPtr{ std::make_unique<amu::GameObject>() };
+	blueGhostUPtr->AddComponent<amu::TransformComponent>(blueGhostUPtr.get(), glm::vec3{amu::WINDOW_WIDTH / 2 - 4, amu::WINDOW_HEIGHT / 2 - 4, 0 });
+	blueGhostUPtr->AddComponent<amu::TextureComponent>(blueGhostUPtr.get());
+	if (blueGhostUPtr->ComponentAdded<amu::TextureComponent>())
 	{
-		std::unique_ptr pacman2UPtr{ std::make_unique<amu::GameObject>() };
-		pacman2UPtr->AddComponent<amu::TransformComponent>(pacman2UPtr.get(), glm::vec3{ 0, 0, 0 });
-		pacman2UPtr->SetParent(pacman1UPtr.get(), false);
-		pacman2UPtr->AddComponent<amu::TextureComponent>(pacman2UPtr.get());
-		if (pacman2UPtr->ComponentAdded<amu::TextureComponent>())
-		{
-			pacman2UPtr->GetComponent<amu::TextureComponent>()->SetTexture("PacMan.png");
-		}
-		pacman2UPtr->AddComponent<amu::AutoRotateComponent>(pacman2UPtr.get(), 100, 0.1 * idx, idx * incAngle);
-
-		constexpr int nrPerCircle2{ nrPerCircle };
-		constexpr double incAngle2{ 360.0 * amu::TO_RADIANS / nrPerCircle2 };
-
-		for (int idx1{}; idx1 < nrPerCircle2; ++idx1)
-		{
-		std::unique_ptr pacman3UPtr{ std::make_unique<amu::GameObject>() };
-			pacman3UPtr->AddComponent<amu::TransformComponent>(pacman3UPtr.get(), glm::vec3{ 0, 0, 0 });
-			pacman3UPtr->SetParent(pacman2UPtr.get(), false);
-			pacman3UPtr->AddComponent<amu::TextureComponent>(pacman3UPtr.get());
-			if (pacman3UPtr->ComponentAdded<amu::TextureComponent>())
-			{
-				pacman3UPtr->GetComponent<amu::TextureComponent>()->SetTexture("PacMan.png");
-			}
-			pacman3UPtr->AddComponent<amu::AutoRotateComponent>(pacman3UPtr.get(), 50, 0.1 * idx1, idx1 * incAngle2);
-			//pacman3SPtr->SetParent(nullptr, true);
-			scene.Add(std::move(pacman3UPtr));
-		}
-		scene.Add(std::move(pacman2UPtr));
+		blueGhostUPtr->GetComponent<amu::TextureComponent>()->SetTexture("BlueGhost.png");
 	}
+	blueGhostUPtr->AddComponent<amu::MoveableComponent>(blueGhostUPtr.get(), 40);
+
 	/////////////////////////////
 	/////////Add commmands
 	/////////////////////////////
 	amu::InputManager::GetInstance().AddCommandController(
-		XINPUT_GAMEPAD_DPAD_RIGHT, 
-		amu::InputManager::InputState::Held, 
-		std::make_unique<amu::MoveRight>(pacman1UPtr.get()));
+		XINPUT_GAMEPAD_DPAD_RIGHT,
+		amu::InputManager::InputState::Held,
+		std::make_unique<amu::MoveRight>(pacmanUPtr.get()));
 
 	amu::InputManager::GetInstance().AddCommandController(
-		XINPUT_GAMEPAD_DPAD_LEFT, amu::InputManager::InputState::Held, 
-		std::make_unique<amu::MoveLeft>(pacman1UPtr.get()));
+		XINPUT_GAMEPAD_DPAD_LEFT,
+		amu::InputManager::InputState::Held,
+		std::make_unique<amu::MoveLeft>(pacmanUPtr.get()));
 
 	amu::InputManager::GetInstance().AddCommandController(
-		XINPUT_GAMEPAD_DPAD_UP, 
-		amu::InputManager::InputState::Held, 
-		std::make_unique<amu::MoveUp>(pacman1UPtr.get()));
+		XINPUT_GAMEPAD_DPAD_UP,
+		amu::InputManager::InputState::Held,
+		std::make_unique<amu::MoveUp>(pacmanUPtr.get()));
 
 	amu::InputManager::GetInstance().AddCommandController(
-		XINPUT_GAMEPAD_DPAD_DOWN, 
-		amu::InputManager::InputState::Held, 
-		std::make_unique<amu::MoveDown>(pacman1UPtr.get()));
+		XINPUT_GAMEPAD_DPAD_DOWN,
+		amu::InputManager::InputState::Held,
+		std::make_unique<amu::MoveDown>(pacmanUPtr.get()));
 
 	amu::InputManager::GetInstance().AddCommandKeyboard(
-		SDLK_s, 
-		amu::InputManager::InputState::Held, 
-		std::make_unique<amu::MoveDown>(pacman1UPtr.get()));
+		SDLK_d,
+		amu::InputManager::InputState::Held,
+		std::make_unique<amu::MoveRight>(blueGhostUPtr.get()));
 
-	scene.Add(std::move(pacman1UPtr));	
+	amu::InputManager::GetInstance().AddCommandKeyboard(
+		SDLK_a,
+		amu::InputManager::InputState::Held,
+		std::make_unique<amu::MoveLeft>(blueGhostUPtr.get()));
+
+	amu::InputManager::GetInstance().AddCommandKeyboard(
+		SDLK_w,
+		amu::InputManager::InputState::Held,
+		std::make_unique<amu::MoveUp>(blueGhostUPtr.get()));
+
+	amu::InputManager::GetInstance().AddCommandKeyboard(
+		SDLK_s,
+		amu::InputManager::InputState::Held,
+		std::make_unique<amu::MoveDown>(blueGhostUPtr.get()));
+
+	scene.Add(std::move(pacmanUPtr));
+	scene.Add(std::move(blueGhostUPtr));
 }
 
 int main(int, char*[]) {
