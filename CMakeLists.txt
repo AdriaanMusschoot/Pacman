@@ -36,7 +36,7 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   "${TARGET_NAME}/Components/AutoRotateComponent.cpp"
   "${TARGET_NAME}/Components/TrashTheCacheEx1Component.cpp" 
   "${TARGET_NAME}/Components/TrashTheCacheEx2Component.cpp" 
-  "${TARGET_NAME}/Components/MoveableComponent.cpp" "Minigin/Commands/MoveCommands.h")
+   "Minigin/Commands/MoveCommands.h")
 
 
 add_library(imgui OBJECT

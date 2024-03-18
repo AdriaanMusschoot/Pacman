@@ -23,7 +23,6 @@
 #include "Components/TextureComponent.h"
 #include "Components/TrashTheCacheEx1Component.h"
 #include "Components/TrashTheCacheEx2Component.h"
-#include "Components/MoveableComponent.h"
 #include "SDL_egl.h"
 #include <iostream>
 #include "windows.h"
@@ -40,7 +39,7 @@ void load()
 	//////////////////////////////////////////
 
 	std::unique_ptr backgroundUPtr{ std::make_unique<amu::GameObject>() };
-	backgroundUPtr->AddComponent<amu::TransformComponent>(backgroundUPtr.get(), glm::vec3{0, 0, 0});
+	backgroundUPtr->AddComponent<amu::TransformComponent>(backgroundUPtr.get(), glm::vec2{0, 0});
 	backgroundUPtr->AddComponent<amu::TextureComponent>(backgroundUPtr.get());
 	if (backgroundUPtr->ComponentAdded<amu::TextureComponent>())
 	{
@@ -48,7 +47,7 @@ void load()
 	}
 	
 	std::unique_ptr daeLogoUPtr{ std::make_unique<amu::GameObject>() };
-	daeLogoUPtr->AddComponent<amu::TransformComponent>(daeLogoUPtr.get(), glm::vec3{amu::WINDOW_WIDTH / 2 - 103, amu::WINDOW_HEIGHT / 2 - 24, 0 });
+	daeLogoUPtr->AddComponent<amu::TransformComponent>(daeLogoUPtr.get(), glm::vec2{amu::WINDOW_WIDTH / 2 - 103, amu::WINDOW_HEIGHT / 2 - 24 });
 	daeLogoUPtr->AddComponent<amu::TextureComponent>(daeLogoUPtr.get());
 	if (daeLogoUPtr->ComponentAdded<amu::TextureComponent>())
 	{
@@ -57,12 +56,12 @@ void load()
  	daeLogoUPtr->SetParent(backgroundUPtr.get(), false);
 
 	std::unique_ptr titleUPtr{ std::make_unique<amu::GameObject>() };
-	titleUPtr->AddComponent<amu::TransformComponent>(titleUPtr.get(), glm::vec3{ 80, 20, 0 });
+	titleUPtr->AddComponent<amu::TransformComponent>(titleUPtr.get(), glm::vec2{ 80, 20 });
 	titleUPtr->AddComponent<amu::TextComponent>(titleUPtr.get(), "Programming 4 Assignment", "Lingua.otf", 36);
  	titleUPtr->SetParent(backgroundUPtr.get(), false);
 	
 	std::unique_ptr fpsCounterUPtr{ std::make_unique<amu::GameObject>() };
-	fpsCounterUPtr->AddComponent<amu::TransformComponent>(fpsCounterUPtr.get(), glm::vec3{ 0, 50, 0 });
+	fpsCounterUPtr->AddComponent<amu::TransformComponent>(fpsCounterUPtr.get(), glm::vec2{ 0, 50 });
 	fpsCounterUPtr->AddComponent<amu::TextComponent>(fpsCounterUPtr.get(), "60", "Lingua.otf", 36);
 	fpsCounterUPtr->AddComponent<amu::FPSComponent>(fpsCounterUPtr.get());
  	fpsCounterUPtr->SetParent(backgroundUPtr.get(), false);
@@ -76,65 +75,70 @@ void load()
 	//////////////////////////////////////////
 
 	std::unique_ptr pacmanUPtr{ std::make_unique<amu::GameObject>() };
-	pacmanUPtr->AddComponent<amu::TransformComponent>(pacmanUPtr.get(), glm::vec3{amu::WINDOW_WIDTH / 2 - 4, amu::WINDOW_HEIGHT / 2 - 4, 0 });
+	pacmanUPtr->AddComponent<amu::TransformComponent>(pacmanUPtr.get(), glm::vec2{amu::WINDOW_WIDTH / 2 - 4, amu::WINDOW_HEIGHT / 2 - 4 });
 	pacmanUPtr->AddComponent<amu::TextureComponent>(pacmanUPtr.get());
 	if (pacmanUPtr->ComponentAdded<amu::TextureComponent>())
 	{
 		pacmanUPtr->GetComponent<amu::TextureComponent>()->SetTexture("PacMan.png");
 	}
-	pacmanUPtr->AddComponent<amu::MoveableComponent>(pacmanUPtr.get(), 20);
 
 	std::unique_ptr blueGhostUPtr{ std::make_unique<amu::GameObject>() };
-	blueGhostUPtr->AddComponent<amu::TransformComponent>(blueGhostUPtr.get(), glm::vec3{amu::WINDOW_WIDTH / 2 - 4, amu::WINDOW_HEIGHT / 2 - 4, 0 });
+	blueGhostUPtr->AddComponent<amu::TransformComponent>(blueGhostUPtr.get(), glm::vec2{amu::WINDOW_WIDTH / 2 - 4, amu::WINDOW_HEIGHT / 2 - 4 });
 	blueGhostUPtr->AddComponent<amu::TextureComponent>(blueGhostUPtr.get());
 	if (blueGhostUPtr->ComponentAdded<amu::TextureComponent>())
 	{
 		blueGhostUPtr->GetComponent<amu::TextureComponent>()->SetTexture("BlueGhost.png");
 	}
-	blueGhostUPtr->AddComponent<amu::MoveableComponent>(blueGhostUPtr.get(), 40);
 
 	/////////////////////////////
 	/////////Add commmands
 	/////////////////////////////
+	glm::vec2 right{ 1, 0  };
+	glm::vec2 left{ -right };
+	glm::vec2 up{ 0, -1 };
+	glm::vec2 down{ -up };
+
+	double speedPacman{ 50 };
+	double speedBlueGhost{ speedPacman * 2 };
 	amu::InputManager::GetInstance().AddCommandController(
 		XINPUT_GAMEPAD_DPAD_RIGHT,
 		amu::InputManager::InputState::Held,
-		std::make_unique<amu::MoveRight>(pacmanUPtr.get()));
+		std::make_unique<amu::MoveCommand>(pacmanUPtr.get(), right, speedPacman));
 
 	amu::InputManager::GetInstance().AddCommandController(
 		XINPUT_GAMEPAD_DPAD_LEFT,
 		amu::InputManager::InputState::Held,
-		std::make_unique<amu::MoveLeft>(pacmanUPtr.get()));
+		std::make_unique<amu::MoveCommand>(pacmanUPtr.get(), left, speedPacman));
 
 	amu::InputManager::GetInstance().AddCommandController(
 		XINPUT_GAMEPAD_DPAD_UP,
 		amu::InputManager::InputState::Held,
-		std::make_unique<amu::MoveUp>(pacmanUPtr.get()));
+		std::make_unique<amu::MoveCommand>(pacmanUPtr.get(), up, speedPacman));
 
 	amu::InputManager::GetInstance().AddCommandController(
 		XINPUT_GAMEPAD_DPAD_DOWN,
 		amu::InputManager::InputState::Held,
-		std::make_unique<amu::MoveDown>(pacmanUPtr.get()));
+		std::make_unique<amu::MoveCommand>(pacmanUPtr.get(), down, speedPacman));
 
 	amu::InputManager::GetInstance().AddCommandKeyboard(
 		SDLK_d,
 		amu::InputManager::InputState::Held,
-		std::make_unique<amu::MoveRight>(blueGhostUPtr.get()));
+		std::make_unique<amu::MoveCommand>(blueGhostUPtr.get(), right, speedBlueGhost));
 
 	amu::InputManager::GetInstance().AddCommandKeyboard(
 		SDLK_a,
 		amu::InputManager::InputState::Held,
-		std::make_unique<amu::MoveLeft>(blueGhostUPtr.get()));
+		std::make_unique<amu::MoveCommand>(blueGhostUPtr.get(), left, speedBlueGhost));
 
 	amu::InputManager::GetInstance().AddCommandKeyboard(
 		SDLK_w,
 		amu::InputManager::InputState::Held,
-		std::make_unique<amu::MoveUp>(blueGhostUPtr.get()));
+		std::make_unique<amu::MoveCommand>(blueGhostUPtr.get(), up, speedBlueGhost));
 
 	amu::InputManager::GetInstance().AddCommandKeyboard(
 		SDLK_s,
 		amu::InputManager::InputState::Held,
-		std::make_unique<amu::MoveDown>(blueGhostUPtr.get()));
+		std::make_unique<amu::MoveCommand>(blueGhostUPtr.get(), down, speedBlueGhost));
 
 	scene.Add(std::move(pacmanUPtr));
 	scene.Add(std::move(blueGhostUPtr));

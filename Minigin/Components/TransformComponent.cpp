@@ -1,7 +1,7 @@
 #include "Base/GameObject.h"
 #include "Components/TransformComponent.h"
 
-amu::TransformComponent::TransformComponent(GameObject* ownerObjectPtr, const glm::vec3& pos)
+amu::TransformComponent::TransformComponent(GameObject* ownerObjectPtr, const glm::vec2& pos)
 	: Component(ownerObjectPtr)
 	, m_LocalPosition{ pos }
 	, m_WorldPosition{ pos }
@@ -9,25 +9,30 @@ amu::TransformComponent::TransformComponent(GameObject* ownerObjectPtr, const gl
 {
 }
 
-const glm::vec3& amu::TransformComponent::GetLocalPosition() const
+const glm::vec2& amu::TransformComponent::GetLocalPosition() const
 {
 	return m_LocalPosition;
 }
 
-void amu::TransformComponent::SetLocalPosition(const glm::vec3& newPosition)
+void amu::TransformComponent::SetLocalPosition(const glm::vec2& newPosition)
 {
 	m_LocalPosition = newPosition;
 
     SetTransformDirty();
 }
 
-const glm::vec3& amu::TransformComponent::GetWorldPosition() const
+const glm::vec2& amu::TransformComponent::GetWorldPosition() const
 {
     if (m_TransformDirty)
     {
         const_cast<TransformComponent*>(this)->UpdateWorldPosition();
     }
 	return m_WorldPosition;
+}
+
+void amu::TransformComponent::Translate(const glm::vec2& offset)
+{
+    SetLocalPosition(GetLocalPosition() + offset);
 }
 
 void amu::TransformComponent::UpdateWorldPosition()

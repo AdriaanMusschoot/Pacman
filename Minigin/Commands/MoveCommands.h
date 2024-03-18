@@ -1,98 +1,38 @@
 #pragma once
 #include "GameActorCommands.h"
+#include "Components/TransformComponent.h"
 
 namespace amu
 {
 
-	class MoveRight final : public GameActorCommand
+	class MoveCommand final : public GameObjectCommand
 	{
 	public:
-		MoveRight(GameObject* actorPtr)
-			: GameActorCommand(actorPtr)
+		MoveCommand(GameObject* gameObjectPtr, glm::vec2 direction, double speed)
+			: GameObjectCommand(gameObjectPtr)
+			, m_DirectionVector{ direction }
+			, m_Speed{ speed }
 		{
-			m_MovementComponent = GetGameActor()->GetComponent<MoveableComponent>();
+			m_TransformComponentPtr = GetGameObject()->GetComponent<TransformComponent>();
 		}
-		virtual ~MoveRight() = default;
+		virtual ~MoveCommand() = default;
 
-		MoveRight(const MoveRight& other) = delete;
-		MoveRight(MoveRight&& other) = delete;
-		MoveRight& operator=(const MoveRight& other) = delete;
-		MoveRight& operator=(MoveRight&& other) = delete;
+		MoveCommand(const MoveCommand& other) = delete;
+		MoveCommand(MoveCommand&& other) = delete;
+		MoveCommand& operator=(const MoveCommand& other) = delete;
+		MoveCommand& operator=(MoveCommand&& other) = delete;
 
 		void Execute() override
 		{
-			m_MovementComponent->MoveRight();
+			m_TransformComponentPtr->Translate(
+				glm::vec2{ 
+					m_Speed * m_DirectionVector.x * GameTime::GetInstance().GetDeltaTime(), 
+					m_Speed * m_DirectionVector.y * GameTime::GetInstance().GetDeltaTime() 
+				});
 		}
 	private:
-		MoveableComponent* m_MovementComponent{ nullptr };
-	};
-	
-	class MoveLeft final : public GameActorCommand
-	{
-	public:
-		MoveLeft(GameObject* actorPtr)
-			: GameActorCommand(actorPtr)
-		{
-			m_MovementComponent = GetGameActor()->GetComponent<MoveableComponent>();
-		}
-		virtual ~MoveLeft() = default;
-
-		MoveLeft(const MoveRight& other) = delete;
-		MoveLeft(MoveRight&& other) = delete;
-		MoveLeft& operator=(const MoveRight& other) = delete;
-		MoveLeft& operator=(MoveRight&& other) = delete;
-
-		void Execute() override
-		{
-			m_MovementComponent->MoveLeft();
-		}
-	private:
-		MoveableComponent* m_MovementComponent{ nullptr };
-	};
-
-	class MoveUp final : public GameActorCommand
-	{
-	public:
-		MoveUp(GameObject* actorPtr)
-			: GameActorCommand(actorPtr)
-		{
-			m_MovementComponent = GetGameActor()->GetComponent<MoveableComponent>();
-		}
-		virtual ~MoveUp() = default;
-
-		MoveUp(const MoveUp& other) = delete;
-		MoveUp(MoveUp&& other) = delete;
-		MoveUp& operator=(const MoveUp& other) = delete;
-		MoveUp& operator=(MoveUp&& other) = delete;
-
-		void Execute() override
-		{
-			m_MovementComponent->MoveUp();
-		}
-	private:
-		MoveableComponent* m_MovementComponent{ nullptr };
-	};
-
-	class MoveDown final : public GameActorCommand
-	{
-	public:
-		MoveDown(GameObject* actorPtr)
-			: GameActorCommand(actorPtr)
-		{
-			m_MovementComponent = GetGameActor()->GetComponent<MoveableComponent>();
-		}
-		virtual ~MoveDown() = default;
-
-		MoveDown(const MoveDown& other) = delete;
-		MoveDown(MoveDown&& other) = delete;
-		MoveDown& operator=(const MoveDown& other) = delete;
-		MoveDown& operator=(MoveDown&& other) = delete;
-
-		void Execute() override
-		{
-			m_MovementComponent->MoveDown();
-		}
-	private:
-		MoveableComponent* m_MovementComponent{ nullptr };
+		glm::vec2 m_DirectionVector = glm::vec2{ 1, 0 };
+		double m_Speed = 20.0;
+		TransformComponent* m_TransformComponentPtr{ nullptr };
 	};
 }

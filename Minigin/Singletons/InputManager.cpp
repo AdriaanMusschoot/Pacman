@@ -8,7 +8,7 @@
 class amu::InputManager::ControllerInputImpl
 {
 public:
-	void AddCommand(unsigned int button, InputState state, std::unique_ptr<GameActorCommand> commandPtr)
+	void AddCommand(unsigned int button, InputState state, std::unique_ptr<GameObjectCommand> commandPtr)
 	{
 		m_ControllerCommandPtrVec.emplace_back(std::make_tuple(button, state, std::move(commandPtr)));
 	}
@@ -51,7 +51,7 @@ private:
 	XINPUT_STATE m_PreviousStateController;
 	XINPUT_STATE m_CurrentStateController;
 
-	std::vector<std::tuple<unsigned int, InputState, std::unique_ptr<GameActorCommand>>> m_ControllerCommandPtrVec;
+	std::vector<std::tuple<unsigned int, InputState, std::unique_ptr<GameObjectCommand>>> m_ControllerCommandPtrVec;
 };
 
 amu::InputManager::InputManager()
@@ -59,17 +59,12 @@ amu::InputManager::InputManager()
 {
 }
 
-amu::InputManager::~InputManager()
-{
-	delete m_ControllerInputImplPtr;
-}
-
-void amu::InputManager::AddCommandController(unsigned int button, InputState state, std::unique_ptr<GameActorCommand> commandPtr)
+void amu::InputManager::AddCommandController(unsigned int button, InputState state, std::unique_ptr<GameObjectCommand> commandPtr)
 {
 	m_ControllerInputImplPtr->AddCommand(button, state, std::move(commandPtr));
 }
 
-void amu::InputManager::AddCommandKeyboard(unsigned int button, InputState state, std::unique_ptr<GameActorCommand> commandPtr)
+void amu::InputManager::AddCommandKeyboard(unsigned int button, InputState state, std::unique_ptr<GameObjectCommand> commandPtr)
 {
 	m_KeyboardCommandPtrVec.emplace_back(std::make_tuple(button, state, std::move(commandPtr)));
 }

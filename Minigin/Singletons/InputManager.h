@@ -14,22 +14,22 @@ namespace amu
 			Released,
 			Held
 		};
-		InputManager();
-		~InputManager();
-		void AddCommandController(unsigned int button, InputState state, std::unique_ptr<GameActorCommand> commandPtr);
 
-		void AddCommandKeyboard(unsigned int button, InputState state, std::unique_ptr<GameActorCommand> commandPtr);
+		InputManager();
+
+		void AddCommandController(unsigned int button, InputState state, std::unique_ptr<GameObjectCommand> commandPtr);
+
+		void AddCommandKeyboard(unsigned int button, InputState state, std::unique_ptr<GameObjectCommand> commandPtr);
 
 		bool ProcessInput();
 	private:
 		class ControllerInputImpl;
-		ControllerInputImpl* m_ControllerInputImplPtr;
+		ControllerInputImpl*  m_ControllerInputImplPtr;
 
-		std::vector<std::tuple<unsigned int, InputState, std::unique_ptr<GameActorCommand>>> m_KeyboardCommandPtrVec;
+		std::vector<std::tuple<unsigned int, InputState, std::unique_ptr<GameObjectCommand>>> m_KeyboardCommandPtrVec;
 
 		std::map<int, bool> m_PreviousStateKeyboard;
 		std::map<int, bool> m_CurrentStateKeyboard;
-
 	};
 
 }

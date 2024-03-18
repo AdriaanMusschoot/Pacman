@@ -9,7 +9,7 @@ namespace amu
 	class AutoRotateComponent final : public amu::Component
 	{
 	public:
-		explicit AutoRotateComponent(amu::GameObject* ownerObjectPtr, int radius, double speed, double angle = 0);
+		explicit AutoRotateComponent(amu::GameObject* ownerObjectPtr, int radius, double speed, double angle);
 		explicit AutoRotateComponent(amu::GameObject* ownerObjectPtr);
 		~AutoRotateComponent() override = default;
 	
@@ -20,7 +20,7 @@ namespace amu
 	
 		void Update() override;
 	private:
-		glm::vec3 m_CenterPosition = glm::vec3{ 0, 0, 0 };
+		glm::vec2 m_CenterPosition{ 0, 0 };
 
 		int m_Radius = 0;
 		double m_Speed = 2;
