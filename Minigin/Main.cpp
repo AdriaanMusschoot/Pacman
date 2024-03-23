@@ -17,12 +17,9 @@
 #include "Base/Scene.h"
 #include <filesystem>
 
-#include "Components/AutoRotateComponent.h"
 #include "Components/FPSComponent.h"
 #include "Components/TextComponent.h"
 #include "Components/TextureComponent.h"
-#include "Components/TrashTheCacheEx1Component.h"
-#include "Components/TrashTheCacheEx2Component.h"
 #include "SDL_egl.h"
 #include <iostream>
 #include "windows.h"
