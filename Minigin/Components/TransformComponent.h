@@ -9,17 +9,25 @@ namespace amu
 	{
 	public:
 		explicit TransformComponent(GameObject * ownerObjectPtr, const glm::vec2& pos);
+		virtual ~TransformComponent() override = default;
+
+		TransformComponent(const TransformComponent&) = delete;
+		TransformComponent& operator= (const TransformComponent&) = delete;
+		TransformComponent(TransformComponent&&) = delete;
+		TransformComponent& operator= (const TransformComponent&&) = delete;
 
 		const glm::vec2& GetLocalPosition() const;
 		void SetLocalPosition(const glm::vec2& newPosition);
+
 		const glm::vec2& GetWorldPosition() const;
 		void Translate(const glm::vec2& offset);
+
 		void SetTransformDirty();
 	private:
 		glm::vec2 m_LocalPosition{ 0, 0 };
 		glm::vec2 m_WorldPosition{ 0, 0 };
 
-		bool m_TransformDirty;
+		bool m_TransformDirty{ false };
 
 		void UpdateWorldPosition();
 	};

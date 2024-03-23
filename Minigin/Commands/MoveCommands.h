@@ -1,5 +1,5 @@
 #pragma once
-#include "GameActorCommands.h"
+#include "GameObjectCommands.h"
 #include "Components/TransformComponent.h"
 
 namespace amu

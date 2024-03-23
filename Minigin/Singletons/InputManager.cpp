@@ -1,62 +1,38 @@
 #include <SDL.h>
 #include "Singletons/InputManager.h"
 #include "Singletons/GUI.h"
-#include <iostream>
-#include "windows.h"
-#include "XInput.h"
+#include "Wrappers/Controller.h"
+#include <array>
 
 class amu::InputManager::ControllerInputImpl
 {
 public:
-	void AddCommand(unsigned int button, InputState state, std::unique_ptr<GameObjectCommand> commandPtr)
+	void AddCommand(unsigned int controllerIdx, unsigned int button, InputState state, std::unique_ptr<GameObjectCommand> commandPtr)
 	{
-		m_ControllerCommandPtrVec.emplace_back(std::make_tuple(button, state, std::move(commandPtr)));
+		for (size_t idx{}; idx < m_ControllerArr.size(); ++idx)
+		{
+			if (idx == controllerIdx)
+			{
+				m_ControllerArr[idx].AddCommand(button, state, std::move(commandPtr));
+			}
+		}
 	}
 
 	void ProcessControllerInput()
 	{
-		CopyMemory(&m_PreviousStateController, &m_CurrentStateController, sizeof(XINPUT_STATE));
-		ZeroMemory(&m_CurrentStateController, sizeof(XINPUT_STATE));
-		XInputGetState(0, &m_CurrentStateController);
-
-		const auto buttonChangesController = m_CurrentStateController.Gamepad.wButtons ^ m_PreviousStateController.Gamepad.wButtons;
-		const auto buttonsPressedThisFrameController = buttonChangesController & m_CurrentStateController.Gamepad.wButtons;
-		const auto buttonsReleasedThisFrameController = buttonChangesController & (~m_CurrentStateController.Gamepad.wButtons);
-		for (const auto& [button, state, command] : m_ControllerCommandPtrVec)
+		for (Controller& controller : m_ControllerArr)
 		{
-			switch (state)
-			{
-			case InputState::Pressed:
-				if (buttonsPressedThisFrameController & button)
-				{
-					command->Execute();
-				}
-				break;
-			case InputState::Released:
-				if (buttonsReleasedThisFrameController & button)
-				{
-					command->Execute();
-				}
-				break;
-			case InputState::Held:
-				if (m_CurrentStateController.Gamepad.wButtons & button)
-				{
-					command->Execute();
-				}
-				break;
-			}
+			controller.ProcessControllerInput();
 		}
 	}
 private:
-	XINPUT_STATE m_PreviousStateController;
-	XINPUT_STATE m_CurrentStateController;
-
-	std::vector<std::tuple<unsigned int, InputState, std::unique_ptr<GameObjectCommand>>> m_ControllerCommandPtrVec;
+	std::array<Controller, 2> m_ControllerArr{ Controller{ 0 }, Controller{ 1 } };
 };
 
 amu::InputManager::InputManager()
-	: m_ControllerInputImplPtr{ new ControllerInputImpl() }
+	: m_ControllerInputImplPtr{ std::make_unique<ControllerInputImpl>() }
 {
+
 }
 
 amu::InputManager::~InputManager()
@@ -64,9 +40,9 @@ amu::InputManager::~InputManager()
 	/////EMPTY DESTRUCTOR TO DELETE UNIQUE PTR OTHERWISE CRASH DONT TOUCH
 }
 
-void amu::InputManager::AddCommandController(unsigned int button, InputState state, std::unique_ptr<GameObjectCommand> commandPtr)
+void amu::InputManager::AddCommandController(unsigned int controllerIdx, unsigned int button, InputState state, std::unique_ptr<GameObjectCommand> commandPtr)
 {
-	m_ControllerInputImplPtr->AddCommand(button, state, std::move(commandPtr));
+	m_ControllerInputImplPtr->AddCommand(controllerIdx, button, state, std::move(commandPtr));
 }
 
 void amu::InputManager::AddCommandKeyboard(unsigned int button, InputState state, std::unique_ptr<GameObjectCommand> commandPtr)
@@ -80,6 +56,7 @@ bool amu::InputManager::ProcessInput()
 	///////////Xbox Input handling
 	////////////////////////////////////////
 	m_ControllerInputImplPtr->ProcessControllerInput();
+	
 
 	////////////////////////////////////////
 	///////////Keyboard and Mouse Input handling

@@ -5,7 +5,7 @@ amu::TransformComponent::TransformComponent(GameObject* ownerObjectPtr, const gl
 	: Component(ownerObjectPtr)
 	, m_LocalPosition{ pos }
 	, m_WorldPosition{ pos }
-	, m_TransformDirty{ false }
+    , m_TransformDirty{ false }
 {
 }
 

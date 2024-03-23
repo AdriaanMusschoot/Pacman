@@ -12,7 +12,7 @@ namespace amu
 	{
 	public:
 		FPSComponent(GameObject * ownerObjectPtr);
-		~FPSComponent() override = default;
+		virtual ~FPSComponent() override = default;
 	
 		FPSComponent(const FPSComponent& other) = delete;
 		FPSComponent(FPSComponent&& other) = delete;
@@ -21,15 +21,16 @@ namespace amu
 	
 		void Update() override;
 	private:
-		std::string m_FPSCountToDisplay = "";
-	
-		int m_TicksPassed = 0;
-	
-		const double m_MaxRefreshTime = 0.2;
-		double m_CurrentRefreshTime = 0.0;
+		TextComponent* m_TextPtr{ nullptr };
 
-		double m_PreviousFPSCount = 0;
+		std::string m_FPSCountToDisplay{ "" };
+	
+		int m_TicksPassed{ 0 };
+	
+		const double m_MaxRefreshTime{ 0.2 };
+		double m_CurrentRefreshTime{ 0.0 };
 
-		TextComponent* m_TextPtr = nullptr;
+		double m_PreviousFPSCount{ 0 };
+
 	};
 }

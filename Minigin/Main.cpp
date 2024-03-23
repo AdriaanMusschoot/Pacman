@@ -9,22 +9,18 @@
 
 #include "Base/Minigin.h"
 #include "Singletons/SceneManager.h"
-#include "Singletons/ResourceManager.h"
 #include "Singletons/InputManager.h"
 #include "Base/GameObject.h"
 #include "Commands/MoveCommands.h"
 #include "Parameters.h"
-#include "Base/Scene.h"
 #include <filesystem>
 
 #include "Components/FPSComponent.h"
 #include "Components/TextComponent.h"
 #include "Components/TextureComponent.h"
-#include "SDL_egl.h"
-#include <iostream>
-#include "windows.h"
+#include "Components/HealthComponent.h"
+#include "Windows.h"
 #include "Xinput.h"
-
 namespace fs = std::filesystem;
 
 void load()
@@ -37,19 +33,11 @@ void load()
 
 	std::unique_ptr backgroundUPtr{ std::make_unique<amu::GameObject>() };
 	backgroundUPtr->AddComponent<amu::TransformComponent>(backgroundUPtr.get(), glm::vec2{0, 0});
-	backgroundUPtr->AddComponent<amu::TextureComponent>(backgroundUPtr.get());
-	if (backgroundUPtr->ComponentAdded<amu::TextureComponent>())
-	{
-		backgroundUPtr->GetComponent<amu::TextureComponent>()->SetTexture("background.tga");
-	}
+	backgroundUPtr->AddComponent<amu::TextureComponent>(backgroundUPtr.get(), "background.tga");
 	
 	std::unique_ptr daeLogoUPtr{ std::make_unique<amu::GameObject>() };
 	daeLogoUPtr->AddComponent<amu::TransformComponent>(daeLogoUPtr.get(), glm::vec2{amu::WINDOW_WIDTH / 2 - 103, amu::WINDOW_HEIGHT / 2 - 24 });
-	daeLogoUPtr->AddComponent<amu::TextureComponent>(daeLogoUPtr.get());
-	if (daeLogoUPtr->ComponentAdded<amu::TextureComponent>())
-	{
-		daeLogoUPtr->GetComponent<amu::TextureComponent>()->SetTexture("logo.tga");
-	}
+	daeLogoUPtr->AddComponent<amu::TextureComponent>(daeLogoUPtr.get(), "logo.tga");
  	daeLogoUPtr->SetParent(backgroundUPtr.get(), false);
 
 	std::unique_ptr titleUPtr{ std::make_unique<amu::GameObject>() };
@@ -67,25 +55,22 @@ void load()
 	scene.Add(std::move(daeLogoUPtr));
 	scene.Add(std::move(titleUPtr));
 	scene.Add(std::move(fpsCounterUPtr));
+
 	//////////////////////////////////////////
-	///////////////ROTATING PACMANS
+	///////////////PACMAN
 	//////////////////////////////////////////
 
 	std::unique_ptr pacmanUPtr{ std::make_unique<amu::GameObject>() };
 	pacmanUPtr->AddComponent<amu::TransformComponent>(pacmanUPtr.get(), glm::vec2{amu::WINDOW_WIDTH / 2 - 4, amu::WINDOW_HEIGHT / 2 - 4 });
-	pacmanUPtr->AddComponent<amu::TextureComponent>(pacmanUPtr.get());
-	if (pacmanUPtr->ComponentAdded<amu::TextureComponent>())
-	{
-		pacmanUPtr->GetComponent<amu::TextureComponent>()->SetTexture("PacMan.png");
-	}
+	pacmanUPtr->AddComponent<amu::TextureComponent>(pacmanUPtr.get(), "PacMan.png");
+	pacmanUPtr->AddComponent<amu::HealthComponent>(pacmanUPtr.get(), 1);
 
+	//////////////////////////////////////////
+	///////////////BLUE GHOST
+	//////////////////////////////////////////
 	std::unique_ptr blueGhostUPtr{ std::make_unique<amu::GameObject>() };
 	blueGhostUPtr->AddComponent<amu::TransformComponent>(blueGhostUPtr.get(), glm::vec2{amu::WINDOW_WIDTH / 2 - 4, amu::WINDOW_HEIGHT / 2 - 4 });
-	blueGhostUPtr->AddComponent<amu::TextureComponent>(blueGhostUPtr.get());
-	if (blueGhostUPtr->ComponentAdded<amu::TextureComponent>())
-	{
-		blueGhostUPtr->GetComponent<amu::TextureComponent>()->SetTexture("BlueGhost.png");
-	}
+	blueGhostUPtr->AddComponent<amu::TextureComponent>(blueGhostUPtr.get(), "BlueGhost.png");
 
 	/////////////////////////////
 	/////////Add commmands
@@ -98,21 +83,25 @@ void load()
 	double speedPacman{ 50 };
 	double speedBlueGhost{ speedPacman * 2 };
 	amu::InputManager::GetInstance().AddCommandController(
+		0, 
 		XINPUT_GAMEPAD_DPAD_RIGHT,
 		amu::InputManager::InputState::Held,
 		std::make_unique<amu::MoveCommand>(pacmanUPtr.get(), right, speedPacman));
 
 	amu::InputManager::GetInstance().AddCommandController(
+		0,
 		XINPUT_GAMEPAD_DPAD_LEFT,
 		amu::InputManager::InputState::Held,
 		std::make_unique<amu::MoveCommand>(pacmanUPtr.get(), left, speedPacman));
 
 	amu::InputManager::GetInstance().AddCommandController(
+		0,
 		XINPUT_GAMEPAD_DPAD_UP,
 		amu::InputManager::InputState::Held,
 		std::make_unique<amu::MoveCommand>(pacmanUPtr.get(), up, speedPacman));
 
 	amu::InputManager::GetInstance().AddCommandController(
+		0,
 		XINPUT_GAMEPAD_DPAD_DOWN,
 		amu::InputManager::InputState::Held,
 		std::make_unique<amu::MoveCommand>(pacmanUPtr.get(), down, speedPacman));
@@ -141,7 +130,8 @@ void load()
 	scene.Add(std::move(blueGhostUPtr));
 }
 
-int main(int, char*[]) {
+int main(int, char*[]) 
+{
 #ifdef WIN32
 	if (AllocConsole()) {
 		FILE* pEmpty;

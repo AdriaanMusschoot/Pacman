@@ -1,6 +1,6 @@
 #pragma once
 #include "Singleton.h"
-#include "Commands/GameActorCommands.h"
+#include "Commands/GameObjectCommands.h"
 #include <map>
 namespace amu
 {
@@ -17,7 +17,8 @@ namespace amu
 
 		InputManager();
 		~InputManager();
-		void AddCommandController(unsigned int button, InputState state, std::unique_ptr<GameObjectCommand> commandPtr);
+
+		void AddCommandController(unsigned int controllerIdx, unsigned int button, InputState state, std::unique_ptr<GameObjectCommand> commandPtr);
 
 		void AddCommandKeyboard(unsigned int button, InputState state, std::unique_ptr<GameObjectCommand> commandPtr);
 

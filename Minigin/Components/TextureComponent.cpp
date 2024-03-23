@@ -5,10 +5,14 @@
 #include "Singletons/ResourceManager.h"
 #include "Base/GameObject.h"
 
-amu::TextureComponent::TextureComponent(GameObject* ownerObjectPtr)
+amu::TextureComponent::TextureComponent(GameObject* ownerObjectPtr, const std::string& fileName)
 	: Component(ownerObjectPtr)
 	, m_TransformPtr{ GetOwnerGameObject()->GetComponent<TransformComponent>() }
 {
+	if (fileName != "")
+	{
+		SetTexture(fileName);
+	}
 }
 
 void amu::TextureComponent::Render() const

@@ -12,8 +12,8 @@ namespace amu
 	class TextureComponent final : public Component
 	{
 	public:
-		TextureComponent(GameObject *  ownerObjectPtr);
-		~TextureComponent() override = default;
+		explicit TextureComponent(GameObject *  ownerObjectPtr, const std::string& fileName = "");
+		virtual ~TextureComponent() override = default;
 	
 		TextureComponent(const TextureComponent&) = delete;
 		TextureComponent& operator= (const TextureComponent&) = delete;
