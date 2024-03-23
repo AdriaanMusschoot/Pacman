@@ -59,6 +59,11 @@ amu::InputManager::InputManager()
 {
 }
 
+amu::InputManager::~InputManager()
+{
+	/////EMPTY DESTRUCTOR TO DELETE UNIQUE PTR OTHERWISE CRASH DONT TOUCH
+}
+
 void amu::InputManager::AddCommandController(unsigned int button, InputState state, std::unique_ptr<GameObjectCommand> commandPtr)
 {
 	m_ControllerInputImplPtr->AddCommand(button, state, std::move(commandPtr));

@@ -16,7 +16,7 @@ namespace amu
 		};
 
 		InputManager();
-
+		~InputManager();
 		void AddCommandController(unsigned int button, InputState state, std::unique_ptr<GameObjectCommand> commandPtr);
 
 		void AddCommandKeyboard(unsigned int button, InputState state, std::unique_ptr<GameObjectCommand> commandPtr);
@@ -24,7 +24,7 @@ namespace amu
 		bool ProcessInput();
 	private:
 		class ControllerInputImpl;
-		ControllerInputImpl*  m_ControllerInputImplPtr;
+		std::unique_ptr<ControllerInputImpl> m_ControllerInputImplPtr;
 
 		std::vector<std::tuple<unsigned int, InputState, std::unique_ptr<GameObjectCommand>>> m_KeyboardCommandPtrVec;
 
