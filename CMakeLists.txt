@@ -19,9 +19,7 @@ set(PAC_MAN_SOURCE_FILES
 
 add_executable(${TARGET_NAME} ${PAC_MAN_SOURCE_FILES})
 
-target_include_directories(${TARGET_NAME} PUBLIC
-    ${GAME_FILES_DIR}
-	)
+target_include_directories(${TARGET_NAME} PUBLIC ${GAME_FILES_DIR})
 
 # enable c++20 features
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)
