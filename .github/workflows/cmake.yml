@@ -19,7 +19,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    name: Submodules
+    name: Submodules & Dependencies
       run: |
         git submodule update --init --recursive
         sudo apt update && sudo apt install -y libconfig-dev
