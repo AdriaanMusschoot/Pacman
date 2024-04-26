@@ -1,10 +1,9 @@
 #include "FPSComponent.h"
-
-#include <sstream>
-
 #include "GameObject.h"
 #include "TextComponent.h"
 #include "GameTime.h"
+
+#include <format>
 
 amu::FPSComponent::FPSComponent(amu::GameObject * ownerObjectPtr)
 	: Component(ownerObjectPtr)

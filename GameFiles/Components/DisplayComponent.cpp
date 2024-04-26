@@ -1,6 +1,7 @@
 #include "DisplayComponent.h"
 #include "HealthComponent.h"
 #include "ScoreComponent.h"
+
 #include <format>
 
 amu::DisplayComponent::DisplayComponent(GameObject* gameObjectPtr, const std::string& textToDisplay)
