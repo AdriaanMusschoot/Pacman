@@ -8,13 +8,13 @@ set(GAME_FILES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/GameFiles)
 
 # list source files here
 set(PAC_MAN_SOURCE_FILES
-  "${GAME_FILES_DIR}/GameLoad.h"    
   "${GAME_FILES_DIR}/Main.cpp"    
   "${GAME_FILES_DIR}/Components/FPSComponent.cpp"    
   "${GAME_FILES_DIR}/Components/HealthComponent.cpp" 
   "${GAME_FILES_DIR}/Components/DisplayComponent.cpp"
   "${GAME_FILES_DIR}/Components/ScoreComponent.cpp"  
-)
+
+  "${GAME_FILES_DIR}/Commands/PlaySoundCommand.cpp")
 
 add_executable(${TARGET_NAME} ${PAC_MAN_SOURCE_FILES})
 

@@ -5,7 +5,7 @@
 
 #include "SceneManager.h"
 #include "ServiceLocator.h"
-#include "GameLoad.h"
+#include "LoadFunctions.h"
 #include "SoundSystem.h"
 namespace fs = std::filesystem;
 
@@ -31,7 +31,7 @@ int main(int, char*[])
 
 	amu::ServiceLocator::GetInstance().RegisterSoundSystem(std::move(sdlSoundSystemUPtr));
 
-	amu::SceneManager::GetInstance().CreateScene("Pac Man", PacMan::LoadGame);
+	amu::SceneManager::GetInstance().CreateScene("Pac Man", pacman::LoadGame);
 
 	engine.Run();
 
