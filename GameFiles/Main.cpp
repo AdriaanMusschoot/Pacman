@@ -1,18 +1,12 @@
-#if _DEBUG
-// ReSharper disable once CppUnusedIncludeDirective
-#if __has_include(<vld.h>)
-#include <vld.h>
-#endif
-#endif
-
 #include "Amugen.h"
 #include <filesystem>
 #include "Windows.h"
 #include <iostream>
 
-#include <SceneManager.h>
-#include <GameLoad.h>
-
+#include "SceneManager.h"
+#include "ServiceLocator.h"
+#include "GameLoad.h"
+#include "SoundSystem.h"
 namespace fs = std::filesystem;
 
 int main(int, char*[]) 
@@ -26,15 +20,16 @@ int main(int, char*[])
 		freopen_s(&pEmpty, "CONOUT$", "w", stderr);
 	}
 #endif
-	
-#if __EMSCRIPTEN__
-	fs::path data_location = "";
-#else
+
 	fs::path data_location = "./Resources/";
 	if(!fs::exists(data_location))
 		data_location = "../Resources/";
-#endif
+
 	amu::Amugen engine(data_location, 224 * 3, 288 * 3);
+
+	std::unique_ptr sdlSoundSystemUPtr{ std::make_unique<amu::SDLSoundSystem>() };
+
+	amu::ServiceLocator::GetInstance().RegisterSoundSystem(std::move(sdlSoundSystemUPtr));
 
 	amu::SceneManager::GetInstance().CreateScene("Pac Man", PacMan::LoadGame);
 
