@@ -32,7 +32,7 @@ target_compile_options(${TARGET_NAME} PRIVATE
   $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX>
   $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror -Wno-volatile>
 )
-
+ 
 set_property(TARGET ${TARGET_NAME} PROPERTY
     CXX_STANDARD 20
     CXX_STANDARD_REQUIRED TRUE
