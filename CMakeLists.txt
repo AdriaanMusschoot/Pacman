@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.6)
 project(PacMan)
 
 add_subdirectory(Amugen)
-#add_dependencies(Amugen)
 
 set(TARGET_NAME PacMan)
 set(GAME_FILES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/GameFiles)
