@@ -9,9 +9,12 @@ namespace pacman
 
 		enum class SoundId
 		{
-			PacManDeath
+			PacmanDeath,
+			PacmanChomp
 		};
 
+		constexpr int WIDTH{ 224 * 3 };
+		constexpr int HEIGHT{ 288 * 3 };
 	}
 
 }

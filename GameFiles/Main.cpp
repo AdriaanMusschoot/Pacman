@@ -5,6 +5,7 @@
 
 #include "SceneManager.h"
 #include "LoadFunctions.h"
+#include "Configuration.h"
 namespace fs = std::filesystem;
 
 int main(int, char*[]) 
@@ -23,7 +24,7 @@ int main(int, char*[])
 	if(!fs::exists(data_location))
 		data_location = "../Resources/";
 
-	amu::Amugen engine(data_location, 224 * 3, 288 * 3);
+	amu::Amugen engine(data_location, pacman::config::WIDTH, pacman::config::HEIGHT);
 
 	amu::SceneManager::GetInstance().CreateScene("Pac Man", pacman::LoadGame);
 
