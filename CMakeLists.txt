@@ -14,7 +14,11 @@ set(PAC_MAN_SOURCE_FILES
   "${GAME_FILES_DIR}/Components/DisplayComponent.cpp"
   "${GAME_FILES_DIR}/Components/ScoreComponent.cpp"  
 
-  "${GAME_FILES_DIR}/Commands/PlaySoundCommand.cpp")
+  "${GAME_FILES_DIR}/Commands/PlaySoundCommand.cpp"
+
+  "${GAME_FILES_DIR}/LoadFunctions.h"
+  "${GAME_FILES_DIR}/SoundIds.h"
+)
 
 add_executable(${TARGET_NAME} ${PAC_MAN_SOURCE_FILES})
 

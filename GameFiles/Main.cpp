@@ -4,9 +4,7 @@
 #include <iostream>
 
 #include "SceneManager.h"
-#include "ServiceLocator.h"
 #include "LoadFunctions.h"
-#include "SoundSystem.h"
 namespace fs = std::filesystem;
 
 int main(int, char*[]) 
@@ -26,10 +24,6 @@ int main(int, char*[])
 		data_location = "../Resources/";
 
 	amu::Amugen engine(data_location, 224 * 3, 288 * 3);
-
-	std::unique_ptr sdlSoundSystemUPtr{ std::make_unique<amu::SDLSoundSystem>() };
-
-	amu::ServiceLocator::GetInstance().RegisterSoundSystem(std::move(sdlSoundSystemUPtr));
 
 	amu::SceneManager::GetInstance().CreateScene("Pac Man", pacman::LoadGame);
 

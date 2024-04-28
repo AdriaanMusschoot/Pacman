@@ -16,6 +16,7 @@
 
 #include "Commands/PlaySoundCommand.h"
 #include "SoundIds.h"
+
 namespace pacman
 {
 
@@ -32,8 +33,7 @@ namespace pacman
 	
 		scenePtr->Add(std::move(titleUPtr));
 
-		SerLoc::GetInstance().GetSoundSystem()->AddSound(static_cast<int>(SoundId::PacManDeath), "PacManDeath.wav");
-		SerLoc::GetInstance().GetSoundSystem()->PlaySoundEffect(static_cast<int>(SoundId::PacManDeath), 10);
+		SerLoc::GetInstance().GetSoundSystem()->AddSoundEffect(static_cast<int>(SoundId::PacManDeath), "PacManDeath.wav");
 
 		std::unique_ptr playSoundCommand{ std::make_unique<pacman::PlaySoundCommand>() };
 
