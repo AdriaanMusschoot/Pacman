@@ -26,7 +26,6 @@ namespace pacman
 		using SoundId = pacman::config::SoundId;
 		using InpMan = amu::InputManager;
 
-		auto& serviceLocator = amu::ServiceLocator::GetInstance();
 		auto& inputManager = InpMan::GetInstance();
 	
 		std::unique_ptr backgroundUPtr{ std::make_unique<amu::GameObject>() };
@@ -65,13 +64,9 @@ namespace pacman
 		scenePtr->Add(std::move(controllerExplainedUPtr));
 		scenePtr->Add(std::move(keyboardExplainedUPtr));
 
-		serviceLocator.GetSoundSystem()->AddSoundEffect(static_cast<int>(SoundId::PacmanChomp), "PacmanChomp.wav");
-
 		std::unique_ptr playChompCommand{ std::make_unique<pacman::PlayPacmanChomp>() };
 
 		inputManager.AddCommandKeyboard(InpMan::Key::W, InpMan::InputState::Pressed, std::move(playChompCommand));
-
-		serviceLocator.GetSoundSystem()->AddSoundEffect(static_cast<int>(SoundId::PacmanDeath), "PacmanDeath.wav");
 
 		std::unique_ptr playDeathCommand{ std::make_unique<pacman::PlayPacmanDeath>() };
 
