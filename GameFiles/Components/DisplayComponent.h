@@ -13,16 +13,16 @@ namespace amu
 	class DisplayComponent final : public Component, public Observer
 	{
 	public:
-		DisplayComponent(GameObject * gameObjectPtr, const std::string & textToDisplay);
+		DisplayComponent(GameObject * gameObjectPtr, std::string_view const& textToDisplay);
 		virtual ~DisplayComponent() override = default;
 
-		DisplayComponent(const DisplayComponent& other) = delete;
+		DisplayComponent(DisplayComponent const& other) = delete;
 		DisplayComponent(DisplayComponent&& other) = delete;
-		DisplayComponent& operator=(const DisplayComponent& other) = delete;
+		DisplayComponent& operator=(DisplayComponent const& other) = delete;
 		DisplayComponent& operator=(DisplayComponent&& other) = delete;
 
-		virtual void Notify(EventType eventType, Subject* subjectPtr) override;
-		virtual void NotifyDestruction() override;
+		void Notify(EventType eventType, Subject* subjectPtr) override;
+		void NotifyDestruction() override;
 	private:
 		std::string m_TextToDisplay{ "Text" };
 

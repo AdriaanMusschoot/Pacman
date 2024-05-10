@@ -4,7 +4,7 @@
 
 #include <format>
 
-amu::DisplayComponent::DisplayComponent(GameObject* gameObjectPtr, const std::string& textToDisplay)
+amu::DisplayComponent::DisplayComponent(GameObject* gameObjectPtr, std::string_view const& textToDisplay)
 	: Component(gameObjectPtr)
 	, m_TextToDisplay{ textToDisplay }
 {
