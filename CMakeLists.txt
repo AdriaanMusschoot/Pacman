@@ -10,9 +10,9 @@ set(GAME_FILES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/GameFiles)
 set(PAC_MAN_SOURCE_FILES
   "${GAME_FILES_DIR}/Main.cpp"    
   "${GAME_FILES_DIR}/Components/FPSComponent.cpp"    
-  "${GAME_FILES_DIR}/Components/HealthComponent.cpp" 
-  "${GAME_FILES_DIR}/Components/DisplayComponent.cpp"
-  "${GAME_FILES_DIR}/Components/ScoreComponent.cpp"  
+   
+  
+    
 
   "${GAME_FILES_DIR}/Commands/PlaySoundCommand.cpp"
 
@@ -20,7 +20,7 @@ set(PAC_MAN_SOURCE_FILES
   "${GAME_FILES_DIR}/Configuration.h"
 )
 
-add_executable(${TARGET_NAME} ${PAC_MAN_SOURCE_FILES})
+add_executable(${TARGET_NAME} ${PAC_MAN_SOURCE_FILES} "GameFiles/Components/PlayFieldGridComponent.h")
 
 target_include_directories(${TARGET_NAME} PUBLIC ${GAME_FILES_DIR})
 

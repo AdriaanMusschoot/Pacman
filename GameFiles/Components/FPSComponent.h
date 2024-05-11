@@ -4,7 +4,7 @@
 #include "Component.h"
 #include "TextComponent.h"
 
-namespace amu
+namespace pacman
 {
 
 	class FPSComponent final : public Component
@@ -13,9 +13,9 @@ namespace amu
 		FPSComponent(GameObject * ownerObjectPtr);
 		virtual ~FPSComponent() override = default;
 	
-		FPSComponent(const FPSComponent& other) = delete;
+		FPSComponent(FPSComponent const& other) = delete;
 		FPSComponent(FPSComponent&& other) = delete;
-		FPSComponent& operator=(const FPSComponent& other) = delete;
+		FPSComponent& operator=(FPSComponent const& other) = delete;
 		FPSComponent& operator=(FPSComponent&& other) = delete;
 	
 		void Update() override;

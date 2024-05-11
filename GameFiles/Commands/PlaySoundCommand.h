@@ -6,7 +6,7 @@
 namespace pacman
 {
 
-	class PlayPacmanChomp final : public amu::Command
+	class PlayPacmanChomp final : public pacman::Command
 	{
 	public:
 		PlayPacmanChomp() {}
@@ -22,7 +22,7 @@ namespace pacman
 
 	};
 
-	class PlayPacmanDeath final : public amu::Command
+	class PlayPacmanDeath final : public pacman::Command
 	{
 	public:
 		PlayPacmanDeath() {}
