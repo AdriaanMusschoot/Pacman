@@ -1,4 +1,4 @@
-idx,rowidx,colidx,tiletype,pickuptype
+idx,rowidx,colidx,tiletype,extra tile specifier
 0,0,0,wall,none
 1,0,1,wall,none
 2,0,2,wall,none
@@ -656,8 +656,8 @@ idx,rowidx,colidx,tiletype,pickuptype
 654,23,10,pathway,small
 655,23,11,pathway,small
 656,23,12,pathway,small
-657,23,13,pathway,small
-658,23,14,pathway,small
+657,23,13,pathway,spawn
+658,23,14,pathway,spawn
 659,23,15,pathway,small
 660,23,16,pathway,small
 661,23,17,pathway,small

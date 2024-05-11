@@ -3,6 +3,8 @@
 
 #include "Component.h"
 #include "Configuration.h"
+#include "PlayFieldGridComponent.h"
+#include "TransformComponent.h"
 
 namespace pacman
 {
@@ -50,6 +52,7 @@ namespace pacman
 
 		virtual void Update(amu::GameObject * gameObjectPtr) override;
 	private:
+		amu::TransformComponent* m_TransformPtr{ nullptr };
 	};
 
 	class MovementDown final : public IMovementState
@@ -65,6 +68,7 @@ namespace pacman
 
 		virtual void Update(amu::GameObject * gameObjectPtr) override;
 	private:
+		amu::TransformComponent* m_TransformPtr{ nullptr };
 	};
 
 	class MovementLeft final : public IMovementState
@@ -80,6 +84,7 @@ namespace pacman
 
 		virtual void Update(amu::GameObject * gameObjectPtr) override;
 	private:
+		amu::TransformComponent* m_TransformPtr{ nullptr };
 	};
 
 	class MovementRight final : public IMovementState
@@ -93,14 +98,15 @@ namespace pacman
 		MovementRight& operator=(MovementRight const& other) = delete;
 		MovementRight& operator=(MovementRight&& other) = delete;
 
-		virtual void Update(amu::GameObject * gameObjectPtr) override;
+		virtual void Update(amu::GameObject* gameObjectPtr) override;
 	private:
+		amu::TransformComponent* m_TransformPtr{ nullptr };
 	};
 
 	class GridMovementComponent final : public amu::Component
 	{
 	public:
-		GridMovementComponent(amu::GameObject * gameObjectPtr);
+		GridMovementComponent(amu::GameObject* gameObjectPtr, PlayFieldGridComponent* playFieldGridPtr);
 		virtual ~GridMovementComponent() override = default;
 
 		GridMovementComponent(GridMovementComponent const& other) = delete;
@@ -112,6 +118,7 @@ namespace pacman
 		void ChangeMovementState(std::shared_ptr<IMovementState> newStateSPtr);
 	private:
 		std::shared_ptr<IMovementState> m_CurrentMovementStateSPtr{ std::make_shared<MovementIdle>() };
+		PlayFieldGridComponent* m_PlayFieldGridPtr{ nullptr };
 	};
 
 }

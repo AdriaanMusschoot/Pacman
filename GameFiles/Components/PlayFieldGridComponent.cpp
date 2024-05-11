@@ -13,17 +13,17 @@ pacman::PlayFieldGridComponent::PlayFieldGridComponent(amu::GameObject* ownerObj
 	{
 		for (int colIdx{}; colIdx < m_ColsGrid; ++colIdx)
 		{
-			m_TileVec[GetIndex(rowIdx, colIdx)].TopLeft = glm::ivec2{ rowIdx * cellHeigth, colIdx * cellWidth };
+			m_TileVec[GetIndex(rowIdx, colIdx)].Center = glm::ivec2{ colIdx * cellWidth + cellWidth / 2, rowIdx * cellHeigth + cellHeigth / 2};
 		}
 	}
 }
 
 void pacman::PlayFieldGridComponent::SetTileType(std::int64_t const& rowIdx, std::int64_t const& colIdx, std::string_view const& typeString)
 {
-	std::cout	<< "[" << rowIdx << ", " << colIdx 
-				<< "] = " << typeString 
-				<< ", top left is: " << m_TileVec[GetIndex(rowIdx, colIdx)].TopLeft.x << ", " << m_TileVec[GetIndex(rowIdx, colIdx)].TopLeft.y
-				<< "\n";
+	//std::cout	<< "[" << rowIdx << ", " << colIdx 
+	//			<< "] = " << typeString 
+	//			<< ", top left is: " << m_TileVec[GetIndex(rowIdx, colIdx)].TopLeft.x << ", " << m_TileVec[GetIndex(rowIdx, colIdx)].TopLeft.y
+	//			<< "\n";
 
 	if (typeString == "pathway")
 	{
@@ -44,7 +44,12 @@ void pacman::PlayFieldGridComponent::SetTileType(std::int64_t const& rowIdx, std
 	throw std::runtime_error(std::string("No valid tile type") + std::string(typeString));
 }
 
+pacman::PlayFieldGridComponent::Tile const& pacman::PlayFieldGridComponent::GetTyle(std::int64_t const& rowIdx, std::int64_t const& colIdx) const
+{
+	return m_TileVec[GetIndex(rowIdx, colIdx)];
+}
+
 [[nodiscard]] std::int64_t pacman::PlayFieldGridComponent::GetIndex(std::int64_t const& rowIdx, std::int64_t const& colIdx) const
 {
-	return colIdx + m_ColsGrid * rowIdx;
+	return rowIdx * m_ColsGrid + colIdx;
 }

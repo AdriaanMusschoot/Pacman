@@ -20,7 +20,7 @@ namespace pacman
 
 		struct Tile
 		{
-			glm::ivec2 TopLeft{ 0, 0 };
+			glm::ivec2 Center{ 0, 0 };
 			TileType Type{ TileType::Void };
 		};
 
@@ -33,11 +33,12 @@ namespace pacman
 		PlayFieldGridComponent& operator=(PlayFieldGridComponent&& other) = delete;
 
 		void SetTileType(std::int64_t const& rowIdx, std::int64_t const& colIdx, std::string_view const& typeString);
-
+		Tile const& GetTyle(std::int64_t const& rowIdx, std::int64_t const& colIdx) const;
 	private:
 		std::int64_t const m_RowsGrid{};
 		std::int64_t const m_ColsGrid{};
 		std::int64_t const m_CellSize{};
+
 		std::vector<Tile> m_TileVec{};
 
 		[[nodiscard]] std::int64_t GetIndex(std::int64_t const& rowIdx, std::int64_t const& colIdx) const;
