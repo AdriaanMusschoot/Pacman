@@ -26,7 +26,7 @@ int main(int, char*[])
 
 	amu::Amugen engine(data_location, pacman::config::WINDOW_WIDTH, pacman::config::WINDOW_HEIGHT);
 
-	amu::SceneManager::GetInstance().CreateScene("Pac Man", pacman::LoadGame);
+	amu::SceneManager::GetInstance().CreateScene("Pac Man", pacman::LoadMainScene);
 
 	engine.Run();
 

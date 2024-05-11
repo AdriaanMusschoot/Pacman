@@ -13,7 +13,7 @@
 #include "ServiceLocator.h"
 #include "SoundSystem.h"
 #include "InputManager.h"
-
+#include "Components/PlayFieldGridComponent.h"
 #include "Components/FPSComponent.h"
 #include "Commands/PlaySoundCommand.h"
 #include "Configuration.h"
@@ -21,50 +21,67 @@
 namespace pacman
 {
 
+	void SpawnSmallPickup(amu::Scene* scenePtr, std::int64_t const& row, std::int64_t const& col)
+	{
+		using namespace pacman::config;
+		std::unique_ptr pickupSmallUPtr{ std::make_unique<amu::GameObject>() };
+		pickupSmallUPtr->AddComponent<amu::TransformComponent>(pickupSmallUPtr.get(), glm::vec2{ col * CELL_WIDTH, row * CELL_HEIGHT });
+		pickupSmallUPtr->AddComponent<amu::RenderComponent>(pickupSmallUPtr.get(), "Sprites/EatableSmall.png");
+		scenePtr->Add(std::move(pickupSmallUPtr));
+	}
+
+	void SpawnBigPickup(amu::Scene* scenePtr, std::int64_t const& row, std::int64_t const& col)
+	{
+		using namespace pacman::config;
+		std::unique_ptr pickupBigUPtr{ std::make_unique<amu::GameObject>() };
+		pickupBigUPtr->AddComponent<amu::TransformComponent>(pickupBigUPtr.get(), glm::vec2{ col * CELL_WIDTH, row * CELL_HEIGHT });
+		pickupBigUPtr->AddComponent<amu::RenderComponent>(pickupBigUPtr.get(), "Sprites/EatableBig.png");
+		scenePtr->Add(std::move(pickupBigUPtr));
+	}
+
 	void LoadGridLayout(amu::Scene* scenePtr)
 	{
-		std::ifstream gridLayoutFile("Resources/Files/GridLayout.csv");
+		using namespace pacman::config;
+		std::unique_ptr gridLayoutUPtr{ std::make_unique<amu::GameObject>() };
+		gridLayoutUPtr->AddComponent<pacman::PlayFieldGridComponent>(gridLayoutUPtr.get(), ROWS_GRID, COLS_GRID);
 
+		std::ifstream gridLayoutFile("Resources/Files/GridLayout.csv");
 		if (not gridLayoutFile.is_open())
 		{
 			throw std::runtime_error("failed to locate pickup positions");
 		}
-		std::regex validLineExpression("(\\d+),(\\d+),(\\d+),(\\w+),(\\w+)");
 		//do not use until after while loop
+		std::regex validLineExpression("(\\d+),(\\d+),(\\d+),(\\w+),(\\w+)");
 		std::smatch matches{};
 		std::string line{};
-
 		while (std::getline(gridLayoutFile, line))
 		{
 			if (std::regex_match(line, matches, validLineExpression))
 			{
 				//ignoring first match since its entire string in the capture group always
 				//ignoring second match since its the index to generate col and row idx
-				int row{ std::stoi(matches[2].str()) };
-				int col{ std::stoi(matches[3].str()) };
+				const std::int64_t row{ std::stoi(matches[2].str()) };
+				const std::int64_t col{ std::stoi(matches[3].str()) };
 
-				if (matches[4] == "pathway")
+				auto& gridLayoutComponent = *gridLayoutUPtr->GetComponent<pacman::PlayFieldGridComponent>();
+				
+				gridLayoutComponent.SetElement(row, col, matches[4].str());
+
+				if (matches[5] == "small")
 				{
-					if (matches[5] == "small")
-					{
-						std::unique_ptr pickupSmallUPtr{ std::make_unique<amu::GameObject>() };
-						pickupSmallUPtr->AddComponent<amu::TransformComponent>(pickupSmallUPtr.get(), glm::vec2{ col * pacman::config::CELL_WIDTH, row * pacman::config::CELL_HEIGHT });
-						pickupSmallUPtr->AddComponent<amu::RenderComponent>(pickupSmallUPtr.get(), "Sprites/EatableSmall.png");
-						scenePtr->Add(std::move(pickupSmallUPtr));
-					}
-					if (matches[5] == "big")
-					{
-						std::unique_ptr pickupBigUPtr{ std::make_unique<amu::GameObject>() };
-						pickupBigUPtr->AddComponent<amu::TransformComponent>(pickupBigUPtr.get(), glm::vec2{ col * pacman::config::CELL_WIDTH, row * pacman::config::CELL_HEIGHT });
-						pickupBigUPtr->AddComponent<amu::RenderComponent>(pickupBigUPtr.get(), "Sprites/EatableBig.png");
-						scenePtr->Add(std::move(pickupBigUPtr));
-					}
+					SpawnSmallPickup(scenePtr, row, col);
+				}
+				if (matches[5] == "big")
+				{
+					SpawnBigPickup(scenePtr, row, col);
 				}
 			}
 		}
+
+		scenePtr->Add(std::move(gridLayoutUPtr));
 	}
 
-	void LoadGame(amu::Scene* scenePtr)
+	void LoadMainScene(amu::Scene* scenePtr)
 	{
 		using SoundId = pacman::sound::SoundId;
 		using InpMan = amu::InputManager;
