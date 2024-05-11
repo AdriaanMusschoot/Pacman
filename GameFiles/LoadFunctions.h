@@ -43,7 +43,7 @@ namespace pacman
 	{
 		using namespace pacman::config;
 		std::unique_ptr gridLayoutUPtr{ std::make_unique<amu::GameObject>() };
-		gridLayoutUPtr->AddComponent<pacman::PlayFieldGridComponent>(gridLayoutUPtr.get(), ROWS_GRID, COLS_GRID);
+		gridLayoutUPtr->AddComponent<pacman::PlayFieldGridComponent>(gridLayoutUPtr.get(), ROWS_GRID, COLS_GRID, CELL_HEIGHT, CELL_WIDTH);
 
 		std::ifstream gridLayoutFile("Resources/Files/GridLayout.csv");
 		if (not gridLayoutFile.is_open())
@@ -65,7 +65,7 @@ namespace pacman
 
 				auto& gridLayoutComponent = *gridLayoutUPtr->GetComponent<pacman::PlayFieldGridComponent>();
 				
-				gridLayoutComponent.SetElement(row, col, matches[4].str());
+				gridLayoutComponent.SetTileType(row, col, matches[4].str());
 
 				if (matches[5] == "small")
 				{

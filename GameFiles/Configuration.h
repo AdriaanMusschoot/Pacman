@@ -4,6 +4,8 @@
 #include <fstream>
 #include <regex>
 #include <vector>
+#include <iostream>
+#include <execution>
 
 namespace pacman
 {
