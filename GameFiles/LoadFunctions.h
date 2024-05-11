@@ -7,15 +7,21 @@
 #include "Component.h"
 #include "GameObject.h"
 
-#include "RenderComponent.h"
-#include "TextComponent.h"
-#include "TransformComponent.h"
 #include "ServiceLocator.h"
 #include "SoundSystem.h"
 #include "InputManager.h"
+
+#include "RenderComponent.h"
+#include "TextComponent.h"
+#include "TransformComponent.h"
+
 #include "Components/PlayFieldGridComponent.h"
 #include "Components/FPSComponent.h"
+#include "Components/GridMovementComponent.h"
+
 #include "Commands/PlaySoundCommand.h"
+#include "Commands/MovePacmanCommand.h"
+
 #include "Configuration.h"
 
 namespace pacman
@@ -23,7 +29,7 @@ namespace pacman
 
 	void SpawnSmallPickup(amu::Scene* scenePtr, std::int64_t const& row, std::int64_t const& col)
 	{
-		using namespace pacman::config;
+		using namespace config;
 		std::unique_ptr pickupSmallUPtr{ std::make_unique<amu::GameObject>() };
 		pickupSmallUPtr->AddComponent<amu::TransformComponent>(pickupSmallUPtr.get(), glm::vec2{ col * CELL_WIDTH, row * CELL_HEIGHT });
 		pickupSmallUPtr->AddComponent<amu::RenderComponent>(pickupSmallUPtr.get(), "Sprites/EatableSmall.png");
@@ -32,7 +38,7 @@ namespace pacman
 
 	void SpawnBigPickup(amu::Scene* scenePtr, std::int64_t const& row, std::int64_t const& col)
 	{
-		using namespace pacman::config;
+		using namespace config;
 		std::unique_ptr pickupBigUPtr{ std::make_unique<amu::GameObject>() };
 		pickupBigUPtr->AddComponent<amu::TransformComponent>(pickupBigUPtr.get(), glm::vec2{ col * CELL_WIDTH, row * CELL_HEIGHT });
 		pickupBigUPtr->AddComponent<amu::RenderComponent>(pickupBigUPtr.get(), "Sprites/EatableBig.png");
@@ -41,9 +47,10 @@ namespace pacman
 
 	void LoadGridLayout(amu::Scene* scenePtr)
 	{
-		using namespace pacman::config;
+		using namespace config;
 		std::unique_ptr gridLayoutUPtr{ std::make_unique<amu::GameObject>() };
-		gridLayoutUPtr->AddComponent<pacman::PlayFieldGridComponent>(gridLayoutUPtr.get(), ROWS_GRID, COLS_GRID, CELL_HEIGHT, CELL_WIDTH);
+		gridLayoutUPtr->AddComponent<PlayFieldGridComponent>(gridLayoutUPtr.get(), ROWS_GRID, COLS_GRID, CELL_HEIGHT, CELL_WIDTH);
+		auto& gridLayoutComponent = *gridLayoutUPtr->GetComponent<PlayFieldGridComponent>();
 
 		std::ifstream gridLayoutFile("Resources/Files/GridLayout.csv");
 		if (not gridLayoutFile.is_open())
@@ -63,8 +70,6 @@ namespace pacman
 				const std::int64_t row{ std::stoi(matches[2].str()) };
 				const std::int64_t col{ std::stoi(matches[3].str()) };
 
-				auto& gridLayoutComponent = *gridLayoutUPtr->GetComponent<pacman::PlayFieldGridComponent>();
-				
 				gridLayoutComponent.SetTileType(row, col, matches[4].str());
 
 				if (matches[5] == "small")
@@ -81,12 +86,33 @@ namespace pacman
 		scenePtr->Add(std::move(gridLayoutUPtr));
 	}
 
+	void LoadPacman(amu::Scene* scenePtr)
+	{
+		using InpMan = amu::InputManager;
+		auto& inputManager = InpMan::GetInstance();
+
+		std::unique_ptr pacmanUPtr{ std::make_unique<amu::GameObject>() };
+		pacmanUPtr->AddComponent<GridMovementComponent>(pacmanUPtr.get());
+
+		std::unique_ptr upCommandUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), std::make_shared<MovementUp>()) };
+		inputManager.AddCommandKeyboard(InpMan::Key::W, InpMan::InputState::Pressed, std::move(upCommandUPtr));
+
+		std::unique_ptr downCommandUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), std::make_shared<MovementDown>()) };
+		inputManager.AddCommandKeyboard(InpMan::Key::S, InpMan::InputState::Pressed, std::move(downCommandUPtr));
+
+		std::unique_ptr leftCommandUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), std::make_shared<MovementLeft>()) };
+		inputManager.AddCommandKeyboard(InpMan::Key::A, InpMan::InputState::Pressed, std::move(leftCommandUPtr));
+
+		std::unique_ptr rightCommandUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), std::make_shared<MovementRight>()) };
+		inputManager.AddCommandKeyboard(InpMan::Key::D, InpMan::InputState::Pressed, std::move(rightCommandUPtr));
+
+		scenePtr->Add(std::move(pacmanUPtr));
+	}
+
 	void LoadMainScene(amu::Scene* scenePtr)
 	{
 		using SoundId = pacman::sound::SoundId;
 		using InpMan = amu::InputManager;
-
-		auto& inputManager = InpMan::GetInstance();
 
 		std::unique_ptr backgroundUPtr{ std::make_unique<amu::GameObject>() };
 		backgroundUPtr->AddComponent<amu::TransformComponent>(backgroundUPtr.get(), glm::vec2{ 0, 0 });
@@ -95,7 +121,7 @@ namespace pacman
 		std::unique_ptr fpsCounterUPtr{ std::make_unique<amu::GameObject>() };
 		fpsCounterUPtr->AddComponent<amu::TransformComponent>(fpsCounterUPtr.get(), glm::vec2{ 0, 50 });
 		fpsCounterUPtr->AddComponent<amu::TextComponent>(fpsCounterUPtr.get(), "60", "Fonts/Lingua.otf", 36);
-		fpsCounterUPtr->AddComponent<pacman::FPSComponent>(fpsCounterUPtr.get());
+		fpsCounterUPtr->AddComponent<FPSComponent>(fpsCounterUPtr.get());
 
 		scenePtr->Add(std::move(backgroundUPtr));
 
@@ -103,13 +129,7 @@ namespace pacman
 
 		scenePtr->Add(std::move(fpsCounterUPtr));
 
-		std::unique_ptr playChompCommand{ std::make_unique<amu::PlayPacmanChomp>() };
-
-		inputManager.AddCommandKeyboard(InpMan::Key::W, InpMan::InputState::Pressed, std::move(playChompCommand));
-
-		std::unique_ptr playDeathCommand{ std::make_unique<amu::PlayPacmanDeath>() };
-
-		inputManager.AddCommandKeyboard(InpMan::Key::A, InpMan::InputState::Pressed, std::move(playDeathCommand));
+		LoadPacman(scenePtr);
 	}
 
 }

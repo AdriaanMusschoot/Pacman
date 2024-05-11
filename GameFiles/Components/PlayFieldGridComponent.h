@@ -8,7 +8,7 @@
 namespace pacman
 {
 
-	class PlayFieldGridComponent : public amu::Component
+	class PlayFieldGridComponent final : public amu::Component
 	{
 	public:
 		enum class TileType
@@ -20,7 +20,7 @@ namespace pacman
 
 		struct Tile
 		{
-			glm::ivec2 Center{ 0, 0 };
+			glm::ivec2 TopLeft{ 0, 0 };
 			TileType Type{ TileType::Void };
 		};
 

@@ -9,12 +9,15 @@ set(GAME_FILES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/GameFiles)
 # list source files here
 set(PAC_MAN_SOURCE_FILES
   "${GAME_FILES_DIR}/Main.cpp"    
-  "${GAME_FILES_DIR}/Components/FPSComponent.cpp"               "${GAME_FILES_DIR}/Components/FPSComponent.h"
-  "${GAME_FILES_DIR}/Commands/PlaySoundCommand.cpp"             "${GAME_FILES_DIR}/Commands/PlaySoundCommand.h"
-  "${GAME_FILES_DIR}/Components/PlayFieldGridComponent.cpp"     "${GAME_FILES_DIR}/Components/PlayFieldGridComponent.h"
-
   "${GAME_FILES_DIR}/LoadFunctions.h"
   "${GAME_FILES_DIR}/Configuration.h"
+
+  "${GAME_FILES_DIR}/Components/FPSComponent.cpp"               "${GAME_FILES_DIR}/Components/FPSComponent.h"
+  "${GAME_FILES_DIR}/Components/PlayFieldGridComponent.cpp"     "${GAME_FILES_DIR}/Components/PlayFieldGridComponent.h"
+
+  "${GAME_FILES_DIR}/Commands/PlaySoundCommand.cpp"             "${GAME_FILES_DIR}/Commands/PlaySoundCommand.h"
+  "${GAME_FILES_DIR}/Components/GridMovementComponent.cpp"      "${GAME_FILES_DIR}/Components/GridMovementComponent.h"
+  "${GAME_FILES_DIR}/Commands/MovePacmanCommand.cpp"              "${GAME_FILES_DIR}/Commands/MovePacmanCommand.h"
 )
 
 add_executable(${TARGET_NAME} ${PAC_MAN_SOURCE_FILES} )

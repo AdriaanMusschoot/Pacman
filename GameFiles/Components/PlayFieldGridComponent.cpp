@@ -13,7 +13,7 @@ pacman::PlayFieldGridComponent::PlayFieldGridComponent(amu::GameObject* ownerObj
 	{
 		for (int colIdx{}; colIdx < m_ColsGrid; ++colIdx)
 		{
-			m_TileVec[GetIndex(rowIdx, colIdx)].Center = glm::ivec2{ rowIdx * cellHeigth + cellHeigth / 2, colIdx * cellWidth + cellWidth / 2 };
+			m_TileVec[GetIndex(rowIdx, colIdx)].TopLeft = glm::ivec2{ rowIdx * cellHeigth, colIdx * cellWidth };
 		}
 	}
 }
@@ -22,7 +22,7 @@ void pacman::PlayFieldGridComponent::SetTileType(std::int64_t const& rowIdx, std
 {
 	std::cout	<< "[" << rowIdx << ", " << colIdx 
 				<< "] = " << typeString 
-				<< ", center is: " << m_TileVec[GetIndex(rowIdx, colIdx)].Center.x << ", " << m_TileVec[GetIndex(rowIdx, colIdx)].Center.y
+				<< ", top left is: " << m_TileVec[GetIndex(rowIdx, colIdx)].TopLeft.x << ", " << m_TileVec[GetIndex(rowIdx, colIdx)].TopLeft.y
 				<< "\n";
 
 	if (typeString == "pathway")

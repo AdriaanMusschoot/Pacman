@@ -9,12 +9,12 @@ namespace amu
 	class PlayPacmanChomp final : public amu::Command
 	{
 	public:
-		PlayPacmanChomp() {}
-		~PlayPacmanChomp() = default;
+		PlayPacmanChomp() = default;
+		virtual ~PlayPacmanChomp() override = default;
 
-		PlayPacmanChomp(const PlayPacmanChomp& other) = delete;
+		PlayPacmanChomp(PlayPacmanChomp const& other) = delete;
 		PlayPacmanChomp(PlayPacmanChomp&& other) = delete;
-		PlayPacmanChomp& operator=(const PlayPacmanChomp& other) = delete;
+		PlayPacmanChomp& operator=(PlayPacmanChomp const& other) = delete;
 		PlayPacmanChomp& operator=(PlayPacmanChomp&& other) = delete;
 
 		void Execute() override;
@@ -25,12 +25,12 @@ namespace amu
 	class PlayPacmanDeath final : public amu::Command
 	{
 	public:
-		PlayPacmanDeath() {}
-		~PlayPacmanDeath() = default;
+		PlayPacmanDeath() = default;
+		virtual ~PlayPacmanDeath() override = default;
 
-		PlayPacmanDeath(const PlayPacmanDeath& other) = delete;
+		PlayPacmanDeath(PlayPacmanDeath const& other) = delete;
 		PlayPacmanDeath(PlayPacmanDeath&& other) = delete;
-		PlayPacmanDeath& operator=(const PlayPacmanDeath& other) = delete;
+		PlayPacmanDeath& operator=(PlayPacmanDeath const& other) = delete;
 		PlayPacmanDeath& operator=(PlayPacmanDeath&& other) = delete;
 
 		void Execute() override;
