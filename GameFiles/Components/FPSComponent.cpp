@@ -5,15 +5,15 @@
 
 #include <format>
 
-pacman::FPSComponent::FPSComponent(pacman::GameObject * ownerObjectPtr)
+pacman::FPSComponent::FPSComponent(amu::GameObject * ownerObjectPtr)
 	: Component(ownerObjectPtr)
-	, m_TextPtr{ GetComponentOwner()->GetComponent<TextComponent>() }
+	, m_TextPtr{ GetComponentOwner()->GetComponent<amu::TextComponent>() }
 {
 }
 
 void pacman::FPSComponent::Update()
 {
-	m_CurrentRefreshTime += GameTime::GetInstance().GetDeltaTime();
+	m_CurrentRefreshTime += amu::GameTime::GetInstance().GetDeltaTime();
 	m_TicksPassed++;
 	if (m_CurrentRefreshTime < m_MaxRefreshTime)
 	{

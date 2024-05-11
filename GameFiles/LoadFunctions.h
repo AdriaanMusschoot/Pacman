@@ -21,7 +21,7 @@
 namespace pacman
 {
 
-	void LoadGridLayout(pacman::Scene* scenePtr)
+	void LoadGridLayout(amu::Scene* scenePtr)
 	{
 		std::ifstream gridLayoutFile("Resources/Files/GridLayout.csv");
 
@@ -47,16 +47,16 @@ namespace pacman
 				{
 					if (matches[5] == "small")
 					{
-						std::unique_ptr pickupSmallUPtr{ std::make_unique<pacman::GameObject>() };
-						pickupSmallUPtr->AddComponent<pacman::TransformComponent>(pickupSmallUPtr.get(), glm::vec2{ col * pacman::config::CELL_WIDTH, row * pacman::config::CELL_HEIGHT });
-						pickupSmallUPtr->AddComponent<pacman::RenderComponent>(pickupSmallUPtr.get(), "Sprites/EatableSmall.png");
+						std::unique_ptr pickupSmallUPtr{ std::make_unique<amu::GameObject>() };
+						pickupSmallUPtr->AddComponent<amu::TransformComponent>(pickupSmallUPtr.get(), glm::vec2{ col * pacman::config::CELL_WIDTH, row * pacman::config::CELL_HEIGHT });
+						pickupSmallUPtr->AddComponent<amu::RenderComponent>(pickupSmallUPtr.get(), "Sprites/EatableSmall.png");
 						scenePtr->Add(std::move(pickupSmallUPtr));
 					}
 					if (matches[5] == "big")
 					{
-						std::unique_ptr pickupBigUPtr{ std::make_unique<pacman::GameObject>() };
-						pickupBigUPtr->AddComponent<pacman::TransformComponent>(pickupBigUPtr.get(), glm::vec2{ col * pacman::config::CELL_WIDTH, row * pacman::config::CELL_HEIGHT });
-						pickupBigUPtr->AddComponent<pacman::RenderComponent>(pickupBigUPtr.get(), "Sprites/EatableBig.png");
+						std::unique_ptr pickupBigUPtr{ std::make_unique<amu::GameObject>() };
+						pickupBigUPtr->AddComponent<amu::TransformComponent>(pickupBigUPtr.get(), glm::vec2{ col * pacman::config::CELL_WIDTH, row * pacman::config::CELL_HEIGHT });
+						pickupBigUPtr->AddComponent<amu::RenderComponent>(pickupBigUPtr.get(), "Sprites/EatableBig.png");
 						scenePtr->Add(std::move(pickupBigUPtr));
 					}
 				}
@@ -64,20 +64,20 @@ namespace pacman
 		}
 	}
 
-	void LoadGame(pacman::Scene* scenePtr)
+	void LoadGame(amu::Scene* scenePtr)
 	{
 		using SoundId = pacman::sound::SoundId;
-		using InpMan = pacman::InputManager;
+		using InpMan = amu::InputManager;
 
 		auto& inputManager = InpMan::GetInstance();
 
-		std::unique_ptr backgroundUPtr{ std::make_unique<pacman::GameObject>() };
-		backgroundUPtr->AddComponent<pacman::TransformComponent>(backgroundUPtr.get(), glm::vec2{ 0, 0 });
-		backgroundUPtr->AddComponent<pacman::RenderComponent>(backgroundUPtr.get(), "Sprites/PlayingField.png");
+		std::unique_ptr backgroundUPtr{ std::make_unique<amu::GameObject>() };
+		backgroundUPtr->AddComponent<amu::TransformComponent>(backgroundUPtr.get(), glm::vec2{ 0, 0 });
+		backgroundUPtr->AddComponent<amu::RenderComponent>(backgroundUPtr.get(), "Sprites/PlayingField.png");
 
-		std::unique_ptr fpsCounterUPtr{ std::make_unique<pacman::GameObject>() };
-		fpsCounterUPtr->AddComponent<pacman::TransformComponent>(fpsCounterUPtr.get(), glm::vec2{ 0, 50 });
-		fpsCounterUPtr->AddComponent<pacman::TextComponent>(fpsCounterUPtr.get(), "60", "Fonts/Lingua.otf", 36);
+		std::unique_ptr fpsCounterUPtr{ std::make_unique<amu::GameObject>() };
+		fpsCounterUPtr->AddComponent<amu::TransformComponent>(fpsCounterUPtr.get(), glm::vec2{ 0, 50 });
+		fpsCounterUPtr->AddComponent<amu::TextComponent>(fpsCounterUPtr.get(), "60", "Fonts/Lingua.otf", 36);
 		fpsCounterUPtr->AddComponent<pacman::FPSComponent>(fpsCounterUPtr.get());
 
 		scenePtr->Add(std::move(backgroundUPtr));
@@ -86,11 +86,11 @@ namespace pacman
 
 		scenePtr->Add(std::move(fpsCounterUPtr));
 
-		std::unique_ptr playChompCommand{ std::make_unique<pacman::PlayPacmanChomp>() };
+		std::unique_ptr playChompCommand{ std::make_unique<amu::PlayPacmanChomp>() };
 
 		inputManager.AddCommandKeyboard(InpMan::Key::W, InpMan::InputState::Pressed, std::move(playChompCommand));
 
-		std::unique_ptr playDeathCommand{ std::make_unique<pacman::PlayPacmanDeath>() };
+		std::unique_ptr playDeathCommand{ std::make_unique<amu::PlayPacmanDeath>() };
 
 		inputManager.AddCommandKeyboard(InpMan::Key::A, InpMan::InputState::Pressed, std::move(playDeathCommand));
 	}

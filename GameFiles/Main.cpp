@@ -24,9 +24,9 @@ int main(int, char*[])
 	if(!fs::exists(data_location))
 		data_location = "../Resources/";
 
-	pacman::Amugen engine(data_location, pacman::config::WINDOW_WIDTH, pacman::config::WINDOW_HEIGHT);
+	amu::Amugen engine(data_location, pacman::config::WINDOW_WIDTH, pacman::config::WINDOW_HEIGHT);
 
-	pacman::SceneManager::GetInstance().CreateScene("Pac Man", pacman::LoadGame);
+	amu::SceneManager::GetInstance().CreateScene("Pac Man", pacman::LoadGame);
 
 	engine.Run();
 

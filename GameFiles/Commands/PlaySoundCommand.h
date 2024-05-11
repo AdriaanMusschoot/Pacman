@@ -3,10 +3,10 @@
 
 #include "Command.h"
 
-namespace pacman
+namespace amu
 {
 
-	class PlayPacmanChomp final : public pacman::Command
+	class PlayPacmanChomp final : public amu::Command
 	{
 	public:
 		PlayPacmanChomp() {}
@@ -22,7 +22,7 @@ namespace pacman
 
 	};
 
-	class PlayPacmanDeath final : public pacman::Command
+	class PlayPacmanDeath final : public amu::Command
 	{
 	public:
 		PlayPacmanDeath() {}

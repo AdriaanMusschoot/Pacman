@@ -11,13 +11,6 @@ namespace pacman
 	namespace config
 	{
 
-		enum class TileType
-		{
-			Void,
-			Pathway,
-			Wall
-		};
-
 		constexpr int SCALE_FACTOR{ 3 };
 
 		constexpr int WINDOW_WIDTH{ 224 * SCALE_FACTOR };
@@ -28,8 +21,6 @@ namespace pacman
 
 		constexpr int CELL_WIDTH{ WINDOW_WIDTH / COLS_GRID };
 		constexpr int CELL_HEIGHT{ WINDOW_HEIGHT / ROWS_GRID };
-
-		static std::vector<TileType> TILE_VEC{ ROWS_GRID * COLS_GRID };
 
 	}
 

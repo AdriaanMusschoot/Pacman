@@ -7,10 +7,10 @@
 namespace pacman
 {
 
-	class FPSComponent final : public Component
+	class FPSComponent final : public amu::Component
 	{
 	public:
-		FPSComponent(GameObject * ownerObjectPtr);
+		FPSComponent(amu::GameObject * ownerObjectPtr);
 		virtual ~FPSComponent() override = default;
 	
 		FPSComponent(FPSComponent const& other) = delete;
@@ -20,7 +20,7 @@ namespace pacman
 	
 		void Update() override;
 	private:
-		TextComponent* m_TextPtr{ nullptr };
+		amu::TextComponent* m_TextPtr{ nullptr };
 
 		std::string m_FPSCountToDisplay{ "" };
 	
