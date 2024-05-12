@@ -15,12 +15,14 @@ namespace pacman
 		{
 			Void,
 			Pathway,
-			Wall
+			Crossing,
+			Wall,
+			Teleport
 		};
 
 		struct Tile
 		{
-			glm::ivec2 Center{ 0, 0 };
+			glm::vec2 Center{ 0, 0 };
 			TileType Type{ TileType::Void };
 		};
 
@@ -33,11 +35,15 @@ namespace pacman
 		PlayFieldGridComponent& operator=(PlayFieldGridComponent&& other) = delete;
 
 		void SetTileType(std::int64_t const& rowIdx, std::int64_t const& colIdx, std::string_view const& typeString);
-		Tile const& GetTyle(std::int64_t const& rowIdx, std::int64_t const& colIdx) const;
+
+		glm::vec2 const& GetTileDimensions() const;
+
+		Tile const& GetTile(std::int64_t const& rowIdx, std::int64_t const& colIdx) const;
+		Tile const& GetTile(glm::vec2 const& position) const;
 	private:
 		std::int64_t const m_RowsGrid{};
 		std::int64_t const m_ColsGrid{};
-		std::int64_t const m_CellSize{};
+		glm::vec2 const m_TileDimensions{};
 
 		std::vector<Tile> m_TileVec{};
 

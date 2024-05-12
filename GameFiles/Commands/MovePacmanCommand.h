@@ -10,7 +10,7 @@ namespace pacman
 	class MovePacmanCommand final : public amu::GameObjectCommand
 	{
 	public:
-		MovePacmanCommand(amu::GameObject* gameObjectPtr, std::shared_ptr<IMovementState> newStateSPtr);
+		MovePacmanCommand(amu::GameObject* gameObjectPtr, glm::vec2 const& direction);
 		virtual ~MovePacmanCommand() override = default;
 
 		MovePacmanCommand(MovePacmanCommand const& other) = delete;
@@ -20,8 +20,8 @@ namespace pacman
 
 		void Execute() override;
 	private:
-		std::shared_ptr<IMovementState> m_NewStateSPtr{ std::make_shared<IMovementState>() };
 		GridMovementComponent* m_GridMovementPtr{ nullptr };
+		glm::vec2 m_Direction{ 0, 0 };
 	};
 
 }
