@@ -14,6 +14,7 @@
 #include "RenderComponent.h"
 #include "TextComponent.h"
 #include "TransformComponent.h"
+#include "CollisionComponent.h"
 
 #include "Components/PlayFieldGridComponent.h"
 #include "Components/FPSComponent.h"
@@ -22,39 +23,44 @@
 #include "Commands/PlaySoundCommand.h"
 #include "Commands/MovePacmanCommand.h"
 
+#include "Observers/SmallPickupObserver.h"
+
 #include "Configuration.h"
 
 namespace pacman
 {
 
-	void SpawnSmallPickup(amu::Scene* scenePtr, std::int64_t const& row, std::int64_t const& col)
+	void SpawnSmallPickup(amu::CollisionComponent* pacman, amu::Scene* scenePtr, std::int64_t const& row, std::int64_t const& col)
 	{
 		using namespace config;
 		std::unique_ptr pickupSmallUPtr{ std::make_unique<amu::GameObject>() };
+		pickupSmallUPtr->SetTag("PickupSmall");
 		pickupSmallUPtr->AddComponent<amu::TransformComponent>(pickupSmallUPtr.get(), glm::vec2{ col * CELL_WIDTH + CELL_WIDTH / 2, row * CELL_HEIGHT + CELL_HEIGHT / 2 });
 		pickupSmallUPtr->AddComponent<amu::RenderComponent>(pickupSmallUPtr.get(), "Sprites/EatableSmall.png");
-		pickupSmallUPtr->AddComponent<pacman::DistanceComponent>(pickupSmallUPtr.get());
+		pacman->AddObserver(new SmallPickupObserver());
 		scenePtr->Add(std::move(pickupSmallUPtr));
 	}
 
-	void SpawnBigPickup(amu::Scene* scenePtr, std::int64_t const& row, std::int64_t const& col)
+	void SpawnBigPickup(amu::CollisionComponent*, amu::Scene* scenePtr, std::int64_t const& row, std::int64_t const& col)
 	{
 		using namespace config;
 		std::unique_ptr pickupBigUPtr{ std::make_unique<amu::GameObject>() };
+		pickupBigUPtr->SetTag("PickupBig");
 		pickupBigUPtr->AddComponent<amu::TransformComponent>(pickupBigUPtr.get(), glm::vec2{ col * CELL_WIDTH + CELL_WIDTH / 2, row * CELL_HEIGHT + CELL_HEIGHT / 2 });
 		pickupBigUPtr->AddComponent<amu::RenderComponent>(pickupBigUPtr.get(), "Sprites/EatableBig.png");
-		pickupBigUPtr->AddComponent<pacman::DistanceComponent>(pickupBigUPtr.get());
 		scenePtr->Add(std::move(pickupBigUPtr));
 	}
 
-	void LoadPacman(amu::Scene* scenePtr, PlayFieldGridComponent* playFieldGridPtr, float x, float y)
+	amu::CollisionComponent* LoadPacman(amu::Scene* scenePtr, PlayFieldGridComponent* playFieldGridPtr, float x, float y)
 	{
 		using InpMan = amu::InputManager;
 		auto& inputManager = InpMan::GetInstance();
 
 		std::unique_ptr pacmanUPtr{ std::make_unique<amu::GameObject>() };
+		pacmanUPtr->SetTag("Pacman");
 		pacmanUPtr->AddComponent<amu::TransformComponent>(pacmanUPtr.get(), glm::vec2{ x, y });
 		pacmanUPtr->AddComponent<amu::RenderComponent>(pacmanUPtr.get(), "Sprites/Pacman.png");
+		pacmanUPtr->AddComponent<amu::CollisionComponent>(pacmanUPtr.get(), "PickupSmall", pacman::collision::PacmanEatSmall);
 		pacmanUPtr->AddComponent<GridMovementComponent>(pacmanUPtr.get(), playFieldGridPtr, 100);
 
 		std::unique_ptr upCommandUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), glm::vec2{ 0, -1 })};
@@ -69,7 +75,11 @@ namespace pacman
 		std::unique_ptr rightCommandUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), glm::vec2{ 1, 0 }) };
 		inputManager.AddCommandKeyboard(InpMan::Key::D, InpMan::InputState::Pressed, std::move(rightCommandUPtr));
 
+		amu::CollisionComponent* temp{ pacmanUPtr->GetComponent<amu::CollisionComponent>() };
+
 		scenePtr->Add(std::move(pacmanUPtr));
+
+		return temp;
 	}
 
 	void PopulatePlayingGrid(amu::Scene* scenePtr)
@@ -88,7 +98,9 @@ namespace pacman
 		std::regex const validLineExpression("(\\d+),(\\d+),(\\d+),(\\w+),(\\w+)");
 		std::smatch matches{};
 		std::string line{};
-		int playerCount{}; 
+
+		amu::CollisionComponent* pacmanCollider{ LoadPacman(scenePtr, gridLayoutComponent, 36, 36) };
+
 		while (std::getline(gridLayoutFile, line))
 		{
 			if (std::regex_match(line, matches, validLineExpression))
@@ -116,24 +128,13 @@ namespace pacman
 				//if small spawn small pickup 
 				if (matches[5] == "small")
 				{
-					SpawnSmallPickup(scenePtr, rowIdx, colIdx);
+					SpawnSmallPickup(pacmanCollider, scenePtr, rowIdx, colIdx);
 				}
 
 				//if big spawn big pickup
 				else if (matches[5] == "big")
 				{
-					SpawnBigPickup(scenePtr, rowIdx, colIdx);
-				}
-
-				//spawn a pcaman
-				else if (matches[5] == "spawn")
-				{
-					if (playerCount < 1)
-					{
-						auto [pos, type] = gridLayoutComponent->GetTile(rowIdx, colIdx);
-						LoadPacman(scenePtr, gridLayoutComponent, pos.x, pos.y);
-						++playerCount;
-					}
+					SpawnBigPickup(pacmanCollider, scenePtr, rowIdx, colIdx);
 				}
 			}
 			else

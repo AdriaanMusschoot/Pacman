@@ -10,8 +10,8 @@ pacman::GridMovementComponent::GridMovementComponent(amu::GameObject * gameObjec
 	, m_Speed{ speed }
 	, m_CurrentTile{ playFieldGridPtr->GetTile(m_TransformPtr->GetWorldPosition()) }
 {
-	GetComponentOwner()->AddComponent<pacman::DistanceComponent>(GetComponentOwner());
-	m_DistanceComponentPtr = GetComponentOwner()->GetComponent<pacman::DistanceComponent>();
+	GetComponentOwner()->AddComponent<amu::DistanceComponent>(GetComponentOwner());
+	m_DistanceComponentPtr = GetComponentOwner()->GetComponent<amu::DistanceComponent>();
 }
 
 void pacman::GridMovementComponent::Update()

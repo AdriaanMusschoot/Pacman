@@ -29,10 +29,10 @@ namespace pacman
 		PlayFieldGridComponent(amu::GameObject* ownerObjectPtr, std::int64_t const& rowsGrid, std::int64_t const& colsGrid, std::int64_t const& cellSize, std::int64_t const& cellHeigth);
 		virtual ~PlayFieldGridComponent() override = default;
 
-		PlayFieldGridComponent(PlayFieldGridComponent const& other) = delete;
-		PlayFieldGridComponent(PlayFieldGridComponent&& other) = delete;
-		PlayFieldGridComponent& operator=(PlayFieldGridComponent const& other) = delete;
-		PlayFieldGridComponent& operator=(PlayFieldGridComponent&& other) = delete;
+		PlayFieldGridComponent(PlayFieldGridComponent const&) = delete;
+		PlayFieldGridComponent(PlayFieldGridComponent&&) = delete;
+		PlayFieldGridComponent& operator=(PlayFieldGridComponent const&) = delete;
+		PlayFieldGridComponent& operator=(PlayFieldGridComponent&&) = delete;
 
 		void SetTileType(std::int64_t const& rowIdx, std::int64_t const& colIdx, std::string_view const& typeString);
 

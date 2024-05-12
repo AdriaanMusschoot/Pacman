@@ -14,13 +14,14 @@ set(PAC_MAN_SOURCE_FILES
 
   "${GAME_FILES_DIR}/Components/FPSComponent.cpp"               "${GAME_FILES_DIR}/Components/FPSComponent.h"
   "${GAME_FILES_DIR}/Components/PlayFieldGridComponent.cpp"     "${GAME_FILES_DIR}/Components/PlayFieldGridComponent.h"
+  "${GAME_FILES_DIR}/Components/GridMovementComponent.cpp"      "${GAME_FILES_DIR}/Components/GridMovementComponent.h"
 
   "${GAME_FILES_DIR}/Commands/PlaySoundCommand.cpp"             "${GAME_FILES_DIR}/Commands/PlaySoundCommand.h"
-  "${GAME_FILES_DIR}/Components/GridMovementComponent.cpp"      "${GAME_FILES_DIR}/Components/GridMovementComponent.h"
   "${GAME_FILES_DIR}/Commands/MovePacmanCommand.cpp"            "${GAME_FILES_DIR}/Commands/MovePacmanCommand.h"
-  "${GAME_FILES_DIR}/Components/DistanceComponent.cpp"          "${GAME_FILES_DIR}/Components/DistanceComponent.h")
+  "${GAME_FILES_DIR}/Observers/SmallPickupObserver.cpp"         "${GAME_FILES_DIR}/Observers/SmallPickupObserver.h"
+)
 
-add_executable(${TARGET_NAME} ${PAC_MAN_SOURCE_FILES} )
+add_executable(${TARGET_NAME} ${PAC_MAN_SOURCE_FILES})
 
 target_include_directories(${TARGET_NAME} PUBLIC ${GAME_FILES_DIR})
 

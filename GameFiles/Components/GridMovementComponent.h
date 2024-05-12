@@ -26,7 +26,7 @@ namespace pacman
 	private:
 		PlayFieldGridComponent* m_PlayFieldGridPtr{ nullptr };
 		amu::TransformComponent* m_TransformPtr{ nullptr };
-		pacman::DistanceComponent* m_DistanceComponentPtr{ nullptr };
+		amu::DistanceComponent* m_DistanceComponentPtr{ nullptr };
 		glm::vec2 m_CurrentDirection{ 0, 0 };
 		glm::vec2 m_NewDirection{ 0, 0 };
 		std::int64_t const m_Speed{ 1 };
