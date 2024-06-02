@@ -18,8 +18,9 @@ set(PAC_MAN_SOURCE_FILES
 
   "${GAME_FILES_DIR}/Commands/PlaySoundCommand.cpp"             "${GAME_FILES_DIR}/Commands/PlaySoundCommand.h"
   "${GAME_FILES_DIR}/Commands/MovePacmanCommand.cpp"            "${GAME_FILES_DIR}/Commands/MovePacmanCommand.h"
-  "${GAME_FILES_DIR}/Observers/SmallPickupObserver.cpp"         "${GAME_FILES_DIR}/Observers/SmallPickupObserver.h"
-           )
+           
+  "GameFiles/Components/SmallPickupCollider.cpp"                "GameFiles/Components/SmallPickupCollider.h"
+  "GameFiles/Components/PacmanCollider.cpp"                "GameFiles/Components/PacmanCollider.h" )
 
 add_executable(${TARGET_NAME} ${PAC_MAN_SOURCE_FILES})
 

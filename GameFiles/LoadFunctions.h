@@ -23,22 +23,23 @@
 #include "Commands/PlaySoundCommand.h"
 #include "Commands/MovePacmanCommand.h"
 
-#include "Observers/SmallPickupObserver.h"
+#include "Components/PacmanCollider.h"
+#include "Components/SmallPickupCollider.h"
 
 #include "Configuration.h"
 
 namespace pacman
 {
 
-	void SpawnSmallPickup(amu::CollisionComponent* pacman, amu::Scene* scenePtr, std::int64_t const& row, std::int64_t const& col)
+	void SpawnSmallPickup(amu::Scene* scenePtr, std::int64_t const& row, std::int64_t const& col)
 	{
 		using namespace config;
 		std::unique_ptr pickupSmallUPtr{ std::make_unique<amu::GameObject>() };
 		pickupSmallUPtr->SetTag("PickupSmall");
 		pickupSmallUPtr->AddComponent<amu::TransformComponent>(pickupSmallUPtr.get(), glm::vec2{ col * CELL_WIDTH + CELL_WIDTH / 2, row * CELL_HEIGHT + CELL_HEIGHT / 2 });
 		pickupSmallUPtr->AddComponent<amu::RenderComponent>(pickupSmallUPtr.get(), "Sprites/EatableSmall.png");
-		pickupSmallUPtr->AddComponent<pacman::SmallPickupObserver>(pickupSmallUPtr.get());
-		pacman->AddObserver(pickupSmallUPtr->GetComponent<pacman::SmallPickupObserver>());
+		pickupSmallUPtr->AddCollider(std::make_unique<SmallPickupCollider>(pickupSmallUPtr.get()));
+		//pickupSmallUPtr->AddComponent<pacman::SmallPickupObserver>(pickupSmallUPtr.get());
 		scenePtr->Add(std::move(pickupSmallUPtr));
 	}
 
@@ -61,7 +62,7 @@ namespace pacman
 		pacmanUPtr->SetTag("Pacman");
 		pacmanUPtr->AddComponent<amu::TransformComponent>(pacmanUPtr.get(), glm::vec2{ x, y });
 		pacmanUPtr->AddComponent<amu::RenderComponent>(pacmanUPtr.get(), "Sprites/Pacman.png");
-		pacmanUPtr->AddComponent<amu::CollisionComponent>(pacmanUPtr.get(), "PickupSmall", pacman::collision::PacmanEatSmall);
+		pacmanUPtr->AddCollider(std::make_unique<PacmanCollider>(pacmanUPtr.get()));
 		pacmanUPtr->AddComponent<GridMovementComponent>(pacmanUPtr.get(), playFieldGridPtr, 100);
 
 		std::unique_ptr upCommandUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), glm::vec2{ 0, -1 })};
@@ -129,7 +130,7 @@ namespace pacman
 				//if small spawn small pickup 
 				if (matches[5] == "small")
 				{
-					SpawnSmallPickup(pacmanCollider, scenePtr, rowIdx, colIdx);
+					SpawnSmallPickup(scenePtr, rowIdx, colIdx);
 				}
 
 				//if big spawn big pickup
