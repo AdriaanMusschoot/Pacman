@@ -37,7 +37,8 @@ namespace pacman
 		pickupSmallUPtr->SetTag("PickupSmall");
 		pickupSmallUPtr->AddComponent<amu::TransformComponent>(pickupSmallUPtr.get(), glm::vec2{ col * CELL_WIDTH + CELL_WIDTH / 2, row * CELL_HEIGHT + CELL_HEIGHT / 2 });
 		pickupSmallUPtr->AddComponent<amu::RenderComponent>(pickupSmallUPtr.get(), "Sprites/EatableSmall.png");
-		pacman->AddObserver(new SmallPickupObserver());
+		pickupSmallUPtr->AddComponent<pacman::SmallPickupObserver>(pickupSmallUPtr.get());
+		pacman->AddObserver(pickupSmallUPtr->GetComponent<pacman::SmallPickupObserver>());
 		scenePtr->Add(std::move(pickupSmallUPtr));
 	}
 

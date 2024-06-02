@@ -1,6 +1,11 @@
 #include "SmallPickupObserver.h"
 
-void pacman::SmallPickupObserver::Notify(amu::IObserver::Event, amu::Subject*) const
+pacman::SmallPickupObserver::SmallPickupObserver(amu::GameObject* ownerPtr)
+	: Component(ownerPtr)
 {
-	std::cout << "Overlapped\n";
+}
+
+void pacman::SmallPickupObserver::Notify(amu::IObserver::Event, amu::Subject* subjectPtr) const
+{
+	std::cout << "This is old and not good";
 }

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PM_FPS_COMPONENT_H
+#define PM_FPS_COMPONENT_H
 #include <string>
 
 #include "Component.h"
@@ -33,3 +34,5 @@ namespace pacman
 
 	};
 }
+
+#endif //PM_FPS_COMPONENT_H

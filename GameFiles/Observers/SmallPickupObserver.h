@@ -3,14 +3,16 @@
 
 #include "IObserver.h"
 #include "Configuration.h"
-
+#include "Component.h"
+#include "GameObject.h"
+#include "Subject.h"
 namespace pacman
 {
 
-	class SmallPickupObserver final :  public amu::IObserver
+	class SmallPickupObserver final : public amu::Component, public amu::IObserver
 	{
 	public:
-		SmallPickupObserver() = default;
+		SmallPickupObserver(amu::GameObject* ownerPtr);
 		~SmallPickupObserver() = default;
 
 		SmallPickupObserver(SmallPickupObserver const&) = delete;
