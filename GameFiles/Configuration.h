@@ -31,8 +31,16 @@ namespace pacman
 
 		using SoundId = int;
 
-		std::pair<SoundId, std::string> const PACMAN_DEATH{ std::make_pair<SoundId, std::string>(0, "Sounds/PacmanChomp.wav") };
-		std::pair<SoundId, std::string> const PACMAN_CHOMP{ std::make_pair<SoundId, std::string>(1, "Sounds/PacmanDeath.wav") };
+		struct SoundRequest
+		{
+			SoundId Id;
+			std::string FilePath;
+			int Volume;
+			int Loops;
+		};
+
+		SoundRequest const PACMAN_CHOMP{ 0, "Sounds/PacmanChomp.wav", 10, -1 };
+		SoundRequest const PACMAN_DEATH{ 1, "Sounds/PacmanDeath.wav", 10, 0 };
 
 	}
 

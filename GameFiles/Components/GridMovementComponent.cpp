@@ -63,6 +63,7 @@ void pacman::GridMovementComponent::ChangeMovementState(glm::vec2 const& newDire
 		and TileReachable(newDirection))
 	{
 		m_CurrentDirection = newDirection;
+		m_NewDirection = glm::vec2{ 0, 0 };
 		return;
 	}
 

@@ -20,7 +20,6 @@
 #include "Components/FPSComponent.h"
 #include "Components/GridMovementComponent.h"
 
-#include "Commands/PlaySoundCommand.h"
 #include "Commands/MovePacmanCommand.h"
 
 #include "Components/PacmanCollider.h"
@@ -63,7 +62,7 @@ namespace pacman
 		pacmanUPtr->AddComponent<amu::TransformComponent>(pacmanUPtr.get(), glm::vec2{ x, y });
 		pacmanUPtr->AddComponent<amu::RenderComponent>(pacmanUPtr.get(), "Sprites/Pacman.png");
 		pacmanUPtr->AddCollider(std::make_unique<PacmanCollider>(pacmanUPtr.get()));
-		pacmanUPtr->AddComponent<GridMovementComponent>(pacmanUPtr.get(), playFieldGridPtr, 100);
+		pacmanUPtr->AddComponent<GridMovementComponent>(pacmanUPtr.get(), playFieldGridPtr, 200);
 
 		std::unique_ptr upCommandUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), glm::vec2{ 0, -1 })};
 		inputManager.AddCommandKeyboard(InpMan::Key::W, InpMan::InputState::Pressed, std::move(upCommandUPtr));
@@ -101,7 +100,7 @@ namespace pacman
 		std::smatch matches{};
 		std::string line{};
 
-		amu::CollisionComponent* pacmanCollider{ LoadPacman(scenePtr, gridLayoutComponent, 36, 36) };
+		amu::CollisionComponent* pacmanColliderPtr{ LoadPacman(scenePtr, gridLayoutComponent, 36, 36) };
 
 		while (std::getline(gridLayoutFile, line))
 		{
@@ -136,7 +135,7 @@ namespace pacman
 				//if big spawn big pickup
 				else if (matches[5] == "big")
 				{
-					SpawnBigPickup(pacmanCollider, scenePtr, rowIdx, colIdx);
+					SpawnBigPickup(pacmanColliderPtr, scenePtr, rowIdx, colIdx);
 				}
 			}
 			else

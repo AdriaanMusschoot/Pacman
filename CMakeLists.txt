@@ -16,7 +16,7 @@ set(PAC_MAN_SOURCE_FILES
   "${GAME_FILES_DIR}/Components/PlayFieldGridComponent.cpp"     "${GAME_FILES_DIR}/Components/PlayFieldGridComponent.h"
   "${GAME_FILES_DIR}/Components/GridMovementComponent.cpp"      "${GAME_FILES_DIR}/Components/GridMovementComponent.h"
 
-  "${GAME_FILES_DIR}/Commands/PlaySoundCommand.cpp"             "${GAME_FILES_DIR}/Commands/PlaySoundCommand.h"
+               
   "${GAME_FILES_DIR}/Commands/MovePacmanCommand.cpp"            "${GAME_FILES_DIR}/Commands/MovePacmanCommand.h"
            
   "GameFiles/Components/SmallPickupCollider.cpp"                "GameFiles/Components/SmallPickupCollider.h"
