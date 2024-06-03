@@ -21,5 +21,5 @@ namespace pacman
 	};
 
 }
-
+ 
 #endif //PM_PACMAN_COLLIDER_H
