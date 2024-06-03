@@ -7,5 +7,4 @@ pacman::PacmanCollider::PacmanCollider(amu::GameObject* ownerObjectPtr)
 
 void pacman::PacmanCollider::OnCollision(amu::CollisionComponent*)
 {
-	std::cout << "Pacman overlapped\n";
 }
