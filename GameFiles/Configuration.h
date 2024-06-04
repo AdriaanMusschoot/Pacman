@@ -6,6 +6,7 @@
 #include <vector>
 #include <iostream>
 #include <execution>
+#include "IObserver.h"
 
 namespace pacman
 {
@@ -26,15 +27,6 @@ namespace pacman
 
 	}
 
-	namespace collision
-	{
-
-		using CollisionType = int;
-
-		CollisionType const PACMAN_EAT_SMALL{ 0 };
-
-	}
-
 	namespace tags
 	{
 
@@ -42,6 +34,13 @@ namespace pacman
 		std::string const PICKUP_SMALL{ "PickupSmall" };
 		std::string const PICKUP_BIG{ "PickupBig" };
 		std::string const BLINKY{ "Blinky" };
+
+	}
+
+	namespace events
+	{
+
+		amu::IObserver::Event constexpr GHOST_INPUT_REQUIRED{ 0 };
 
 	}
 

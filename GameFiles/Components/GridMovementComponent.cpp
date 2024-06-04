@@ -10,7 +10,9 @@ pacman::GridMovementComponent::GridMovementComponent(amu::GameObject * gameObjec
 	, m_TransformPtr{ GetComponentOwner()->GetComponent<amu::TransformComponent>() }
 	, m_Speed{ speed }
 	, m_CurrentTile{ playFieldGridPtr->GetTile(m_TransformPtr->GetWorldPosition()) }
+	, m_Tag{ gameObjectPtr->GetTag() }
 {
+
 }
 
 void pacman::GridMovementComponent::Update()
@@ -31,26 +33,28 @@ void pacman::GridMovementComponent::Update()
 
 	if (IsCentered())
 	{
+		m_TransformPtr->SetLocalPosition(m_CurrentTile.Center);
+		if (m_Tag == pacman::tags::BLINKY and m_CurrentTile.Type == PlayFieldGridComponent::TileType::Crossing)
+		{
+			NotifyObservers(events::GHOST_INPUT_REQUIRED);
+		}
 		if (m_CurrentTile.Type == PlayFieldGridComponent::TileType::Crossing and
 			m_NewDirection != glm::vec2{ 0, 0 } and
 			m_CurrentDirection != m_NewDirection and
 			TileReachable(m_NewDirection))
 		{
-			m_TransformPtr->SetLocalPosition(m_CurrentTile.Center);
 			m_CurrentDirection = m_NewDirection;
 			m_NewDirection = glm::vec2{ 0, 0 };
 			return;
 		}
 		if (not TileReachable(m_CurrentDirection))
 		{
-			m_TransformPtr->SetLocalPosition(m_CurrentTile.Center);
 			m_CurrentDirection = glm::vec2{ 0, 0 };
 			m_NewDirection = glm::vec2{ 0, 0 };
 		}
 		if (m_CurrentTile.Type == PlayFieldGridComponent::TileType::Pathway or
 			m_CurrentTile.Type == PlayFieldGridComponent::TileType::Crossing)
 		{
-			m_TransformPtr->SetLocalPosition(m_CurrentTile.Center);
 			return;
 		}
 	}
@@ -74,6 +78,56 @@ void pacman::GridMovementComponent::ChangeMovementState(glm::vec2 const& newDire
 		m_CurrentDirection = newDirection;
 	}
 	m_NewDirection = newDirection;
+}
+
+std::vector<glm::vec2> pacman::GridMovementComponent::PossibleDirections()
+{
+	std::vector<glm::vec2> possibleDirectionVec{};
+
+	glm::vec2 tileCenter
+	{
+		m_CurrentTile.Center.x,
+		m_CurrentTile.Center.y
+	};
+
+	glm::vec2 nextTile
+	{
+		 m_PlayFieldGridPtr->GetTileDimensions().x,
+		 m_PlayFieldGridPtr->GetTileDimensions().y
+	};
+
+	glm::vec2 up{ 0, -1 };
+	auto& tileUp = m_PlayFieldGridPtr->GetTile(tileCenter + nextTile * up);
+	if (tileUp.Type == PlayFieldGridComponent::TileType::Pathway or
+		tileUp.Type == PlayFieldGridComponent::TileType::Crossing)
+	{
+		possibleDirectionVec.emplace_back(up);
+	}
+
+	glm::vec2 down{ 0, 1 };
+	auto& tileDown = m_PlayFieldGridPtr->GetTile(tileCenter + nextTile * down);
+	if (tileDown.Type == PlayFieldGridComponent::TileType::Pathway or
+		tileDown.Type == PlayFieldGridComponent::TileType::Crossing)
+	{
+		possibleDirectionVec.emplace_back(down);
+	}
+
+	glm::vec2 left{ -1, 0 };
+	auto& tileLeft = m_PlayFieldGridPtr->GetTile(tileCenter + nextTile * left);
+	if (tileLeft.Type == PlayFieldGridComponent::TileType::Pathway or
+		tileLeft.Type == PlayFieldGridComponent::TileType::Crossing)
+	{
+		possibleDirectionVec.emplace_back(left);
+	}
+
+	glm::vec2 right{ 1, 0 };
+	auto& tileRight = m_PlayFieldGridPtr->GetTile(tileCenter + nextTile * right);
+	if (tileRight.Type == PlayFieldGridComponent::TileType::Pathway or
+		tileRight.Type == PlayFieldGridComponent::TileType::Crossing)
+	{
+		possibleDirectionVec.emplace_back(right);
+	}
+	return possibleDirectionVec;
 }
 
 bool pacman::GridMovementComponent::TileReachable(glm::vec2 const& direction) const

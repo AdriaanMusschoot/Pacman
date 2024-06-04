@@ -92,6 +92,7 @@ namespace pacman
 		blinkyUPtr->AddComponent<GridMovementComponent>(blinkyUPtr.get(), playFieldGridPtr, 100);
 		blinkyUPtr->AddComponent<amu::RenderComponent>(blinkyUPtr.get(), resources::sprites::BLINKY);
 		blinkyUPtr->AddComponent<BlinkyAIComponent>(blinkyUPtr.get(), pacmanTransform);
+		blinkyUPtr->GetComponent<GridMovementComponent>()->AddObserver(blinkyUPtr->GetComponent<BlinkyAIComponent>());
 		scenePtr->Add(std::move(blinkyUPtr));
 	}
 

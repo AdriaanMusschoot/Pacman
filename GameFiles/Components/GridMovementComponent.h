@@ -24,6 +24,7 @@ namespace pacman
 
 		void Update() override;
 		void ChangeMovementState(glm::vec2 const& newDirection);
+		std::vector<glm::vec2> PossibleDirections();
 	private:
 		PlayFieldGridComponent* m_PlayFieldGridPtr{ nullptr };
 		amu::TransformComponent* m_TransformPtr{ nullptr };
@@ -33,9 +34,9 @@ namespace pacman
 		glm::vec2 m_PredictedPosition{ 0, 0 };
 		std::int64_t const m_Speed{ 1 };
 		PlayFieldGridComponent::Tile m_CurrentTile{};
+		std::string const m_Tag{};
 		bool TileReachable(glm::vec2 const& direction) const;
 		bool IsCentered() const;
-		void NotifyObserversFromTag() const;
 	};
 
 }
