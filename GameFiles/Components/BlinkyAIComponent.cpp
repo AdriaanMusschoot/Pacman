@@ -7,16 +7,26 @@ pacman::BlinkyAIComponent::BlinkyAIComponent(amu::GameObject* gameObjectPtr, amu
 {
     m_TransformPtr = GetComponentOwner()->GetComponent<amu::TransformComponent>();
     m_GridMovementPtr = GetComponentOwner()->GetComponent<GridMovementComponent>();
-    m_GridMovementPtr->ChangeMovementState(glm::vec2{ 1, 0 });
+    m_GridMovementPtr->ChangeMovementState(config::VEC_LEFT);
 }
 
 void pacman::BlinkyAIComponent::Notify(Event eventType, amu::Subject*)
 {
     if (eventType == pacman::events::GHOST_INPUT_REQUIRED)
     {
-        glm::vec2 const optimalDirection{ GetOptimalDirectionToPacman(m_GridMovementPtr->PossibleDirections()) };
-        m_GridMovementPtr->ChangeMovementState(optimalDirection);
-        m_PreviousDirection = optimalDirection;
+        std::vector<glm::vec2> possibleDirectionVec{ m_GridMovementPtr->PossibleDirections() };
+        glm::vec2 const optimalDirection{ GetOptimalDirectionToPacman(possibleDirectionVec) };
+        if (optimalDirection != config::VEC_INVALID)
+        {
+            m_GridMovementPtr->ChangeMovementState(optimalDirection);
+            m_PreviousDirection = optimalDirection;
+        }
+        else
+        {
+            auto& safetyDirection = possibleDirectionVec[0];
+            m_GridMovementPtr->ChangeMovementState(safetyDirection);
+            m_PreviousDirection = safetyDirection;
+        }
     }
 }
 
@@ -57,7 +67,7 @@ glm::vec2 pacman::BlinkyAIComponent::GetOptimalDirectionToPacman(std::vector<glm
             return preferredDirection;
         }
     }
-    return glm::vec2{ -1, -1 };
+    return config::VEC_INVALID;
 }
 
 pacman::BlinkyAIComponent::Axis pacman::BlinkyAIComponent::GetOptimalAxis(float deltaX, float deltaY) const
@@ -74,29 +84,24 @@ pacman::BlinkyAIComponent::Axis pacman::BlinkyAIComponent::GetOptimalAxis(float 
 
 glm::vec2 pacman::BlinkyAIComponent::GetOptimalHorizontalDirection(float deltaX) const
 {
-    glm::vec2 left{ -1, 0 };
-    glm::vec2 right{ 1, 0 };
-
     if (deltaX > 0)
     {
-        return right;
+        return config::VEC_RIGHT;
     }
     else 
     {
-        return left;
+        return config::VEC_LEFT;
     }
 }
 
 glm::vec2 pacman::BlinkyAIComponent::GetOptimalVerticalDirection(float deltaY) const
 {
-    glm::vec2 up{ 0, -1 };
-    glm::vec2 down{ 0, 1 };
     if (deltaY > 0)
     {
-        return down;
+        return config::VEC_DOWN;
     }
     else
     {
-        return up;
+        return config::VEC_UP;
     }
 }

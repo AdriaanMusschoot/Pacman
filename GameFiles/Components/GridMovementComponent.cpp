@@ -39,18 +39,18 @@ void pacman::GridMovementComponent::Update()
 			NotifyObservers(events::GHOST_INPUT_REQUIRED);
 		}
 		if (m_CurrentTile.Type == PlayFieldGridComponent::TileType::Crossing and
-			m_NewDirection != glm::vec2{ 0, 0 } and
+			m_NewDirection != config::VEC_NEUTRAL and
 			m_CurrentDirection != m_NewDirection and
 			TileReachable(m_NewDirection))
 		{
 			m_CurrentDirection = m_NewDirection;
-			m_NewDirection = glm::vec2{ 0, 0 };
+			m_NewDirection = config::VEC_NEUTRAL;
 			return;
 		}
 		if (not TileReachable(m_CurrentDirection))
 		{
-			m_CurrentDirection = glm::vec2{ 0, 0 };
-			m_NewDirection = glm::vec2{ 0, 0 };
+			m_CurrentDirection = config::VEC_NEUTRAL;
+			m_NewDirection = config::VEC_NEUTRAL;
 		}
 		if (m_CurrentTile.Type == PlayFieldGridComponent::TileType::Pathway or
 			m_CurrentTile.Type == PlayFieldGridComponent::TileType::Crossing)
@@ -65,11 +65,11 @@ void pacman::GridMovementComponent::Update()
 void pacman::GridMovementComponent::ChangeMovementState(glm::vec2 const& newDirection)
 {	
 	//if Idling go immedeatly no need to wait until you are on the a crossing tile
-	if (m_CurrentDirection == glm::vec2{ 0, 0 } 
+	if (m_CurrentDirection == config::VEC_NEUTRAL 
 		and TileReachable(newDirection))
 	{
 		m_CurrentDirection = newDirection;
-		m_NewDirection = glm::vec2{ 0, 0 };
+		m_NewDirection = config::VEC_NEUTRAL;
 		return;
 	}
 
@@ -96,36 +96,32 @@ std::vector<glm::vec2> pacman::GridMovementComponent::PossibleDirections()
 		 m_PlayFieldGridPtr->GetTileDimensions().y
 	};
 
-	glm::vec2 up{ 0, -1 };
-	auto& tileUp = m_PlayFieldGridPtr->GetTile(tileCenter + nextTile * up);
+	auto& tileUp = m_PlayFieldGridPtr->GetTile(tileCenter + nextTile * config::VEC_UP);
 	if (tileUp.Type == PlayFieldGridComponent::TileType::Pathway or
 		tileUp.Type == PlayFieldGridComponent::TileType::Crossing)
 	{
-		possibleDirectionVec.emplace_back(up);
+		possibleDirectionVec.emplace_back(config::VEC_UP);
 	}
 
-	glm::vec2 down{ 0, 1 };
-	auto& tileDown = m_PlayFieldGridPtr->GetTile(tileCenter + nextTile * down);
+	auto& tileDown = m_PlayFieldGridPtr->GetTile(tileCenter + nextTile * config::VEC_DOWN);
 	if (tileDown.Type == PlayFieldGridComponent::TileType::Pathway or
 		tileDown.Type == PlayFieldGridComponent::TileType::Crossing)
 	{
-		possibleDirectionVec.emplace_back(down);
+		possibleDirectionVec.emplace_back(config::VEC_DOWN);
 	}
 
-	glm::vec2 left{ -1, 0 };
-	auto& tileLeft = m_PlayFieldGridPtr->GetTile(tileCenter + nextTile * left);
+	auto& tileLeft = m_PlayFieldGridPtr->GetTile(tileCenter + nextTile * config::VEC_LEFT);
 	if (tileLeft.Type == PlayFieldGridComponent::TileType::Pathway or
 		tileLeft.Type == PlayFieldGridComponent::TileType::Crossing)
 	{
-		possibleDirectionVec.emplace_back(left);
+		possibleDirectionVec.emplace_back(config::VEC_LEFT);
 	}
 
-	glm::vec2 right{ 1, 0 };
-	auto& tileRight = m_PlayFieldGridPtr->GetTile(tileCenter + nextTile * right);
+	auto& tileRight = m_PlayFieldGridPtr->GetTile(tileCenter + nextTile * config::VEC_RIGHT);
 	if (tileRight.Type == PlayFieldGridComponent::TileType::Pathway or
 		tileRight.Type == PlayFieldGridComponent::TileType::Crossing)
 	{
-		possibleDirectionVec.emplace_back(right);
+		possibleDirectionVec.emplace_back(config::VEC_RIGHT);
 	}
 	return possibleDirectionVec;
 }
@@ -150,23 +146,7 @@ bool pacman::GridMovementComponent::TileReachable(glm::vec2 const& direction) co
 
 bool pacman::GridMovementComponent::IsCentered() const
 {
-	if (m_CurrentDirection == glm::vec2{ 1, 0 })
-	{
-		if (m_OldPosition.x < m_CurrentTile.Center.x and
-			m_PredictedPosition.x > m_CurrentTile.Center.x)
-		{
-			return true;
-		}
-	}
-	if (m_CurrentDirection == glm::vec2{ -1, 0 })
-	{
-		if (m_OldPosition.x > m_CurrentTile.Center.x and
-			m_PredictedPosition.x < m_CurrentTile.Center.x)
-		{
-			return true;
-		}
-	}
-	if (m_CurrentDirection == glm::vec2{ 0, 1 })
+	if (m_CurrentDirection == config::VEC_DOWN)
 	{
 		if (m_OldPosition.y < m_CurrentTile.Center.y and
 			m_PredictedPosition.y > m_CurrentTile.Center.y)
@@ -174,10 +154,26 @@ bool pacman::GridMovementComponent::IsCentered() const
 			return true;
 		}
 	}
-	if (m_CurrentDirection == glm::vec2{ 0, -1 })
+	if (m_CurrentDirection == config::VEC_UP)
 	{
 		if (m_OldPosition.y > m_CurrentTile.Center.y and
 			m_PredictedPosition.y < m_CurrentTile.Center.y)
+		{
+			return true;
+		}
+	}
+	if (m_CurrentDirection == config::VEC_RIGHT)
+	{
+		if (m_OldPosition.x < m_CurrentTile.Center.x and
+			m_PredictedPosition.x > m_CurrentTile.Center.x)
+		{
+			return true;
+		}
+	}
+	if (m_CurrentDirection == config::VEC_LEFT)
+	{
+		if (m_OldPosition.x > m_CurrentTile.Center.x and
+			m_PredictedPosition.x < m_CurrentTile.Center.x)
 		{
 			return true;
 		}

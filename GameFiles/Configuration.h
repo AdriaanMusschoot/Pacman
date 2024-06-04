@@ -7,6 +7,7 @@
 #include <iostream>
 #include <execution>
 #include "IObserver.h"
+#include <glm/glm.hpp>
 
 namespace pacman
 {
@@ -24,6 +25,13 @@ namespace pacman
 					  
 		int constexpr CELL_WIDTH{ WINDOW_WIDTH / COLS_GRID };
 		int constexpr CELL_HEIGHT{ WINDOW_HEIGHT / ROWS_GRID };
+
+		glm::vec2 const VEC_UP{ 0, -1 };
+		glm::vec2 const VEC_DOWN{ 0, 1 };
+		glm::vec2 const VEC_LEFT{ -1, 0 };
+		glm::vec2 const VEC_RIGHT{ 1, 0 };
+		glm::vec2 const VEC_NEUTRAL{ 0, 0 };
+		glm::vec2 const VEC_INVALID{ -1, -1 };
 
 	}
 

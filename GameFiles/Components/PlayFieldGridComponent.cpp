@@ -20,11 +20,6 @@ pacman::PlayFieldGridComponent::PlayFieldGridComponent(amu::GameObject* ownerObj
 
 void pacman::PlayFieldGridComponent::SetTileType(std::int64_t const& rowIdx, std::int64_t const& colIdx, std::string_view const& typeString)
 {
-	//std::cout	<< "[" << rowIdx << ", " << colIdx 
-	//			<< "] = " << typeString 
-	//			<< ", top left is: " << m_TileVec[GetIndex(rowIdx, colIdx)].TopLeft.x << ", " << m_TileVec[GetIndex(rowIdx, colIdx)].TopLeft.y
-	//			<< "\n";
-
 	if (typeString == "pathway")
 	{
 		m_TileVec[GetIndex(rowIdx, colIdx)].Type = TileType::Pathway;
