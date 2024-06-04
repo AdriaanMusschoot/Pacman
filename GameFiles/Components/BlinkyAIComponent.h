@@ -30,7 +30,9 @@ namespace pacman
 
 		glm::vec2 m_PreviousDirection{ 0, 0 };
 		
-		glm::vec2 GetOptimalDirectionToPacman(std::vector<glm::vec2> const& possibleDirections) const;
+		std::vector<glm::vec2> m_PreferredDirectionVec{ 4 };
+
+		glm::vec2 const& GetOptimalDirectionToPacman(std::vector<glm::vec2> const& possibleDirections);
 
 		enum class Axis
 		{

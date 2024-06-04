@@ -15,7 +15,7 @@ void pacman::BlinkyAIComponent::Notify(Event eventType, amu::Subject*)
     if (eventType == pacman::events::GHOST_INPUT_REQUIRED)
     {
         std::vector<glm::vec2> possibleDirectionVec{ m_GridMovementPtr->PossibleDirections() };
-        glm::vec2 const optimalDirection{ GetOptimalDirectionToPacman(possibleDirectionVec) };
+        glm::vec2 const& optimalDirection{ GetOptimalDirectionToPacman(possibleDirectionVec) };
         if (optimalDirection != config::VEC_INVALID)
         {
             m_GridMovementPtr->ChangeMovementState(optimalDirection);
@@ -30,29 +30,28 @@ void pacman::BlinkyAIComponent::Notify(Event eventType, amu::Subject*)
     }
 }
 
-glm::vec2 pacman::BlinkyAIComponent::GetOptimalDirectionToPacman(std::vector<glm::vec2> const& possibleDirections) const
+glm::vec2 const& pacman::BlinkyAIComponent::GetOptimalDirectionToPacman(std::vector<glm::vec2> const& possibleDirections)
 {
 	auto& pacmanPosition = m_PacmanTransformPtr->GetWorldPosition();
     auto& ghostPosition = m_TransformPtr->GetWorldPosition();
     float deltaX = pacmanPosition.x - ghostPosition.x;
     float deltaY = pacmanPosition.y - ghostPosition.y;
 
-    std::vector<glm::vec2> preferredDirectionVec{};
     if (GetOptimalAxis(deltaX, deltaY) == Axis::X)
     {
-        preferredDirectionVec.emplace_back(GetOptimalHorizontalDirection(deltaX));
-        preferredDirectionVec.emplace_back(GetOptimalVerticalDirection(deltaY));
-        preferredDirectionVec.emplace_back(-GetOptimalHorizontalDirection(deltaX));
-        preferredDirectionVec.emplace_back(-GetOptimalVerticalDirection(deltaY));
-    }
+        m_PreferredDirectionVec[0] = (GetOptimalHorizontalDirection(deltaX));
+        m_PreferredDirectionVec[1] = (GetOptimalVerticalDirection(deltaY));
+        m_PreferredDirectionVec[2] = (-GetOptimalHorizontalDirection(deltaX));
+        m_PreferredDirectionVec[3] = (-GetOptimalVerticalDirection(deltaY));
+    }   
     else
     {
-        preferredDirectionVec.emplace_back(GetOptimalVerticalDirection(deltaY));
-        preferredDirectionVec.emplace_back(GetOptimalHorizontalDirection(deltaX));
-        preferredDirectionVec.emplace_back(-GetOptimalVerticalDirection(deltaY));
-        preferredDirectionVec.emplace_back(-GetOptimalHorizontalDirection(deltaX));
+        m_PreferredDirectionVec[0] = (GetOptimalVerticalDirection(deltaY));
+        m_PreferredDirectionVec[1] = (GetOptimalHorizontalDirection(deltaX));
+        m_PreferredDirectionVec[2] = (-GetOptimalVerticalDirection(deltaY));
+        m_PreferredDirectionVec[3] = (-GetOptimalHorizontalDirection(deltaX));
     }
-    for (glm::vec2 const& preferredDirection : preferredDirectionVec)
+    for (glm::vec2 const& preferredDirection : m_PreferredDirectionVec)
     {
         if (preferredDirection == -m_PreviousDirection)
         {
