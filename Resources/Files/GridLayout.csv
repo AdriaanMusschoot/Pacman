@@ -321,7 +321,7 @@ idx,rowidx,colidx,tiletype,pickup
 319,11,11,pathway,none
 320,11,12,crossing,none
 321,11,13,pathway,none
-322,11,14,pathway,none
+322,11,14,pathway,blinky
 323,11,15,crossing,none
 324,11,16,pathway,none
 325,11,17,pathway,none

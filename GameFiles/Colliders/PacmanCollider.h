@@ -56,10 +56,10 @@ namespace pacman
 		PacmanCollider(amu::GameObject* ownerObjectPtr);
 		virtual ~PacmanCollider() override = default;
 
-		PacmanCollider(PacmanCollider const& other) = delete;
-		PacmanCollider(PacmanCollider&& other) = delete;
-		PacmanCollider& operator=(PacmanCollider const& other) = delete;
-		PacmanCollider& operator=(PacmanCollider&& other) = delete;
+		PacmanCollider(PacmanCollider const&) = delete;
+		PacmanCollider(PacmanCollider&&) = delete;
+		PacmanCollider& operator=(PacmanCollider const&) = delete;
+		PacmanCollider& operator=(PacmanCollider&&) = delete;
 
 		void Update() override;
 

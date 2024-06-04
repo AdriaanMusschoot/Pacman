@@ -6,20 +6,21 @@
 #include "PlayFieldGridComponent.h"
 #include "TransformComponent.h"
 #include "DistanceComponent.h"
+#include "Subject.h"
 
 namespace pacman
 {
 
-	class GridMovementComponent final : public amu::Component
+	class GridMovementComponent final : public amu::Component, public amu::Subject
 	{
 	public:
 		GridMovementComponent(amu::GameObject* gameObjectPtr, PlayFieldGridComponent* playFieldGridPtr, std::int64_t const& speed);
 		virtual ~GridMovementComponent() override = default;
 
-		GridMovementComponent(GridMovementComponent const& other) = delete;
-		GridMovementComponent(GridMovementComponent&& other) = delete;
-		GridMovementComponent& operator=(GridMovementComponent const& other) = delete;
-		GridMovementComponent& operator=(GridMovementComponent&& other) = delete;
+		GridMovementComponent(GridMovementComponent const&) = delete;
+		GridMovementComponent(GridMovementComponent&&) = delete;
+		GridMovementComponent& operator=(GridMovementComponent const&) = delete;
+		GridMovementComponent& operator=(GridMovementComponent&&) = delete;
 
 		void Update() override;
 		void ChangeMovementState(glm::vec2 const& newDirection);
@@ -34,6 +35,7 @@ namespace pacman
 		PlayFieldGridComponent::Tile m_CurrentTile{};
 		bool TileReachable(glm::vec2 const& direction) const;
 		bool IsCentered() const;
+		void NotifyObserversFromTag() const;
 	};
 
 }

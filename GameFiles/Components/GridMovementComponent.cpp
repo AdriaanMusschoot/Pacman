@@ -5,6 +5,7 @@
 
 pacman::GridMovementComponent::GridMovementComponent(amu::GameObject * gameObjectPtr, PlayFieldGridComponent* playFieldGridPtr, std::int64_t const& speed)
 	: amu::Component(gameObjectPtr)
+	, amu::Subject(gameObjectPtr)
 	, m_PlayFieldGridPtr{ playFieldGridPtr }
 	, m_TransformPtr{ GetComponentOwner()->GetComponent<amu::TransformComponent>() }
 	, m_Speed{ speed }
@@ -44,6 +45,7 @@ void pacman::GridMovementComponent::Update()
 		{
 			m_TransformPtr->SetLocalPosition(m_CurrentTile.Center);
 			m_CurrentDirection = glm::vec2{ 0, 0 };
+			m_NewDirection = glm::vec2{ 0, 0 };
 		}
 		if (m_CurrentTile.Type == PlayFieldGridComponent::TileType::Pathway or
 			m_CurrentTile.Type == PlayFieldGridComponent::TileType::Crossing)

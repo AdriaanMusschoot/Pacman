@@ -14,10 +14,10 @@ namespace pacman
 		FPSComponent(amu::GameObject * ownerObjectPtr);
 		virtual ~FPSComponent() override = default;
 	
-		FPSComponent(FPSComponent const& other) = delete;
-		FPSComponent(FPSComponent&& other) = delete;
-		FPSComponent& operator=(FPSComponent const& other) = delete;
-		FPSComponent& operator=(FPSComponent&& other) = delete;
+		FPSComponent(FPSComponent const&) = delete;
+		FPSComponent(FPSComponent&&) = delete;
+		FPSComponent& operator=(FPSComponent const&) = delete;
+		FPSComponent& operator=(FPSComponent&&) = delete;
 	
 		void Update() override;
 	private:

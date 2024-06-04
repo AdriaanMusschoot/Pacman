@@ -11,10 +11,10 @@ namespace pacman
 		SmallPickupCollider(amu::GameObject* ownerObjectPtr);
 		virtual ~SmallPickupCollider() override = default;
 
-		SmallPickupCollider(SmallPickupCollider const& other) = delete;
-		SmallPickupCollider(SmallPickupCollider&& other) = delete;
-		SmallPickupCollider& operator=(SmallPickupCollider const& other) = delete;
-		SmallPickupCollider& operator=(SmallPickupCollider&& other) = delete;
+		SmallPickupCollider(SmallPickupCollider const&) = delete;
+		SmallPickupCollider(SmallPickupCollider&&) = delete;
+		SmallPickupCollider& operator=(SmallPickupCollider const&) = delete;
+		SmallPickupCollider& operator=(SmallPickupCollider&&) = delete;
 
 		void OnCollision(amu::CollisionComponent* otherCollider) override;
 	private:
