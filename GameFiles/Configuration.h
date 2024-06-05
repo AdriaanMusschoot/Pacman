@@ -51,6 +51,7 @@ namespace pacman
 		amu::IObserver::Event constexpr GHOST_INPUT_REQUIRED{ 0 };
 		amu::IObserver::Event constexpr PACMAN_EAT_SMALL_PICKUP{ 1 };
 		amu::IObserver::Event constexpr PACMAN_EAT_BIG_PICKUP{ 2 };
+		amu::IObserver::Event constexpr GRID_DIRECTION_CHANGES{ 3 };
 	}
 
 	namespace resources
@@ -59,11 +60,18 @@ namespace pacman
 		namespace sprites
 		{
 
-			std::string const PACMAN{ "Sprites/Pacman.png" };
-			std::string const PICKUP_SMALL{ "Sprites/EatableSmall.png" };
-			std::string const PICKUP_BIG{ "Sprites/EatableBig.png" };
-			std::string const PLAYINGFIELD{ "Sprites/PlayingField.png" };
-			std::string const BLINKY{ "Sprites/Blinky.png" };
+			struct SpriteData
+			{
+				std::string const FilePath;
+				int const Rows;
+				int const Cols;
+			};
+
+			SpriteData const PACMAN{ "Sprites/Pacman.png", 1, 1 };
+			SpriteData const PICKUP_SMALL{ "Sprites/EatableSmall.png", 1, 1 };
+			SpriteData const PICKUP_BIG{ "Sprites/EatableBig.png", 1, 1 };
+			SpriteData const PLAYINGFIELD{ "Sprites/PlayingField.png", 1, 1 };
+			SpriteData const BLINKY{ "Sprites/Blinky.png", 1, 8 };
 
 		}
 

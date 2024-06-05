@@ -3,6 +3,7 @@
 #include "GameTime.h"
 pacman::BlinkyAIComponent::BlinkyAIComponent(amu::GameObject* gameObjectPtr, amu::TransformComponent* pacmanTransformPtr)
 	: Component(gameObjectPtr)
+    , Subject(gameObjectPtr)
 	, m_PacmanTransformPtr{ pacmanTransformPtr }
 {
     m_TransformPtr = GetComponentOwner()->GetComponent<amu::TransformComponent>();
@@ -118,6 +119,10 @@ pacman::BaseGhostState* pacman::HuntPacmanState::HandleEvent(BlinkyAIComponent* 
     {
         return ownerPtr->GetState<AvoidPacmanState>();
     }
+    if (eventType == events::GRID_DIRECTION_CHANGES)
+    {
+        ownerPtr->NotifyObservers(events::GRID_DIRECTION_CHANGES);
+    }
     return nullptr;
 }
 
@@ -188,9 +193,12 @@ pacman::BaseGhostState* pacman::AvoidPacmanState::HandleOverlap(BlinkyAIComponen
     return nullptr;
 }
 
-pacman::BaseGhostState* pacman::AvoidPacmanState::HandleEvent(BlinkyAIComponent*, amu::IObserver::Event, amu::Subject*)
+pacman::BaseGhostState* pacman::AvoidPacmanState::HandleEvent(BlinkyAIComponent*, amu::IObserver::Event eventType, amu::Subject*)
 {
-    m_Timer = 0.0;
+    if (eventType == events::PACMAN_EAT_BIG_PICKUP)
+    {
+        m_Timer = 0.0;
+    }
     return nullptr;
 }
 

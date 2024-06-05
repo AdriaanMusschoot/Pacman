@@ -45,6 +45,7 @@ void pacman::GridMovementComponent::Update()
 		{
 			m_CurrentDirection = m_NewDirection;
 			m_NewDirection = config::VEC_NEUTRAL;
+			NotifyObservers(events::GRID_DIRECTION_CHANGES);
 			return;
 		}
 		if (not TileReachable(m_CurrentDirection))
@@ -124,6 +125,11 @@ std::vector<glm::vec2> pacman::GridMovementComponent::PossibleDirections()
 		possibleDirectionVec.emplace_back(config::VEC_RIGHT);
 	}
 	return possibleDirectionVec;
+}
+
+glm::vec2 const& pacman::GridMovementComponent::GetCurrentDirection() const
+{
+	return m_CurrentDirection;
 }
 
 bool pacman::GridMovementComponent::TileReachable(glm::vec2 const& direction) const

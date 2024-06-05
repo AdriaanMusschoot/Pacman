@@ -15,14 +15,15 @@ set(PAC_MAN_SOURCE_FILES
   "${GAME_FILES_DIR}/Components/FPSComponent.cpp"               "${GAME_FILES_DIR}/Components/FPSComponent.h"
   "${GAME_FILES_DIR}/Components/PlayFieldGridComponent.cpp"     "${GAME_FILES_DIR}/Components/PlayFieldGridComponent.h"
   "${GAME_FILES_DIR}/Components/GridMovementComponent.cpp"      "${GAME_FILES_DIR}/Components/GridMovementComponent.h"
-
+  "${GAME_FILES_DIR}/Components/BlinkyAIComponent.cpp"          "${GAME_FILES_DIR}/Components/BlinkyAIComponent.h"  
                
   "${GAME_FILES_DIR}/Commands/MovePacmanCommand.cpp"            "${GAME_FILES_DIR}/Commands/MovePacmanCommand.h"
            
-  "GameFiles/Colliders/SmallPickupCollider.cpp"                 "GameFiles/Colliders/SmallPickupCollider.h"
-  "GameFiles/Colliders/BigPickupCollider.cpp"                   "GameFiles/Colliders/BigPickupCollider.h"
-  "GameFiles/Colliders/PacmanCollider.cpp"                      "GameFiles/Colliders/PacmanCollider.h" 
-  "${GAME_FILES_DIR}/Components/BlinkyAIComponent.cpp"          "${GAME_FILES_DIR}/Components/BlinkyAIComponent.h" )
+  "${GAME_FILES_DIR}/Colliders/SmallPickupCollider.cpp"         "${GAME_FILES_DIR}/Colliders/SmallPickupCollider.h"
+  "${GAME_FILES_DIR}/Colliders/BigPickupCollider.cpp"           "${GAME_FILES_DIR}/Colliders/BigPickupCollider.h"
+  "${GAME_FILES_DIR}/Colliders/PacmanCollider.cpp"              "${GAME_FILES_DIR}/Colliders/PacmanCollider.h" 
+
+  "${GAME_FILES_DIR}/Animations/GhostAnimationComponent.h"      "${GAME_FILES_DIR}/Animations/GhostAnimationComponent.cpp")
 
 add_executable(${TARGET_NAME} ${PAC_MAN_SOURCE_FILES})
 

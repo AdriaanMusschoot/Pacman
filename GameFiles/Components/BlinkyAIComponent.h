@@ -75,7 +75,7 @@ namespace pacman
 		double m_MaxTime{ 10.0 };
 	};
 
-	class BlinkyAIComponent final : public amu::Component, public amu::IObserver
+	class BlinkyAIComponent final : public amu::Component, public amu::IObserver, public amu::Subject
 	{
 	public:
 

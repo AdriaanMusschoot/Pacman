@@ -25,6 +25,7 @@ namespace pacman
 		void Update() override;
 		void ChangeMovementState(glm::vec2 const& newDirection);
 		std::vector<glm::vec2> PossibleDirections();
+		glm::vec2 const& GetCurrentDirection() const;
 	private:
 		PlayFieldGridComponent* m_PlayFieldGridPtr{ nullptr };
 		amu::TransformComponent* m_TransformPtr{ nullptr };
