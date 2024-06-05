@@ -23,6 +23,7 @@
 
 #include "Colliders/PacmanCollider.h"
 #include "Colliders/SmallPickupCollider.h"
+#include "Colliders/BigPickupCollider.h"
 
 #include "Commands/MovePacmanCommand.h"
 
@@ -49,10 +50,11 @@ namespace pacman
 		pickupBigUPtr->SetTag(pacman::tags::PICKUP_BIG);
 		pickupBigUPtr->AddComponent<amu::TransformComponent>(pickupBigUPtr.get(), glm::vec2{ col * CELL_WIDTH + CELL_WIDTH / 2, row * CELL_HEIGHT + CELL_HEIGHT / 2 });
 		pickupBigUPtr->AddComponent<amu::RenderComponent>(pickupBigUPtr.get(), resources::sprites::PICKUP_BIG);
+		pickupBigUPtr->AddCollider(std::make_unique<BigPickupCollider>(pickupBigUPtr.get()));
 		scenePtr->Add(std::move(pickupBigUPtr));
 	}
 
-	amu::TransformComponent* LoadPacman(amu::Scene* scenePtr, PlayFieldGridComponent* playFieldGridPtr, float x, float y)
+	amu::GameObject* LoadPacman(amu::Scene* scenePtr, PlayFieldGridComponent* playFieldGridPtr, float x, float y)
 	{
 		using InpMan = amu::InputManager;
 		auto& inputManager = InpMan::GetInstance();
@@ -62,7 +64,7 @@ namespace pacman
 		pacmanUPtr->AddComponent<amu::TransformComponent>(pacmanUPtr.get(), glm::vec2{ x, y });
 		pacmanUPtr->AddComponent<amu::RenderComponent>(pacmanUPtr.get(), resources::sprites::PACMAN);
 		pacmanUPtr->AddCollider(std::make_unique<PacmanCollider>(pacmanUPtr.get()));
-		pacmanUPtr->AddComponent<GridMovementComponent>(pacmanUPtr.get(), playFieldGridPtr, 200);
+		pacmanUPtr->AddComponent<GridMovementComponent>(pacmanUPtr.get(), playFieldGridPtr, 100);
 
 		std::unique_ptr upCommandUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), config::VEC_UP)};
 		inputManager.AddCommandKeyboard(InpMan::Key::W, InpMan::InputState::Pressed, std::move(upCommandUPtr));
@@ -76,14 +78,14 @@ namespace pacman
 		std::unique_ptr rightCommandUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), config::VEC_RIGHT) };
 		inputManager.AddCommandKeyboard(InpMan::Key::D, InpMan::InputState::Pressed, std::move(rightCommandUPtr));
 
-		amu::TransformComponent* temp{ pacmanUPtr->GetComponent<amu::TransformComponent>() };
+		amu::GameObject* pacmanPtr{ pacmanUPtr.get() };
 
 		scenePtr->Add(std::move(pacmanUPtr));
 
-		return temp;
+		return pacmanPtr;
 	}
 
-	void SpawnBlinky(amu::Scene* scenePtr, PlayFieldGridComponent* playFieldGridPtr, amu::TransformComponent* pacmanTransform, std::int64_t const& row, std::int64_t const& col)
+	void SpawnBlinky(amu::Scene* scenePtr, PlayFieldGridComponent* playFieldGridPtr, amu::GameObject* pacmanPtr, std::int64_t const& row, std::int64_t const& col)
 	{
 		using namespace config;
 		std::unique_ptr blinkyUPtr{ std::make_unique<amu::GameObject>() };
@@ -91,8 +93,10 @@ namespace pacman
 		blinkyUPtr->AddComponent<amu::TransformComponent>(blinkyUPtr.get(), glm::vec2{ col * CELL_WIDTH, row * CELL_HEIGHT + CELL_HEIGHT / 2 });
 		blinkyUPtr->AddComponent<GridMovementComponent>(blinkyUPtr.get(), playFieldGridPtr, 100);
 		blinkyUPtr->AddComponent<amu::RenderComponent>(blinkyUPtr.get(), resources::sprites::BLINKY);
-		blinkyUPtr->AddComponent<BlinkyAIComponent>(blinkyUPtr.get(), pacmanTransform);
+		blinkyUPtr->AddComponent<BlinkyAIComponent>(blinkyUPtr.get(), pacmanPtr->GetComponent<amu::TransformComponent>());
 		blinkyUPtr->GetComponent<GridMovementComponent>()->AddObserver(blinkyUPtr->GetComponent<BlinkyAIComponent>());
+		PacmanCollider* pmColliderPtr{ dynamic_cast<PacmanCollider*>(pacmanPtr->GetCollider()) };
+		pmColliderPtr->AddObserver(blinkyUPtr->GetComponent<BlinkyAIComponent>());
 		scenePtr->Add(std::move(blinkyUPtr));
 	}
 
@@ -113,7 +117,7 @@ namespace pacman
 		std::smatch matches{};
 		std::string line{};
 
-		amu::TransformComponent* pacmanTransformPtr{ LoadPacman(scenePtr, gridLayoutComponent, 36, 36) };
+		amu::GameObject* pacmanPtr{ LoadPacman(scenePtr, gridLayoutComponent, 36, 36) };
 
 		while (std::getline(gridLayoutFile, line))
 		{
@@ -153,7 +157,7 @@ namespace pacman
 
 				else if (matches[5] == rgx::BLINKY_SPAWN)
 				{
-					SpawnBlinky(scenePtr, gridLayoutComponent, pacmanTransformPtr, rowIdx, colIdx);
+					SpawnBlinky(scenePtr, gridLayoutComponent, pacmanPtr, rowIdx, colIdx);
 				}
 			}
 			else

@@ -6,21 +6,21 @@
 namespace pacman
 {
 
-	class BaseStateSmallPickupOverlap
+	class BaseStatePickupOverlap
 	{
 	public:
-		BaseStateSmallPickupOverlap() = default;
-		virtual ~BaseStateSmallPickupOverlap() = default;
+		BaseStatePickupOverlap() = default;
+		virtual ~BaseStatePickupOverlap() = default;
 
 		virtual void OnEnter() = 0;
 		virtual void OnExit() = 0;
 
-		virtual std::unique_ptr<BaseStateSmallPickupOverlap> Update(double elapsedSec) = 0;
-		virtual std::unique_ptr<BaseStateSmallPickupOverlap> HandleOverlap() = 0;
+		virtual std::unique_ptr<BaseStatePickupOverlap> Update(double elapsedSec) = 0;
+		virtual std::unique_ptr<BaseStatePickupOverlap> HandleOverlap() = 0;
 	private:
 	};
 
-	class WaitingStateSmallPickupOverlap final : public BaseStateSmallPickupOverlap
+	class WaitingStateSmallPickupOverlap final : public BaseStatePickupOverlap
 	{
 	public:
 		WaitingStateSmallPickupOverlap() = default;
@@ -29,12 +29,12 @@ namespace pacman
 		void OnExit() override {}
 		void OnEnter() override {}
 
-		std::unique_ptr<BaseStateSmallPickupOverlap> Update(double elapsedSec) override;
-		std::unique_ptr<BaseStateSmallPickupOverlap> HandleOverlap() override;;
+		std::unique_ptr<BaseStatePickupOverlap> Update(double elapsedSec) override;
+		std::unique_ptr<BaseStatePickupOverlap> HandleOverlap() override;;
 	private:
 	};
 
-	class HasEatenStateSmallPickupOverlap final : public BaseStateSmallPickupOverlap
+	class HasEatenStateSmallPickupOverlap final : public BaseStatePickupOverlap
 	{
 	public:
 		HasEatenStateSmallPickupOverlap() = default;
@@ -43,11 +43,11 @@ namespace pacman
 		void OnEnter() override;
 		void OnExit() override;
 
-		std::unique_ptr<BaseStateSmallPickupOverlap> Update(double elapsedSec) override;
-		std::unique_ptr<BaseStateSmallPickupOverlap> HandleOverlap() override;;
+		std::unique_ptr<BaseStatePickupOverlap> Update(double elapsedSec) override;
+		std::unique_ptr<BaseStatePickupOverlap> HandleOverlap() override;;
 	private:
 		double m_Timer{};
-		double m_MaxTime{ 0.6 };
+		double m_MaxTime{ 0.3 };
 	};
 
 	class PacmanCollider final : public amu::CollisionComponent, public amu::Subject
@@ -65,7 +65,7 @@ namespace pacman
 
 		void OnCollision(amu::CollisionComponent* otherCollider) override;
 	private:
-		std::unique_ptr<BaseStateSmallPickupOverlap> m_StateSmallPickupUPtr{};
+		std::unique_ptr<BaseStatePickupOverlap> m_StatePickupUPtr{};
 	};
 
 }

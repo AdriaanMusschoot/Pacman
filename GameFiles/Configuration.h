@@ -49,7 +49,8 @@ namespace pacman
 	{
 
 		amu::IObserver::Event constexpr GHOST_INPUT_REQUIRED{ 0 };
-
+		amu::IObserver::Event constexpr PACMAN_EAT_SMALL_PICKUP{ 1 };
+		amu::IObserver::Event constexpr PACMAN_EAT_BIG_PICKUP{ 2 };
 	}
 
 	namespace resources

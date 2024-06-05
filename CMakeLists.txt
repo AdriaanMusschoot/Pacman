@@ -19,9 +19,10 @@ set(PAC_MAN_SOURCE_FILES
                
   "${GAME_FILES_DIR}/Commands/MovePacmanCommand.cpp"            "${GAME_FILES_DIR}/Commands/MovePacmanCommand.h"
            
-  "GameFiles/Colliders/SmallPickupCollider.cpp"         "GameFiles/Colliders/SmallPickupCollider.h"
-  "GameFiles/Colliders/PacmanCollider.cpp"              "GameFiles/Colliders/PacmanCollider.h" 
-  "${GAME_FILES_DIR}/Components/BlinkyAIComponent.cpp"           "${GAME_FILES_DIR}/Components/BlinkyAIComponent.h" )
+  "GameFiles/Colliders/SmallPickupCollider.cpp"                 "GameFiles/Colliders/SmallPickupCollider.h"
+  "GameFiles/Colliders/BigPickupCollider.cpp"                   "GameFiles/Colliders/BigPickupCollider.h"
+  "GameFiles/Colliders/PacmanCollider.cpp"                      "GameFiles/Colliders/PacmanCollider.h" 
+  "${GAME_FILES_DIR}/Components/BlinkyAIComponent.cpp"          "${GAME_FILES_DIR}/Components/BlinkyAIComponent.h" )
 
 add_executable(${TARGET_NAME} ${PAC_MAN_SOURCE_FILES})
 

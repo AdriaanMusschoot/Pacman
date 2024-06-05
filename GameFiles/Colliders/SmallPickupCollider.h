@@ -1,6 +1,7 @@
 #ifndef PM_SMALL_PICKUP_COLLIDER_H
 #define PM_SMALL_PICKUP_COLLIDER_H
 #include "CollisionComponent.h"
+#include "Configuration.h"
 
 namespace pacman
 {

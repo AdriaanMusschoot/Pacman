@@ -5,7 +5,10 @@ pacman::SmallPickupCollider::SmallPickupCollider(amu::GameObject* ownerObjectPtr
 {
 }
 
-void pacman::SmallPickupCollider::OnCollision(amu::CollisionComponent*)
+void pacman::SmallPickupCollider::OnCollision(amu::CollisionComponent* otherColliderPtr)
 {
-	GetComponentOwner()->EnableToBeDestroyed();
+	if (otherColliderPtr->GetComponentOwner()->GetTag() == tags::PACMAN)
+	{
+		GetComponentOwner()->EnableToBeDestroyed();
+	}
 }

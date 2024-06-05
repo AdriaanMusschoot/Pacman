@@ -6,39 +6,49 @@
 pacman::PacmanCollider::PacmanCollider(amu::GameObject* ownerObjectPtr)
 	: CollisionComponent(ownerObjectPtr, std::vector<std::string>{ pacman::tags::PICKUP_SMALL })
 	, Subject(ownerObjectPtr)
-	, m_StateSmallPickupUPtr{ std::make_unique<WaitingStateSmallPickupOverlap>() }
+	, m_StatePickupUPtr{ std::make_unique<WaitingStateSmallPickupOverlap>() }
 {
 }
 
 void pacman::PacmanCollider::Update()
 {
-	if (auto newState{ std::move(m_StateSmallPickupUPtr->Update(amu::GameTime::GetInstance().GetDeltaTime())) }; newState != nullptr)
+	if (auto newState{ std::move(m_StatePickupUPtr->Update(amu::GameTime::GetInstance().GetDeltaTime())) }; newState != nullptr)
 	{
-		m_StateSmallPickupUPtr->OnExit();
-		m_StateSmallPickupUPtr = std::move(newState);
-		m_StateSmallPickupUPtr->OnEnter();
+		m_StatePickupUPtr->OnExit();
+		m_StatePickupUPtr = std::move(newState);
+		m_StatePickupUPtr->OnEnter();
 	}
 }
 
 void pacman::PacmanCollider::OnCollision(amu::CollisionComponent* otherCollider)
 {
-	if (otherCollider->GetComponentOwner()->GetTag() == pacman::tags::PICKUP_SMALL)
+	std::string_view otherTag{ otherCollider->GetComponentOwner()->GetTag() };
+	if (otherTag == tags::PICKUP_SMALL or 
+		otherTag == tags::PICKUP_BIG)
 	{
-		if (auto newState{ std::move(m_StateSmallPickupUPtr->HandleOverlap()) }; newState != nullptr)
+		if (auto newState{ std::move(m_StatePickupUPtr->HandleOverlap()) }; newState != nullptr)
 		{
-			m_StateSmallPickupUPtr->OnExit();
-			m_StateSmallPickupUPtr = std::move(newState);
-			m_StateSmallPickupUPtr->OnEnter();
+			m_StatePickupUPtr->OnExit();
+			m_StatePickupUPtr = std::move(newState);
+			m_StatePickupUPtr->OnEnter();
 		}
+	}
+	if (otherTag == tags::PICKUP_SMALL)
+	{
+		NotifyObservers(events::PACMAN_EAT_SMALL_PICKUP);
+	}
+	else if (otherTag == tags::PICKUP_BIG)
+	{
+		NotifyObservers(events::PACMAN_EAT_BIG_PICKUP);
 	}
 }
 
-std::unique_ptr<pacman::BaseStateSmallPickupOverlap> pacman::WaitingStateSmallPickupOverlap::Update(double)
+std::unique_ptr<pacman::BaseStatePickupOverlap> pacman::WaitingStateSmallPickupOverlap::Update(double)
 {
 	return nullptr;
 }
 
-std::unique_ptr<pacman::BaseStateSmallPickupOverlap> pacman::WaitingStateSmallPickupOverlap::HandleOverlap()
+std::unique_ptr<pacman::BaseStatePickupOverlap> pacman::WaitingStateSmallPickupOverlap::HandleOverlap()
 {
 	return std::make_unique<HasEatenStateSmallPickupOverlap>();
 }
@@ -55,7 +65,7 @@ void pacman::HasEatenStateSmallPickupOverlap::OnExit()
 	amu::ServiceLocator::GetInstance().GetSoundSystem()->RequestStopSoundEffect(pm_chomp.Id);
 }
 
-std::unique_ptr<pacman::BaseStateSmallPickupOverlap> pacman::HasEatenStateSmallPickupOverlap::Update(double elapsedTime)
+std::unique_ptr<pacman::BaseStatePickupOverlap> pacman::HasEatenStateSmallPickupOverlap::Update(double elapsedTime)
 {
 	m_Timer += elapsedTime;
 	if (m_Timer >= m_MaxTime)
@@ -65,7 +75,7 @@ std::unique_ptr<pacman::BaseStateSmallPickupOverlap> pacman::HasEatenStateSmallP
 	return nullptr; 
 }
 
-std::unique_ptr<pacman::BaseStateSmallPickupOverlap> pacman::HasEatenStateSmallPickupOverlap::HandleOverlap() 
+std::unique_ptr<pacman::BaseStatePickupOverlap> pacman::HasEatenStateSmallPickupOverlap::HandleOverlap() 
 {
 	m_Timer = 0.0;
 	
