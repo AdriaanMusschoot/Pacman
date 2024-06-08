@@ -26,7 +26,7 @@ namespace pacman
 			TileType Type{ TileType::Void };
 		};
 
-		PlayFieldGridComponent(amu::GameObject* ownerObjectPtr, std::int64_t const& rowsGrid, std::int64_t const& colsGrid, std::int64_t const& cellSize, std::int64_t const& cellHeigth);
+		PlayFieldGridComponent(amu::GameObject* ownerObjectPtr, std::uint64_t const& rowsGrid, std::uint64_t const& colsGrid, std::uint64_t const& cellSize, std::uint64_t const& cellHeigth);
 		virtual ~PlayFieldGridComponent() override = default;
 
 		PlayFieldGridComponent(PlayFieldGridComponent const&) = delete;
@@ -34,20 +34,24 @@ namespace pacman
 		PlayFieldGridComponent& operator=(PlayFieldGridComponent const&) = delete;
 		PlayFieldGridComponent& operator=(PlayFieldGridComponent&&) = delete;
 
-		void SetTileType(std::int64_t const& rowIdx, std::int64_t const& colIdx, std::string_view const& typeString);
+		void SetTileType(std::uint64_t const& rowIdx, std::uint64_t const& colIdx, std::string_view const& typeString);
 
 		glm::vec2 const& GetTileDimensions() const;
 
-		Tile const& GetTile(std::int64_t const& rowIdx, std::int64_t const& colIdx) const;
+		Tile const& GetTile(std::uint64_t const& rowIdx, std::uint64_t const& colIdx) const;
 		Tile const& GetTile(glm::vec2 const& position) const;
+
+		Tile const& GetTileToTeleportTo(Tile const& currentTile);
 	private:
-		std::int64_t const m_RowsGrid{};
-		std::int64_t const m_ColsGrid{};
+		std::uint64_t const m_RowsGrid{};
+		std::uint64_t const m_ColsGrid{};
 		glm::vec2 const m_TileDimensions{};
 
 		std::vector<Tile> m_TileVec{};
 
-		[[nodiscard]] std::int64_t GetIndex(std::int64_t const& rowIdx, std::int64_t const& colIdx) const;
+		std::vector<Tile> m_TeleportTileVec{};
+
+		[[nodiscard]] std::int64_t GetIndex(std::uint64_t const& rowIdx, std::uint64_t const& colIdx) const;
 	};
 
 }
