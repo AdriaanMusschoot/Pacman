@@ -1,14 +1,14 @@
 #include "GhostFSM.h"
 #include "GameTime.h"
 
-pacman::GhostFSMComponent::GhostFSMComponent(amu::GameObject* ownerObjectPtr, amu::TransformComponent* pacmanTransformPtr)
+pacman::GhostFSMComponent::GhostFSMComponent(amu::GameObject* ownerObjectPtr, amu::GameObject* pacmanTransformPtr)
 	: Component(ownerObjectPtr)
 	, Subject(ownerObjectPtr)
-	, m_PacmanTransformPtr{ pacmanTransformPtr }
+	, m_PacmanPtr{ pacmanTransformPtr }
 {
 	m_TransformPtr = GetComponentOwner()->GetComponent<amu::TransformComponent>();
 	m_GridMovementPtr = GetComponentOwner()->GetComponent<GridMovementComponent>();
-	m_AIPtr = GetComponentOwner()->GetComponent<BlinkyAIComponent>();
+	m_AIPtr = GetComponentOwner()->GetComponent<BaseAIComponent>();
 	assert(m_AIPtr);
 	assert(m_GridMovementPtr);
 	m_GridMovementPtr->ChangeMovementState(config::VEC_LEFT);
@@ -16,6 +16,7 @@ pacman::GhostFSMComponent::GhostFSMComponent(amu::GameObject* ownerObjectPtr, am
 
 	m_GhostStateUPtrVec.emplace_back(std::make_unique<HuntingPacmanState>());
 	m_GhostStateUPtrVec.emplace_back(std::make_unique<AvoidingPacmanState>());
+	m_GhostStateUPtrVec.emplace_back(std::make_unique<EatenByPacmanState>());
 
 	m_CurrentGhostStatePtr = GetState<HuntingPacmanState>();
 }
@@ -55,6 +56,11 @@ void pacman::GhostFSMComponent::OnNotify(amu::IObserver::Event eventType, amu::S
 	}
 }
 
+pacman::BaseGhostState* pacman::GhostFSMComponent::GetGhostState() const
+{
+	return m_CurrentGhostStatePtr;
+}
+
 void pacman::GhostFSMComponent::SetPreviousDirection(glm::vec2 const& direction)
 {
 	m_PreviousDirection = direction;
@@ -67,7 +73,12 @@ glm::vec2 const& pacman::GhostFSMComponent::GetPreviousDirection()
 
 glm::vec2 const& pacman::GhostFSMComponent::GetPacmanPosition()
 {
-	return m_PacmanTransformPtr->GetWorldPosition();
+	return m_PacmanPtr->GetComponent<amu::TransformComponent>()->GetWorldPosition();
+}
+
+glm::vec2 const& pacman::GhostFSMComponent::GetPacmanDirection()
+{
+	return m_PacmanPtr->GetComponent<GridMovementComponent>()->GetCurrentDirection();
 }
 
 glm::vec2 const& pacman::GhostFSMComponent::GetGhostPosition()
@@ -85,8 +96,9 @@ pacman::BaseAIComponent* pacman::GhostFSMComponent::GetAI() const
 	return m_AIPtr;
 }
 
-void pacman::HuntingPacmanState::OnEnter(GhostFSMComponent*)
+void pacman::HuntingPacmanState::OnEnter(GhostFSMComponent* ownerPtr)
 {
+	ownerPtr->NotifyObservers(events::GHOST_ATTACK);
 }
 
 void pacman::HuntingPacmanState::OnExit(GhostFSMComponent*)
@@ -115,12 +127,9 @@ pacman::BaseGhostState* pacman::HuntingPacmanState::OnNotify(amu::IObserver::Eve
 	}
 	else if (eventType == events::GHOST_INPUT_REQUIRED)
 	{
-		glm::vec2 const& pacmanPos = ownerPtr->GetPacmanPosition();
-		glm::vec2 const& ghostPos = ownerPtr->GetGhostPosition();
-		glm::vec2 const& previousDir = ownerPtr->GetPreviousDirection();
 		GridMovementComponent* gridMovePtr{ ownerPtr->GetGridMove() };
 		std::vector<glm::vec2> possibleDirectionVec{ gridMovePtr->PossibleDirections() };
-		glm::vec2 const& optimalDirection{ ownerPtr->GetAI()->GetOptimalDirectionToPacman(possibleDirectionVec, pacmanPos, ghostPos, previousDir) };
+		glm::vec2 const& optimalDirection{ ownerPtr->GetAI()->GetOptimalDirectionToPacman(possibleDirectionVec, ownerPtr) };
 		if (optimalDirection != config::VEC_INVALID)
 		{
 			gridMovePtr->ChangeMovementState(optimalDirection);
@@ -140,8 +149,11 @@ pacman::BaseGhostState* pacman::HuntingPacmanState::OnNotify(amu::IObserver::Eve
 	return nullptr;
 }
 
-void pacman::AvoidingPacmanState::OnEnter(GhostFSMComponent* )
+void pacman::AvoidingPacmanState::OnEnter(GhostFSMComponent* ownerPtr)
 {
+	GridMovementComponent* gridMovementPtr{ ownerPtr->GetGridMove() };
+	gridMovementPtr->ChangeMovementState(-gridMovementPtr->GetCurrentDirection());
+	ownerPtr->NotifyObservers(events::GHOST_PANICK);
 }
 
 void pacman::AvoidingPacmanState::OnExit(GhostFSMComponent* )
@@ -152,36 +164,88 @@ void pacman::AvoidingPacmanState::HandleInput(glm::vec2 const& , GhostFSMCompone
 {
 }
 
-pacman::BaseGhostState* pacman::AvoidingPacmanState::Update(double elapsedSec, GhostFSMComponent* ownerPtr)
+pacman::BaseGhostState* pacman::AvoidingPacmanState::Update(double, GhostFSMComponent*)
 {
-	m_Timer += elapsedSec;
-	if (m_Timer > m_MaxTime)
+	return nullptr;
+}
+
+pacman::BaseGhostState* pacman::AvoidingPacmanState::HandleOverlap(amu::CollisionComponent* otherColliderPtr, GhostFSMComponent* ownerPtr)
+{
+	std::string_view otherTag{ otherColliderPtr->GetComponentOwner()->GetTag() };
+	if (otherTag == tags::PACMAN)
+	{
+		return ownerPtr->GetState<EatenByPacmanState>();
+	}
+	return nullptr;
+}
+
+pacman::BaseGhostState* pacman::AvoidingPacmanState::OnNotify(amu::IObserver::Event eventType, amu::Subject* , GhostFSMComponent* ownerPtr)
+{
+	if (eventType == events::GHOST_INPUT_REQUIRED)
+	{
+		GridMovementComponent* gridMovePtr{ ownerPtr->GetGridMove() };
+		std::vector<glm::vec2> possibleDirectionVec{ gridMovePtr->PossibleDirections() };
+		glm::vec2 const& optimalDirection{ ownerPtr->GetAI()->GetOptimalDirectionFromPacman(possibleDirectionVec, ownerPtr) };
+		if (optimalDirection != config::VEC_INVALID)
+		{
+			gridMovePtr->ChangeMovementState(optimalDirection);
+			ownerPtr->SetPreviousDirection(optimalDirection);
+		}
+		else
+		{
+			auto& safetyDirection = possibleDirectionVec[0];
+			gridMovePtr->ChangeMovementState(safetyDirection);
+			ownerPtr->SetPreviousDirection(optimalDirection);
+		}
+	}
+	else if (eventType == events::PACMAN_COLLECT)
+	{
+		return ownerPtr->GetState<HuntingPacmanState>();
+	}
+	else if (eventType == events::PACMAN_EAT_BIG_PICKUP)
+	{
+		ownerPtr->NotifyObservers(events::GHOST_PANICK);
+	}
+	return nullptr;
+}
+
+void pacman::EatenByPacmanState::OnEnter(GhostFSMComponent* ownerPtr)
+{
+	m_StartSpeed = ownerPtr->GetGridMove()->ChangeSpeed(config::RETURN_TO_SPAWN_SPEED);
+	ownerPtr->NotifyObservers(events::GHOST_RUSHING_TO_SPAWN);
+}
+
+void pacman::EatenByPacmanState::OnExit(GhostFSMComponent* ownerPtr)
+{
+	ownerPtr->GetGridMove()->ChangeSpeed(m_StartSpeed);
+}
+
+void pacman::EatenByPacmanState::HandleInput(glm::vec2 const&, GhostFSMComponent*)
+{
+}
+
+pacman::BaseGhostState* pacman::EatenByPacmanState::Update(double, GhostFSMComponent* ownerPtr)
+{
+	glm::vec2 const& ghostPos = ownerPtr->GetGhostPosition();
+	if (ownerPtr->GetAI()->IsAtSpawnPos(ghostPos))
 	{
 		return ownerPtr->GetState<HuntingPacmanState>();
 	}
 	return nullptr;
 }
 
-pacman::BaseGhostState* pacman::AvoidingPacmanState::HandleOverlap(amu::CollisionComponent* , GhostFSMComponent* )
+pacman::BaseGhostState* pacman::EatenByPacmanState::HandleOverlap(amu::CollisionComponent*, GhostFSMComponent*)
 {
 	return nullptr;
 }
 
-pacman::BaseGhostState* pacman::AvoidingPacmanState::OnNotify(amu::IObserver::Event eventType, amu::Subject* , GhostFSMComponent* ownerPtr)
+pacman::BaseGhostState* pacman::EatenByPacmanState::OnNotify(amu::IObserver::Event eventType, amu::Subject*, GhostFSMComponent* ownerPtr)
 {
-	if (eventType == events::PACMAN_EAT_BIG_PICKUP)
-	{
-		m_Timer = 0.0;
-		return nullptr;
-	}
 	if (eventType == events::GHOST_INPUT_REQUIRED)
 	{
-		glm::vec2 const& pacmanPos = ownerPtr->GetPacmanPosition();
-		glm::vec2 const& ghostPos = ownerPtr->GetGhostPosition();
-		glm::vec2 const& previousDir = ownerPtr->GetPreviousDirection();
 		GridMovementComponent* gridMovePtr{ ownerPtr->GetGridMove() };
 		std::vector<glm::vec2> possibleDirectionVec{ gridMovePtr->PossibleDirections() };
-		glm::vec2 const& optimalDirection{ ownerPtr->GetAI()->GetOptimalDirectionFromPacman(possibleDirectionVec, pacmanPos, ghostPos, previousDir) };
+		glm::vec2 const& optimalDirection{ ownerPtr->GetAI()->GetOptimalDirectionToSpawn(possibleDirectionVec, ownerPtr) };
 		if (optimalDirection != config::VEC_INVALID)
 		{
 			gridMovePtr->ChangeMovementState(optimalDirection);

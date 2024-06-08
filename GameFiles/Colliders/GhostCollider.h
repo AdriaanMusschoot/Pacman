@@ -2,6 +2,7 @@
 #define PM_GHOST_COLLIDER_H
 #include "CollisionComponent.h"
 #include "Configuration.h"
+#include "Components/GhostFSM.h"
 
 namespace pacman
 {
@@ -19,6 +20,8 @@ namespace pacman
 
 		void OnCollision(amu::CollisionComponent* otherCollider) override;
 	private:
+		GhostFSMComponent* m_GhostFSMPtr{ nullptr };
+
 	};
 
 }

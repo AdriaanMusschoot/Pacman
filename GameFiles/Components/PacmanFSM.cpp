@@ -1,6 +1,7 @@
 #include "PacmanFSM.h"
 #include "GameTime.h"
 #include "ServiceLocator.h"
+#include "GhostFSM.h"
 
 pacman::PacmanFSMComponent::PacmanFSMComponent(amu::GameObject* ownerObjectPtr)
 	: Component(ownerObjectPtr)
@@ -161,8 +162,9 @@ pacman::BaseStatePacman* pacman::BaseStatePacman::HandleOverlap(amu::CollisionCo
 	return nullptr;
 }
 
-void pacman::CollectingState::OnEnter(PacmanFSMComponent*)
+void pacman::CollectingState::OnEnter(PacmanFSMComponent* ownerPtr)
 {
+	ownerPtr->NotifyObservers(events::PACMAN_COLLECT);
 }
 
 void pacman::CollectingState::OnExit(PacmanFSMComponent*)
@@ -184,9 +186,14 @@ pacman::BaseStatePacman* pacman::CollectingState::HandleOverlap(amu::CollisionCo
 {
 	BaseStatePacman::HandleOverlap(otherColliderPtr, ownerPtr);
 	std::string_view otherTag{ otherColliderPtr->GetComponentOwner()->GetTag() };
-	if (otherTag == tags::BLINKY)
+	if (otherTag == tags::GHOST)
 	{
-		return ownerPtr->GetState<DyingState>();
+		GhostFSMComponent* ghostFSMPtr{ otherColliderPtr->GetComponentOwner()->GetComponent<GhostFSMComponent>() };
+		HuntingPacmanState* huntingStatePtr{ ghostFSMPtr->GetState<HuntingPacmanState>() };
+		if (ghostFSMPtr->GetGhostState() == huntingStatePtr)
+		{
+			return ownerPtr->GetState<DyingState>();
+		}
 	}
 	if (otherTag == tags::PICKUP_BIG)
 	{
@@ -235,8 +242,10 @@ pacman::BaseStatePacman* pacman::DyingState::OnNotify(amu::IObserver::Event even
 	return nullptr;
 }
 
-void pacman::EvilState::OnEnter(PacmanFSMComponent*)
+void pacman::EvilState::OnEnter(PacmanFSMComponent* ownerPtr)
 {
+	ownerPtr->NotifyObservers(events::PACMAN_EAT_BIG_PICKUP);
+	m_Timer = 0.0;
 }
 
 void pacman::EvilState::OnExit(PacmanFSMComponent*)
@@ -262,6 +271,16 @@ pacman::BaseStatePacman* pacman::EvilState::Update(double elapsedSec, PacmanFSMC
 pacman::BaseStatePacman* pacman::EvilState::HandleOverlap(amu::CollisionComponent* otherColliderPtr, PacmanFSMComponent* ownerPtr)
 {
 	BaseStatePacman::HandleOverlap(otherColliderPtr, ownerPtr);
+	std::string_view otherTag{ otherColliderPtr->GetComponentOwner()->GetTag() };
+	if (otherTag == tags::PICKUP_BIG)
+	{
+		ownerPtr->NotifyObservers(events::PACMAN_EAT_BIG_PICKUP);
+		m_Timer = 0.0;
+	}
+	if (otherTag == tags::GHOST)
+	{
+		ownerPtr->NotifyObservers(events::PACMAN_EAT_GHOST);
+	}
 	return nullptr;
 }
 

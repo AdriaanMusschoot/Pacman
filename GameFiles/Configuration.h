@@ -34,6 +34,7 @@ namespace pacman
 		glm::vec2 const VEC_INVALID{ -1, -1 };
 
 		double const MAX_TIME_PICKUP{ 10.0 };
+		int constexpr RETURN_TO_SPAWN_SPEED{ 180 };
 	}
 
 	namespace tags
@@ -42,7 +43,7 @@ namespace pacman
 		std::string const PACMAN{ "Pacman" };
 		std::string const PICKUP_SMALL{ "PickupSmall" };
 		std::string const PICKUP_BIG{ "PickupBig" };
-		std::string const BLINKY{ "Blinky" };
+		std::string const GHOST{ "Blinky" };
 
 	}
 
@@ -57,6 +58,11 @@ namespace pacman
 		amu::IObserver::Event constexpr PACMAN_DYING_ANIM_FINISHED{ 5 };
 		amu::IObserver::Event constexpr SMALL_PICKUP_VANISHED{ 6 };
 		amu::IObserver::Event constexpr BIG_PICKUP_VANISHED{ 7 };
+		amu::IObserver::Event constexpr GHOST_PANICK{ 8 };
+		amu::IObserver::Event constexpr GHOST_ATTACK{ 9 };
+		amu::IObserver::Event constexpr PACMAN_EAT_GHOST{ 10 };
+		amu::IObserver::Event constexpr PACMAN_COLLECT{ 11 };
+		amu::IObserver::Event constexpr GHOST_RUSHING_TO_SPAWN{ 12 };
 
 	}
 
@@ -77,7 +83,8 @@ namespace pacman
 			SpriteData const PICKUP_SMALL{ "Sprites/EatableSmall.png", 1, 1 };
 			SpriteData const PICKUP_BIG{ "Sprites/EatableBig.png", 1, 1 };
 			SpriteData const PLAYINGFIELD{ "Sprites/PlayingField.png", 1, 1 };
-			SpriteData const BLINKY{ "Sprites/Blinky.png", 1, 8 };
+			SpriteData const BLINKY{ "Sprites/Blinky.png", 1, 16 };
+			SpriteData const PINKY{ "Sprites/Pinky.png", 1, 16 };
 
 		}
 
@@ -94,7 +101,7 @@ namespace pacman
 				std::string const NOTHING_TO_SPAWN{ "none" };
 				std::string const PICKUP_SMALL{ "small" };
 				std::string const PICKUP_BIG{ "big" };
-				std::string const BLINKY_SPAWN{ "blinky" };
+				std::string const GHOST_SPAWN{ "blinky" };
 
 			}
 

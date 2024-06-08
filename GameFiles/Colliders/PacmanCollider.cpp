@@ -4,7 +4,7 @@
 #include "GameTime.h"
 
 pacman::PacmanCollider::PacmanCollider(amu::GameObject* ownerObjectPtr)
-	: CollisionComponent(ownerObjectPtr, std::vector<std::string>{ pacman::tags::PICKUP_SMALL, pacman::tags::PICKUP_BIG, pacman::tags::BLINKY })
+	: CollisionComponent(ownerObjectPtr, std::vector<std::string>{ pacman::tags::PICKUP_SMALL, pacman::tags::PICKUP_BIG, pacman::tags::GHOST })
 {
 	m_PacmanFSMPtr = GetComponentOwner()->GetComponent<PacmanFSMComponent>();
 }

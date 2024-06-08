@@ -15,7 +15,7 @@ set(PAC_MAN_SOURCE_FILES
   "${GAME_FILES_DIR}/Components/FPSComponent.cpp"               "${GAME_FILES_DIR}/Components/FPSComponent.h"
   "${GAME_FILES_DIR}/Components/PlayFieldGridComponent.cpp"     "${GAME_FILES_DIR}/Components/PlayFieldGridComponent.h"
   "${GAME_FILES_DIR}/Components/GridMovementComponent.cpp"      "${GAME_FILES_DIR}/Components/GridMovementComponent.h"
-  "${GAME_FILES_DIR}/Components/BlinkyAIComponent.cpp"          "${GAME_FILES_DIR}/Components/BlinkyAIComponent.h"  
+  "GameFiles/Components/GhostAIComponents.cpp"          "GameFiles/Components/GhostAIComponents.h"  
   "${GAME_FILES_DIR}/Components/PacmanLivesComponent.h"         "${GAME_FILES_DIR}/Components/PacmanLivesComponent.cpp"
   "${GAME_FILES_DIR}/Components/PacmanFSM.h"                    "${GAME_FILES_DIR}/Components/PacmanFSM.cpp"
                

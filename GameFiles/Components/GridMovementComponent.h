@@ -28,6 +28,7 @@ namespace pacman
 		std::vector<glm::vec2> PossibleDirections();
 		glm::vec2 const& GetCurrentDirection() const;
 
+		std::int64_t ChangeSpeed(std::int64_t const& newSpeed);
 	private:
 
 		PlayFieldGridComponent* m_PlayFieldGridPtr{ nullptr };

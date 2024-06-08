@@ -3,7 +3,7 @@
 
 #include "Component.h"
 #include "GridMovementComponent.h"
-#include "BlinkyAIComponent.h"
+#include "GhostAIComponents.h"
 
 namespace pacman
 {
@@ -62,14 +62,31 @@ namespace pacman
 		BaseGhostState* OnNotify(amu::IObserver::Event eventType, amu::Subject* subjectPtr, GhostFSMComponent* ownerPtr) override;
 
 	private:
-		double m_Timer{ 0.0 };
-		double m_MaxTime{ config::MAX_TIME_PICKUP };
+	};
+
+	class EatenByPacmanState final : public BaseGhostState
+	{
+	public:
+		EatenByPacmanState() = default;
+		virtual ~EatenByPacmanState() = default;
+
+		void OnEnter(GhostFSMComponent* ownerPtr) override;
+		void OnExit(GhostFSMComponent* ownerPtr) override;
+
+		void HandleInput(glm::vec2 const& direction, GhostFSMComponent* ownerPtr) override;
+		BaseGhostState* Update(double elapsedSec, GhostFSMComponent* ownerPtr) override;
+
+		BaseGhostState* HandleOverlap(amu::CollisionComponent* otherColliderPtr, GhostFSMComponent* ownerPtr) override;
+		BaseGhostState* OnNotify(amu::IObserver::Event eventType, amu::Subject* subjectPtr, GhostFSMComponent* ownerPtr) override;
+
+	private:
+		std::int64_t m_StartSpeed{ };
 	};
 
 	class GhostFSMComponent final : public amu::Component, public amu::IObserver, public amu::Subject
 	{
 	public:
-		GhostFSMComponent(amu::GameObject* ownerObjectPtr, amu::TransformComponent* pacmanTransformPtr);
+		GhostFSMComponent(amu::GameObject* ownerObjectPtr, amu::GameObject* pacmanPtr);
 		virtual ~GhostFSMComponent() = default;
 
 		GhostFSMComponent(GhostFSMComponent const&) = delete;
@@ -97,9 +114,12 @@ namespace pacman
 			return nullptr;
 		}
 
+		BaseGhostState* GetGhostState() const;
+
 		void SetPreviousDirection(glm::vec2 const& direction);
 		glm::vec2 const& GetPreviousDirection();
 		glm::vec2 const& GetPacmanPosition();
+		glm::vec2 const& GetPacmanDirection();
 		glm::vec2 const& GetGhostPosition();
 
 		GridMovementComponent* GetGridMove() const;
@@ -109,7 +129,7 @@ namespace pacman
 
 		amu::TransformComponent* m_TransformPtr{ nullptr };
 
-		amu::TransformComponent* m_PacmanTransformPtr{ nullptr };
+		amu::GameObject* m_PacmanPtr{ nullptr };
 
 		std::vector<std::unique_ptr<BaseGhostState>> m_GhostStateUPtrVec{};
 

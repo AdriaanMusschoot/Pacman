@@ -34,7 +34,7 @@ void pacman::GridMovementComponent::Update()
 	if (IsCentered())
 	{
 		m_TransformPtr->SetLocalPosition(m_CurrentTile.Center);
-		if (m_Tag == pacman::tags::BLINKY and m_CurrentTile.Type == PlayFieldGridComponent::TileType::Crossing)
+		if (m_Tag == pacman::tags::GHOST and m_CurrentTile.Type == PlayFieldGridComponent::TileType::Crossing)
 		{
 			NotifyObservers(events::GHOST_INPUT_REQUIRED);
 		}
@@ -137,6 +137,13 @@ std::vector<glm::vec2> pacman::GridMovementComponent::PossibleDirections()
 glm::vec2 const& pacman::GridMovementComponent::GetCurrentDirection() const
 {
 	return m_CurrentDirection;
+}
+
+std::int64_t pacman::GridMovementComponent::ChangeSpeed(std::int64_t const& newSpeed)
+{
+	std::int64_t speed{ m_Speed };
+	m_Speed = newSpeed;
+	return speed;
 }
 
 bool pacman::GridMovementComponent::TileReachable(glm::vec2 const& direction) const

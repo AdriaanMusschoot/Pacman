@@ -19,7 +19,7 @@
 #include "Components/PlayFieldGridComponent.h"
 #include "Components/FPSComponent.h"
 #include "Components/GridMovementComponent.h"
-#include "Components/BlinkyAIComponent.h"
+#include "Components/GhostAIComponents.h"
 #include "Components/PacmanLivesComponent.h"
 #include "Components/PacmanFSM.h"
 #include "Components/GhostFSM.h"
@@ -56,7 +56,7 @@ namespace pacman
 		PacmanAnimationComponent* pmAnimPtr{ pacmanUPtr->AddComponent<PacmanAnimationComponent>(pacmanUPtr.get()) };
 		pmAnimPtr->AddObserver(playFieldGridPtr);
 
-		GridMovementComponent* gridMovePtr{ pacmanUPtr->AddComponent<GridMovementComponent>(pacmanUPtr.get(), playFieldGridPtr, 100) };
+		GridMovementComponent* gridMovePtr{ pacmanUPtr->AddComponent<GridMovementComponent>(pacmanUPtr.get(), playFieldGridPtr, 120) };
 		gridMovePtr->AddObserver(pmAnimPtr);
 
 		PacmanFSMComponent* fsmComponentPtr{ pacmanUPtr->AddComponent<PacmanFSMComponent>(pacmanUPtr.get()) };
@@ -90,7 +90,7 @@ namespace pacman
 		using namespace config;
 
 		std::unique_ptr blinkyUPtr{ std::make_unique<amu::GameObject>() };
-		blinkyUPtr->SetTag(tags::BLINKY);
+		blinkyUPtr->SetTag(tags::GHOST);
 
 		blinkyUPtr->AddComponent<amu::TransformComponent>(blinkyUPtr.get(), glm::vec2{ col * CELL_WIDTH, row * CELL_HEIGHT + CELL_HEIGHT / 2 });
 
@@ -102,7 +102,7 @@ namespace pacman
 
 		blinkyUPtr->AddComponent<BlinkyAIComponent>(blinkyUPtr.get());
 
-		GhostFSMComponent* ghostFSMComponentPtr{ blinkyUPtr->AddComponent<GhostFSMComponent>(blinkyUPtr.get(), pacmanPtr->GetComponent<amu::TransformComponent>()) };
+		GhostFSMComponent* ghostFSMComponentPtr{ blinkyUPtr->AddComponent<GhostFSMComponent>(blinkyUPtr.get(), pacmanPtr) };
 
 		gridMoveCompPtr->AddObserver(ghostFSMComponentPtr);
 
@@ -114,6 +114,44 @@ namespace pacman
 		pmFSMPtr->AddObserver(ghostFSMComponentPtr);
 
 		scenePtr->Add(std::move(blinkyUPtr));
+	}
+
+	void SpawnPinky(amu::Scene* scenePtr, PlayFieldGridComponent* playFieldGridPtr, amu::GameObject* pacmanPtr, std::int64_t const& row, std::int64_t const& col)
+	{
+		using namespace config;
+
+		std::unique_ptr pinkyUPtr{ std::make_unique<amu::GameObject>() };
+		pinkyUPtr->SetTag(tags::GHOST);
+
+		pinkyUPtr->AddComponent<amu::TransformComponent>(pinkyUPtr.get(), glm::vec2{ col * CELL_WIDTH, row * CELL_HEIGHT + CELL_HEIGHT / 2 });
+
+		amu::RenderComponent* renderCompPtr{ pinkyUPtr->AddComponent<amu::RenderComponent>(pinkyUPtr.get(), resources::sprites::PINKY.FilePath) };
+		renderCompPtr->SetSourceRectangle(SDL_Rect{ 0, 0, renderCompPtr->GetSize().x / resources::sprites::BLINKY.Cols, renderCompPtr->GetSize().y / resources::sprites::BLINKY.Rows });
+		GhostAnimationComponent* animComponent{ pinkyUPtr->AddComponent<GhostAnimationComponent>(pinkyUPtr.get()) };
+
+		GridMovementComponent* gridMoveCompPtr{ pinkyUPtr->AddComponent<GridMovementComponent>(pinkyUPtr.get(), playFieldGridPtr, 100) };
+
+		pinkyUPtr->AddComponent<InkyPinkyAIComponent>(pinkyUPtr.get(), 50.f);
+
+		GhostFSMComponent* ghostFSMComponentPtr{ pinkyUPtr->AddComponent<GhostFSMComponent>(pinkyUPtr.get(), pacmanPtr) };
+
+		gridMoveCompPtr->AddObserver(ghostFSMComponentPtr);
+
+		ghostFSMComponentPtr->AddObserver(animComponent);
+
+		pinkyUPtr->AddCollider(std::make_unique<GhostCollider>(pinkyUPtr.get()));
+
+		PacmanFSMComponent* pmFSMPtr{ pacmanPtr->GetComponent<PacmanFSMComponent>() };
+		pmFSMPtr->AddObserver(ghostFSMComponentPtr);
+
+		scenePtr->Add(std::move(pinkyUPtr));
+	}
+
+	void SpawnGhosts(amu::Scene* scenePtr, PlayFieldGridComponent* playFieldGridPtr, amu::GameObject* pacmanPtr, std::int64_t const& row, std::int64_t const& col)
+	{
+		SpawnBlinky(scenePtr, playFieldGridPtr, pacmanPtr, row, col);
+
+		SpawnPinky(scenePtr, playFieldGridPtr, pacmanPtr, row, col);
 	}
 
 	void PopulatePlayingGrid(amu::Scene* scenePtr)
@@ -173,9 +211,9 @@ namespace pacman
 					gridLayoutComponent->SpawnBigPickup(scenePtr, spawnPos);
 				}
 
-				else if (matches[5] == rgx::BLINKY_SPAWN)
+				else if (matches[5] == rgx::GHOST_SPAWN)
 				{
-					SpawnBlinky(scenePtr, gridLayoutComponent, pacmanPtr, rowIdx, colIdx);
+					SpawnGhosts(scenePtr, gridLayoutComponent, pacmanPtr, rowIdx, colIdx);
 				}
 			}
 			else
