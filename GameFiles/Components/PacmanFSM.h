@@ -18,7 +18,7 @@ namespace pacman
 		virtual void OnExit() = 0;
 
 		virtual BaseStatePickupOverlap* Update(double elapsedSec, PacmanFSMComponent* ownerPtr) = 0;
-		virtual BaseStatePickupOverlap* HandleOverlap(PacmanFSMComponent* ownerPtr) = 0;
+		virtual BaseStatePickupOverlap* HandleOverlap(amu::CollisionComponent* otherColliderPtr, PacmanFSMComponent* ownerPtr) = 0;
 	private:
 	};
 
@@ -32,7 +32,7 @@ namespace pacman
 		void OnEnter() override {}
 
 		BaseStatePickupOverlap* Update(double elapsedSec, PacmanFSMComponent* ownerPtr) override;
-		BaseStatePickupOverlap* HandleOverlap(PacmanFSMComponent* ownerPtr) override;
+		BaseStatePickupOverlap* HandleOverlap(amu::CollisionComponent* otherColliderPtr, PacmanFSMComponent* ownerPtr) override;
 	private:
 	};
 
@@ -46,7 +46,7 @@ namespace pacman
 		void OnExit() override;
 
 		BaseStatePickupOverlap* Update(double elapsedSec, PacmanFSMComponent* ownerPtr) override;
-		BaseStatePickupOverlap* HandleOverlap(PacmanFSMComponent* ownerPtr) override;
+		BaseStatePickupOverlap* HandleOverlap(amu::CollisionComponent* otherColliderPtr, PacmanFSMComponent* ownerPtr) override;
 	private:
 		double m_Timer{};
 		double m_MaxTime{ 0.3 };

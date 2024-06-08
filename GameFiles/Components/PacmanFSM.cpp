@@ -64,9 +64,23 @@ pacman::BaseStatePickupOverlap* pacman::WaitingStateSmallPickupOverlap::Update(d
 	return nullptr;
 }
 
-pacman::BaseStatePickupOverlap* pacman::WaitingStateSmallPickupOverlap::HandleOverlap(PacmanFSMComponent* ownerPtr)
+pacman::BaseStatePickupOverlap* pacman::WaitingStateSmallPickupOverlap::HandleOverlap(amu::CollisionComponent* otherColliderPtr, PacmanFSMComponent* ownerPtr)
 {
-	return ownerPtr->GetPickupState<HasEatenStateSmallPickupOverlap>();
+	std::string_view otherTag{ otherColliderPtr->GetComponentOwner()->GetTag() };
+	if (otherTag == tags::PICKUP_SMALL or
+		otherTag == tags::PICKUP_BIG)
+	{
+		return ownerPtr->GetPickupState<HasEatenStateSmallPickupOverlap>();
+	}
+	if (otherTag == tags::PICKUP_SMALL)
+	{
+		ownerPtr->NotifyObservers(events::PACMAN_EAT_SMALL_PICKUP);
+	}
+	else if (otherTag == tags::PICKUP_BIG)
+	{
+		ownerPtr->NotifyObservers(events::PACMAN_EAT_BIG_PICKUP);
+	}
+	return nullptr;
 }
 
 void pacman::HasEatenStateSmallPickupOverlap::OnEnter()
@@ -92,10 +106,22 @@ pacman::BaseStatePickupOverlap* pacman::HasEatenStateSmallPickupOverlap::Update(
 	return nullptr;
 }
 
-pacman::BaseStatePickupOverlap* pacman::HasEatenStateSmallPickupOverlap::HandleOverlap(PacmanFSMComponent*)
+pacman::BaseStatePickupOverlap* pacman::HasEatenStateSmallPickupOverlap::HandleOverlap(amu::CollisionComponent* otherColliderPtr, PacmanFSMComponent* ownerPtr)
 {
-	m_Timer = 0.0;
-
+	std::string_view otherTag{ otherColliderPtr->GetComponentOwner()->GetTag() };
+	if (otherTag == tags::PICKUP_SMALL or
+		otherTag == tags::PICKUP_BIG)
+	{
+		m_Timer = 0.0;
+	}%
+	if (otherTag == tags::PICKUP_SMALL)
+	{
+		ownerPtr->NotifyObservers(events::PACMAN_EAT_SMALL_PICKUP);
+	}
+	else if (otherTag == tags::PICKUP_BIG)
+	{
+		ownerPtr->NotifyObservers(events::PACMAN_EAT_BIG_PICKUP);
+	}
 	return nullptr;
 }
 
@@ -114,16 +140,12 @@ pacman::BaseStatePacman* pacman::BaseStatePacman::Update(double elapsedSec, Pacm
 pacman::BaseStatePacman* pacman::BaseStatePacman::HandleOverlap(amu::CollisionComponent* otherColliderPtr, PacmanFSMComponent* ownerPtr)
 {
 	std::string_view otherTag{ otherColliderPtr->GetComponentOwner()->GetTag() };
-	if (otherTag == tags::PICKUP_SMALL or
-		otherTag == tags::PICKUP_BIG)
+	BaseStatePickupOverlap* currentStatePtr{ ownerPtr->GetCurrentPickupState() };
+	if (auto newState{ currentStatePtr->HandleOverlap(otherColliderPtr, ownerPtr) }; newState != nullptr)
 	{
-		BaseStatePickupOverlap* currentStatePtr{ ownerPtr->GetCurrentPickupState() };
-		if (auto newState{ currentStatePtr->HandleOverlap(ownerPtr) }; newState != nullptr)
-		{
-			currentStatePtr->OnExit();
-			ownerPtr->SetCurrentPickupState(newState);
-			ownerPtr->GetCurrentPickupState()->OnEnter();
-		}
+		currentStatePtr->OnExit();
+		ownerPtr->SetCurrentPickupState(newState);
+		ownerPtr->GetCurrentPickupState()->OnEnter();
 	}
 	return nullptr;
 }
@@ -155,14 +177,6 @@ pacman::BaseStatePacman* pacman::CollectingState::HandleOverlap(amu::CollisionCo
 	if (otherTag == tags::BLINKY)
 	{
 		return ownerPtr->GetState<DyingState>();
-	}
-	if (otherTag == tags::PICKUP_SMALL)
-	{
-		ownerPtr->NotifyObservers(events::PACMAN_EAT_SMALL_PICKUP);
-	}
-	else if (otherTag == tags::PICKUP_BIG)
-	{
-		ownerPtr->NotifyObservers(events::PACMAN_EAT_BIG_PICKUP);
 	}
 	return nullptr;
 }
