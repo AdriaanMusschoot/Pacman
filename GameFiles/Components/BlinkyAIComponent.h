@@ -72,7 +72,7 @@ namespace pacman
 		glm::vec2 const& GetOptimalDirection(BlinkyAIComponent* ownerPtr, std::vector<glm::vec2> const& possibleDirections) override;
 	private:
 		double m_Timer{ 0.0 };
-		double m_MaxTime{ 10.0 };
+		double m_MaxTime{ 10 };
 	};
 
 	class BlinkyAIComponent final : public amu::Component, public amu::IObserver, public amu::Subject

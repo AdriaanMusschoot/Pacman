@@ -2,11 +2,12 @@
 #define PM_SMALL_PICKUP_COLLIDER_H
 #include "CollisionComponent.h"
 #include "Configuration.h"
+#include "Subject.h"
 
 namespace pacman
 {
 
-	class SmallPickupCollider final : public amu::CollisionComponent
+	class SmallPickupCollider final : public amu::CollisionComponent, public amu::Subject
 	{
 	public:
 		SmallPickupCollider(amu::GameObject* ownerObjectPtr);

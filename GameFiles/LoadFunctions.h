@@ -24,8 +24,6 @@
 #include "Components/PacmanFSM.h"
 
 #include "Colliders/PacmanCollider.h"
-#include "Colliders/SmallPickupCollider.h"
-#include "Colliders/BigPickupCollider.h"
 #include "Colliders/GhostCollider.h"
 
 #include "Commands/MovePacmanCommand.h"
@@ -37,47 +35,14 @@
 
 namespace pacman
 {
-
-	void SpawnSmallPickup(amu::Scene* scenePtr, std::int64_t const& row, std::int64_t const& col)
-	{
-		using namespace config;
-		std::unique_ptr pickupSmallUPtr{ std::make_unique<amu::GameObject>() };
-		pickupSmallUPtr->SetTag(pacman::tags::PICKUP_SMALL);
-
-		pickupSmallUPtr->AddComponent<amu::TransformComponent>(pickupSmallUPtr.get(), glm::vec2{ col * CELL_WIDTH + CELL_WIDTH / 2, row * CELL_HEIGHT + CELL_HEIGHT / 2 });
-
-		amu::RenderComponent* renderComponentPtr{ pickupSmallUPtr->AddComponent<amu::RenderComponent>(pickupSmallUPtr.get(), resources::sprites::PICKUP_SMALL.FilePath) };
-		renderComponentPtr->SetSourceRectangle(SDL_Rect{ 0, 0, renderComponentPtr->GetSize().x, renderComponentPtr->GetSize().y });
-
-		pickupSmallUPtr->AddCollider(std::make_unique<SmallPickupCollider>(pickupSmallUPtr.get()));
-
-		scenePtr->Add(std::move(pickupSmallUPtr));
-	}
-
-	void SpawnBigPickup(amu::Scene* scenePtr, std::int64_t const& row, std::int64_t const& col)
-	{
-		using namespace config;
-		std::unique_ptr pickupBigUPtr{ std::make_unique<amu::GameObject>() };
-		pickupBigUPtr->SetTag(pacman::tags::PICKUP_BIG);
-
-		pickupBigUPtr->AddComponent<amu::TransformComponent>(pickupBigUPtr.get(), glm::vec2{ col * CELL_WIDTH + CELL_WIDTH / 2, row * CELL_HEIGHT + CELL_HEIGHT / 2 });
-
-		amu::RenderComponent* renderComponentPtr{ pickupBigUPtr->AddComponent<amu::RenderComponent>(pickupBigUPtr.get(), resources::sprites::PICKUP_BIG.FilePath) };
-		renderComponentPtr->SetSourceRectangle(SDL_Rect{ 0, 0, renderComponentPtr->GetSize().x, renderComponentPtr->GetSize().y });
-
-		pickupBigUPtr->AddCollider(std::make_unique<BigPickupCollider>(pickupBigUPtr.get()));
-
-		scenePtr->Add(std::move(pickupBigUPtr));
-	}
-
 	amu::GameObject* LoadPacman(amu::Scene* scenePtr, PlayFieldGridComponent* playFieldGridPtr, float x, float y)
 	{
 		using InpMan = amu::InputManager;
 		auto& inputManager = InpMan::GetInstance();
 
 		std::unique_ptr livesDisplayUPtr{ std::make_unique<amu::GameObject>() };
-		livesDisplayUPtr->AddComponent<amu::TransformComponent>(livesDisplayUPtr.get(), glm::vec2{ 0, config::WINDOW_HEIGHT - 20 });
-		livesDisplayUPtr->AddComponent<amu::TextComponent>(livesDisplayUPtr.get(), "X", resources::font::LINGUA, 20);
+		livesDisplayUPtr->AddComponent<amu::TransformComponent>(livesDisplayUPtr.get(), glm::vec2{ 20, config::WINDOW_HEIGHT - 20 });
+		livesDisplayUPtr->AddComponent<amu::TextComponent>(livesDisplayUPtr.get(), "3", resources::font::LINGUA, 20);
 		PacmanLivesComponent* pmLivesPtr{ livesDisplayUPtr->AddComponent<PacmanLivesComponent>(livesDisplayUPtr.get()) };
 
 		std::unique_ptr pacmanUPtr{ std::make_unique<amu::GameObject>() };
@@ -86,15 +51,18 @@ namespace pacman
 		pacmanUPtr->AddComponent<amu::TransformComponent>(pacmanUPtr.get(), glm::vec2{ x, y });
 
 		amu::RenderComponent* renderCompPtr{ pacmanUPtr->AddComponent<amu::RenderComponent>(pacmanUPtr.get(), resources::sprites::PACMAN.FilePath) };
-		renderCompPtr->SetSourceRectangle(SDL_Rect{ renderCompPtr->GetSize().x / resources::sprites::PACMAN.Cols * (resources::sprites::PACMAN.Cols - 1), 0, renderCompPtr->GetSize().x / resources::sprites::PACMAN.Cols, renderCompPtr->GetSize().y / resources::sprites::PACMAN.Rows });
+		renderCompPtr->SetSourceRectangle(SDL_Rect{ renderCompPtr->GetSize().x / resources::sprites::PACMAN.Cols * (resources::sprites::PACMAN.Cols - 12), 0, renderCompPtr->GetSize().x / resources::sprites::PACMAN.Cols, renderCompPtr->GetSize().y / resources::sprites::PACMAN.Rows });
 		PacmanAnimationComponent* pmAnimPtr{ pacmanUPtr->AddComponent<PacmanAnimationComponent>(pacmanUPtr.get()) };
+		pmAnimPtr->AddObserver(playFieldGridPtr);
 
 		GridMovementComponent* gridMovePtr{ pacmanUPtr->AddComponent<GridMovementComponent>(pacmanUPtr.get(), playFieldGridPtr, 100) };
 		gridMovePtr->AddObserver(pmAnimPtr);
 
 		PacmanFSMComponent* fsmComponentPtr{ pacmanUPtr->AddComponent<PacmanFSMComponent>(pacmanUPtr.get()) };
+		fsmComponentPtr->AddObserver(pmAnimPtr);
 		fsmComponentPtr->AddObserver(pmLivesPtr);
 
+		pmAnimPtr->AddObserver(fsmComponentPtr);
 		pacmanUPtr->AddCollider(std::make_unique<PacmanCollider>(pacmanUPtr.get()));
 
 		std::unique_ptr upCommandUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), config::VEC_UP)};
@@ -140,6 +108,7 @@ namespace pacman
 
 		PacmanFSMComponent* pmFSMPtr{ pacmanPtr->GetComponent<PacmanFSMComponent>() };
 		pmFSMPtr->AddObserver(blinkyUPtr->GetComponent<BlinkyAIComponent>());
+
 		scenePtr->Add(std::move(blinkyUPtr));
 	}
 
@@ -190,12 +159,14 @@ namespace pacman
 				//if small spawn small pickup 
 				if (matches[5] == rgx::PICKUP_SMALL)
 				{
-					SpawnSmallPickup(scenePtr, rowIdx, colIdx);
+					glm::vec2 spawnPos{ colIdx * CELL_WIDTH + CELL_WIDTH / 2, rowIdx * CELL_HEIGHT + CELL_HEIGHT / 2 };
+					gridLayoutComponent->SpawnSmallPickup(scenePtr, spawnPos);
 				}
 				//if big spawn big pickup
 				else if (matches[5] == rgx::PICKUP_BIG)
 				{
-					SpawnBigPickup(scenePtr, rowIdx, colIdx);
+					glm::vec2 spawnPos{ colIdx * CELL_WIDTH + CELL_WIDTH / 2,  rowIdx * CELL_HEIGHT + CELL_HEIGHT / 2 };
+					gridLayoutComponent->SpawnBigPickup(scenePtr, spawnPos);
 				}
 
 				else if (matches[5] == rgx::BLINKY_SPAWN)

@@ -15,6 +15,7 @@ pacman::PacmanFSMComponent::PacmanFSMComponent(amu::GameObject* ownerObjectPtr)
 
 	m_PMStatesUPtrVec.emplace_back(std::make_unique<CollectingState>());
 	m_PMStatesUPtrVec.emplace_back(std::make_unique<DyingState>());
+	m_PMStatesUPtrVec.emplace_back(std::make_unique<EvilState>());
 
 	m_CurrentStatePtr = GetState<CollectingState>();
 }
@@ -37,6 +38,16 @@ void pacman::PacmanFSMComponent::HandleOverlap(amu::CollisionComponent* otherCol
 void pacman::PacmanFSMComponent::Update()
 {
 	if (BaseStatePacman* newState{ m_CurrentStatePtr->Update(amu::GameTime::GetInstance().GetDeltaTime(), this)}; newState != nullptr)
+	{
+		m_CurrentStatePtr->OnExit(this);
+		m_CurrentStatePtr = newState;
+		m_CurrentStatePtr->OnEnter(this);
+	}
+}
+
+void pacman::PacmanFSMComponent::OnNotify(Event eventType, amu::Subject* subjectPtr)
+{
+	if (BaseStatePacman* newState{ m_CurrentStatePtr->OnNotify(eventType, subjectPtr, this) }; newState != nullptr)
 	{
 		m_CurrentStatePtr->OnExit(this);
 		m_CurrentStatePtr = newState;
@@ -113,7 +124,7 @@ pacman::BaseStatePickupOverlap* pacman::HasEatenStateSmallPickupOverlap::HandleO
 		otherTag == tags::PICKUP_BIG)
 	{
 		m_Timer = 0.0;
-	}%
+	}
 	if (otherTag == tags::PICKUP_SMALL)
 	{
 		ownerPtr->NotifyObservers(events::PACMAN_EAT_SMALL_PICKUP);
@@ -161,7 +172,6 @@ void pacman::CollectingState::OnExit(PacmanFSMComponent*)
 void pacman::CollectingState::HandleInput(glm::vec2 const& direction, PacmanFSMComponent* ownerPtr)
 {
 	ownerPtr->GetGridMove()->ChangeMovementState(direction);
-	ownerPtr->NotifyObservers(events::PACMAN_HIT_GHOST);
 }
 
 pacman::BaseStatePacman* pacman::CollectingState::Update(double elapsedSec, PacmanFSMComponent* ownerPtr)
@@ -178,11 +188,21 @@ pacman::BaseStatePacman* pacman::CollectingState::HandleOverlap(amu::CollisionCo
 	{
 		return ownerPtr->GetState<DyingState>();
 	}
+	if (otherTag == tags::PICKUP_BIG)
+	{
+		return ownerPtr->GetState<EvilState>();
+	}
+	return nullptr;
+}
+
+pacman::BaseStatePacman* pacman::CollectingState::OnNotify(amu::IObserver::Event, amu::Subject*, PacmanFSMComponent*)
+{
 	return nullptr;
 }
 
 void pacman::DyingState::OnEnter(PacmanFSMComponent* ownerPtr)
 {
+	ownerPtr->NotifyObservers(events::PACMAN_HIT_GHOST);
 	ownerPtr->GetGridMove()->ChangeMovementState(config::VEC_NEUTRAL);
 }
 
@@ -203,5 +223,49 @@ pacman::BaseStatePacman* pacman::DyingState::Update(double elapsedSec, PacmanFSM
 pacman::BaseStatePacman* pacman::DyingState::HandleOverlap(amu::CollisionComponent* otherColliderPtr, PacmanFSMComponent* ownerPtr)
 {
 	BaseStatePacman::HandleOverlap(otherColliderPtr, ownerPtr);
+	return nullptr;
+}
+
+pacman::BaseStatePacman* pacman::DyingState::OnNotify(amu::IObserver::Event eventType, amu::Subject*, PacmanFSMComponent* ownerPtr)
+{
+	if (eventType == events::PACMAN_DYING_ANIM_FINISHED)
+	{
+		return ownerPtr->GetState<CollectingState>();
+	}
+	return nullptr;
+}
+
+void pacman::EvilState::OnEnter(PacmanFSMComponent*)
+{
+}
+
+void pacman::EvilState::OnExit(PacmanFSMComponent*)
+{
+}
+
+void pacman::EvilState::HandleInput(glm::vec2 const& direction, PacmanFSMComponent* ownerPtr)
+{
+	ownerPtr->GetGridMove()->ChangeMovementState(direction);
+}
+
+pacman::BaseStatePacman* pacman::EvilState::Update(double elapsedSec, PacmanFSMComponent* ownerPtr)
+{
+	BaseStatePacman::Update(elapsedSec, ownerPtr);
+	m_Timer += elapsedSec;
+	if (m_Timer >= m_MaxTime)
+	{
+		return ownerPtr->GetState<CollectingState>();
+	}
+	return nullptr;
+}
+
+pacman::BaseStatePacman* pacman::EvilState::HandleOverlap(amu::CollisionComponent* otherColliderPtr, PacmanFSMComponent* ownerPtr)
+{
+	BaseStatePacman::HandleOverlap(otherColliderPtr, ownerPtr);
+	return nullptr;
+}
+
+pacman::BaseStatePacman* pacman::EvilState::OnNotify(amu::IObserver::Event, amu::Subject*, PacmanFSMComponent*)
+{
 	return nullptr;
 }

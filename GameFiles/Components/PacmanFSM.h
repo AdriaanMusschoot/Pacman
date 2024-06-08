@@ -65,6 +65,7 @@ namespace pacman
 		virtual BaseStatePacman* Update(double elapsedSec, PacmanFSMComponent* ownerPtr) = 0;
 
 		virtual BaseStatePacman* HandleOverlap(amu::CollisionComponent* otherColliderPtr, PacmanFSMComponent* ownerPtr) = 0;
+		virtual BaseStatePacman* OnNotify(amu::IObserver::Event eventType, amu::Subject* subjectPtr, PacmanFSMComponent* ownerPtr) = 0;
 	private:
 	};
 
@@ -81,6 +82,7 @@ namespace pacman
 		BaseStatePacman* Update(double elapsedSec, PacmanFSMComponent* ownerPtr) override;
 
 		BaseStatePacman* HandleOverlap(amu::CollisionComponent* otherColliderPtr, PacmanFSMComponent* ownerPtr) override;
+		BaseStatePacman* OnNotify(amu::IObserver::Event eventType, amu::Subject* subjectPtr, PacmanFSMComponent* ownerPtr) override;
 	private:
 	};
 
@@ -97,6 +99,7 @@ namespace pacman
 		BaseStatePacman* Update(double elapsedSec, PacmanFSMComponent* ownerPtr) override;
 
 		BaseStatePacman* HandleOverlap(amu::CollisionComponent* otherColliderPtr, PacmanFSMComponent* ownerPtr) override;
+		BaseStatePacman* OnNotify(amu::IObserver::Event eventType, amu::Subject* subjectPtr, PacmanFSMComponent* ownerPtr) override;
 	private:
 	};
 
@@ -105,10 +108,21 @@ namespace pacman
 	public:
 		EvilState() = default;
 		virtual ~EvilState() = default;
+
+		virtual void OnEnter(PacmanFSMComponent* ownerPtr) override;
+		virtual void OnExit(PacmanFSMComponent* ownerPtr) override;
+
+		void HandleInput(glm::vec2 const& direction, PacmanFSMComponent* ownerPtr) override;
+		BaseStatePacman* Update(double elapsedSec, PacmanFSMComponent* ownerPtr) override;
+
+		BaseStatePacman* HandleOverlap(amu::CollisionComponent* otherColliderPtr, PacmanFSMComponent* ownerPtr) override;
+		BaseStatePacman* OnNotify(amu::IObserver::Event eventType, amu::Subject* subjectPtr, PacmanFSMComponent* ownerPtr) override;
 	private:
+		double m_Timer{ 0.0 };
+		double m_MaxTime{ 10 };
 	};
 
-	class PacmanFSMComponent final : public amu::Component, public amu::Subject
+	class PacmanFSMComponent final : public amu::Component, public amu::Subject, public amu::IObserver
 	{
 	public:
 		PacmanFSMComponent(amu::GameObject* ownerObjectPtr);
@@ -123,6 +137,8 @@ namespace pacman
 
 		void HandleOverlap(amu::CollisionComponent* otherColliderPtr);
 		void Update() override;
+
+		void OnNotify(Event eventType, amu::Subject* subjectPtr) override;
 
 		template<typename T>
 		T* GetState()

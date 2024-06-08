@@ -6,6 +6,7 @@
 #include "SceneManager.h"
 #include "LoadFunctions.h"
 #include "Configuration.h"
+
 namespace fs = std::filesystem;
 
 int main(int, char*[]) 

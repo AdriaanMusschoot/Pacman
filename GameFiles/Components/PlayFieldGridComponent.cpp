@@ -1,4 +1,9 @@
 #include "PlayFieldGridComponent.h"
+#include "SceneManager.h"
+#include "Subject.h"
+#include "RenderComponent.h"
+#include "Colliders/BigPickupCollider.h"
+#include "Colliders/SmallPickupCollider.h"
 
 pacman::PlayFieldGridComponent::PlayFieldGridComponent(amu::GameObject* ownerObjectPtr, std::uint64_t const& rowsGrid, std::uint64_t const& colsGrid, std::uint64_t const& cellWidth, std::uint64_t const& cellHeigth)
 	: amu::Component(ownerObjectPtr)
@@ -47,7 +52,6 @@ void pacman::PlayFieldGridComponent::SetTileType(std::uint64_t const& rowIdx, st
 		m_TeleportTileVec.emplace_back(m_TileVec[idx]);
 		return;
 	}
-	throw std::runtime_error(std::string("No valid tile type") + std::string(typeString));
 }
 
 glm::vec2 const& pacman::PlayFieldGridComponent::GetTileDimensions() const
@@ -89,6 +93,70 @@ pacman::PlayFieldGridComponent::Tile const& pacman::PlayFieldGridComponent::GetT
 		};
 	auto it = std::find_if(m_TeleportTileVec.begin(), m_TeleportTileVec.end(), otherTileFinder);
 	return *it;
+}
+
+void pacman::PlayFieldGridComponent::SpawnSmallPickup(amu::Scene* scenePtr, glm::vec2 const& location)
+{
+	std::unique_ptr pickupSmallUPtr{ std::make_unique<amu::GameObject>() };
+	pickupSmallUPtr->SetTag(tags::PICKUP_SMALL);
+
+	pickupSmallUPtr->AddComponent<amu::TransformComponent>(pickupSmallUPtr.get(), location);
+
+	amu::RenderComponent* renderComponentPtr{ pickupSmallUPtr->AddComponent<amu::RenderComponent>(pickupSmallUPtr.get(), resources::sprites::PICKUP_SMALL.FilePath) };
+	renderComponentPtr->SetSourceRectangle(SDL_Rect{ 0, 0, renderComponentPtr->GetSize().x, renderComponentPtr->GetSize().y });
+
+	pickupSmallUPtr->AddCollider(std::make_unique<SmallPickupCollider>(pickupSmallUPtr.get()));
+	SmallPickupCollider* collPtr{ dynamic_cast<SmallPickupCollider*>(pickupSmallUPtr->GetCollider()) };
+	collPtr->AddObserver(this);
+
+	scenePtr->Add(std::move(pickupSmallUPtr));
+}
+
+void pacman::PlayFieldGridComponent::SpawnBigPickup(amu::Scene* scenePtr, glm::vec2 const& location)
+{
+	std::unique_ptr pickupBigUPtr{ std::make_unique<amu::GameObject>() };
+	pickupBigUPtr->SetTag(tags::PICKUP_BIG);
+
+	pickupBigUPtr->AddComponent<amu::TransformComponent>(pickupBigUPtr.get(), location);
+
+	amu::RenderComponent* renderComponentPtr{ pickupBigUPtr->AddComponent<amu::RenderComponent>(pickupBigUPtr.get(), resources::sprites::PICKUP_BIG.FilePath) };
+	renderComponentPtr->SetSourceRectangle(SDL_Rect{ 0, 0, renderComponentPtr->GetSize().x, renderComponentPtr->GetSize().y });
+
+	pickupBigUPtr->AddCollider(std::make_unique<BigPickupCollider>(pickupBigUPtr.get()));
+	BigPickupCollider* collPtr{ dynamic_cast<BigPickupCollider*>(pickupBigUPtr->GetCollider()) };
+	collPtr->AddObserver(this);
+
+	scenePtr->Add(std::move(pickupBigUPtr));
+}
+
+void pacman::PlayFieldGridComponent::AddPickupSpawnLocation(glm::vec2 const& spawnLocation, std::string_view const& type)
+{
+	m_PickupRespawnSpawnLocationVec.emplace_back(std::make_pair(spawnLocation, type));
+}
+
+void pacman::PlayFieldGridComponent::OnNotify(Event eventType, amu::Subject* subjectPtr)
+{
+	if (eventType == events::SMALL_PICKUP_VANISHED or eventType == events::BIG_PICKUP_VANISHED)
+	{
+		amu::GameObject* subjectOwnerPtr{ subjectPtr->GetSubjectOwner() };
+		AddPickupSpawnLocation(subjectOwnerPtr->GetComponent<amu::TransformComponent>()->GetWorldPosition(), subjectOwnerPtr->GetTag());
+	}
+
+	if (eventType == events::PACMAN_DYING_ANIM_FINISHED)
+	{
+		amu::Scene* currScenePtr = amu::SceneManager::GetInstance().GetCurrentScene();
+		for (auto& [loc, tag]: m_PickupRespawnSpawnLocationVec)
+		{
+			if (tag == tags::PICKUP_SMALL)
+			{
+				SpawnSmallPickup(currScenePtr, loc);
+			}
+			else if (tag == tags::PICKUP_BIG)
+			{
+				SpawnBigPickup(currScenePtr, loc);
+			}
+		}
+	}
 }
 	
 [[nodiscard]] std::int64_t pacman::PlayFieldGridComponent::GetIndex(std::uint64_t const& rowIdx, std::uint64_t const& colIdx) const

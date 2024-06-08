@@ -5,6 +5,7 @@
 
 pacman::PacmanAnimationComponent::PacmanAnimationComponent(amu::GameObject* ownerObjectPtr)
 	: Component(ownerObjectPtr)
+	, Subject(ownerObjectPtr)
 {
 	m_RenderComponentPtr = GetComponentOwner()->GetComponent<amu::RenderComponent>();
 }
@@ -17,9 +18,24 @@ void pacman::PacmanAnimationComponent::Update()
 	}
 
 	m_Timer += amu::GameTime::GetInstance().GetDeltaTime();
+
 	if (m_Timer >= m_MaxTime)
 	{
-		m_CurrentColIdx = ++m_CurrentColIdx % m_ColsPerAnimation;
+		if (m_Dying)
+		{
+			++m_CurrentColIdx;
+			if (m_CurrentColIdx >= 14)
+			{
+				NotifyObservers(events::PACMAN_DYING_ANIM_FINISHED);
+				m_CurrentColIdx = 2;
+				m_Dying = false;
+				m_Stuck = true;
+			}
+		}
+		else
+		{
+			m_CurrentColIdx = ++m_CurrentColIdx % m_ColsPerAnimation;
+		}
 		m_Timer = 0.0;
 		SDL_Rect const& oldSourceRect{ m_RenderComponentPtr->GetSourceRectangle() };
 		m_RenderComponentPtr->SetSourceRectangle(SDL_Rect{ m_CurrentColIdx * oldSourceRect.w, m_CurrentRowIdx * oldSourceRect.h, oldSourceRect.w, oldSourceRect.h });
@@ -55,9 +71,19 @@ void pacman::PacmanAnimationComponent::OnNotify(Event eventType, amu::Subject* s
 		}
 		else if (currDir == config::VEC_NEUTRAL)
 		{
-			m_Stuck = true;
+			if (not m_Dying)
+			{
+				m_Stuck = true;
+			}
 		}
 		SDL_Rect const& oldSourceRect{ m_RenderComponentPtr->GetSourceRectangle() };
 		m_RenderComponentPtr->SetSourceRectangle(SDL_Rect{ m_CurrentColIdx * oldSourceRect.w, m_CurrentRowIdx * oldSourceRect.h, oldSourceRect.w, oldSourceRect.h });
+	}
+	if (eventType == events::PACMAN_HIT_GHOST)
+	{
+		m_Dying = true;
+		m_Stuck = false;
+		m_CurrentRowIdx = 0;
+		m_CurrentColIdx = 3;
 	}
 }

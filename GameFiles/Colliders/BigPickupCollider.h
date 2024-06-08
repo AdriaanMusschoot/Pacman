@@ -2,11 +2,11 @@
 #define PM_BIG_PICKUP_COLLIDER_H
 #include "CollisionComponent.h"
 #include "Configuration.h"
-
+#include "Subject.h"
 namespace pacman
 {
 
-	class BigPickupCollider final : public amu::CollisionComponent
+	class BigPickupCollider final : public amu::CollisionComponent, public amu::Subject
 	{
 	public:
 		BigPickupCollider(amu::GameObject* ownerObjectPtr);

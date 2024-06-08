@@ -28,7 +28,7 @@ set(PAC_MAN_SOURCE_FILES
 
   "${GAME_FILES_DIR}/Animations/GhostAnimationComponent.h"      "${GAME_FILES_DIR}/Animations/GhostAnimationComponent.cpp" 
   "${GAME_FILES_DIR}/Animations/PacmanAnimationComponent.h"     "${GAME_FILES_DIR}/Animations/PacmanAnimationComponent.cpp" 
-)
+ "GameFiles/Components/GhostFSM.h" "GameFiles/Components/GhostFSM.cpp")
 
 add_executable(${TARGET_NAME} ${PAC_MAN_SOURCE_FILES})
 

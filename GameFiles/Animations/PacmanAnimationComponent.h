@@ -10,7 +10,7 @@
 namespace pacman
 {
 
-	class PacmanAnimationComponent final : public amu::Component, public amu::IObserver
+	class PacmanAnimationComponent final : public amu::Component, public amu::IObserver, public amu::Subject
 	{
 	public:
 		PacmanAnimationComponent(amu::GameObject* ownerObjectPtr);
@@ -29,11 +29,13 @@ namespace pacman
 		double m_Timer{};
 		double m_MaxTime{ 0.1 };
 
+		bool m_Dying{ false };
+
 		bool m_Stuck{ true };
 
 		int m_CurrentRowIdx{ 0 };
 
-		int const m_ColsPerAnimation{ pacman::resources::sprites::PACMAN.Cols };
+		int const m_ColsPerAnimation{ 3 };
 
 		int m_CurrentColIdx{ 2 };
 

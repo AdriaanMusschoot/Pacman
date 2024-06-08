@@ -53,6 +53,10 @@ namespace pacman
 		amu::IObserver::Event constexpr PACMAN_EAT_BIG_PICKUP{ 2 };
 		amu::IObserver::Event constexpr GRID_DIRECTION_CHANGES{ 3 };
 		amu::IObserver::Event constexpr PACMAN_HIT_GHOST{ 4 };
+		amu::IObserver::Event constexpr PACMAN_DYING_ANIM_FINISHED{ 5 };
+		amu::IObserver::Event constexpr SMALL_PICKUP_VANISHED{ 6 };
+		amu::IObserver::Event constexpr BIG_PICKUP_VANISHED{ 7 };
+
 	}
 
 	namespace resources
@@ -68,7 +72,7 @@ namespace pacman
 				int const Cols;
 			};
 
-			SpriteData const PACMAN{ "Sprites/Pacman.png", 4, 3 };
+			SpriteData const PACMAN{ "Sprites/Pacman.png", 4, 14 };
 			SpriteData const PICKUP_SMALL{ "Sprites/EatableSmall.png", 1, 1 };
 			SpriteData const PICKUP_BIG{ "Sprites/EatableBig.png", 1, 1 };
 			SpriteData const PLAYINGFIELD{ "Sprites/PlayingField.png", 1, 1 };

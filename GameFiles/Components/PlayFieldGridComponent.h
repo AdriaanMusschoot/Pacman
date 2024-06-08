@@ -3,12 +3,14 @@
 
 #include "Configuration.h"
 #include "Component.h"
+#include "IObserver.h"
+#include "Scene.h"
 #include <glm/glm.hpp>
 
 namespace pacman
 {
 
-	class PlayFieldGridComponent final : public amu::Component
+	class PlayFieldGridComponent final : public amu::Component, public amu::IObserver
 	{
 	public:
 		enum class TileType
@@ -42,6 +44,11 @@ namespace pacman
 		Tile const& GetTile(glm::vec2 const& position) const;
 
 		Tile const& GetTileToTeleportTo(Tile const& currentTile);
+
+		void SpawnSmallPickup(amu::Scene* scenePtr, glm::vec2 const& location);
+		void SpawnBigPickup(amu::Scene* scenePtr, glm::vec2 const& location);
+
+		void OnNotify(Event eventType, amu::Subject* subjectPtr) override;
 	private:
 		std::uint64_t const m_RowsGrid{};
 		std::uint64_t const m_ColsGrid{};
@@ -51,7 +58,10 @@ namespace pacman
 
 		std::vector<Tile> m_TeleportTileVec{};
 
+		std::vector<std::pair<glm::vec2, std::string>> m_PickupRespawnSpawnLocationVec{};
+
 		[[nodiscard]] std::int64_t GetIndex(std::uint64_t const& rowIdx, std::uint64_t const& colIdx) const;
+		void AddPickupSpawnLocation(glm::vec2 const& spawnLocation, std::string_view const& type);
 	};
 
 }
