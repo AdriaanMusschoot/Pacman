@@ -22,6 +22,7 @@
 #include "Components/BlinkyAIComponent.h"
 #include "Components/PacmanLivesComponent.h"
 #include "Components/PacmanFSM.h"
+#include "Components/GhostFSM.h"
 
 #include "Colliders/PacmanCollider.h"
 #include "Colliders/GhostCollider.h"
@@ -95,19 +96,19 @@ namespace pacman
 
 		amu::RenderComponent* renderCompPtr{ blinkyUPtr->AddComponent<amu::RenderComponent>(blinkyUPtr.get(), resources::sprites::BLINKY.FilePath) };
 		renderCompPtr->SetSourceRectangle(SDL_Rect{ 0, 0, renderCompPtr->GetSize().x / resources::sprites::BLINKY.Cols, renderCompPtr->GetSize().y / resources::sprites::BLINKY.Rows });
-		GhostAnimationComponent* animComponent{ blinkyUPtr->AddComponent<GhostAnimationComponent>(blinkyUPtr.get()) };
-
+		//GhostAnimationComponent* animComponent{ blinkyUPtr->AddComponent<GhostAnimationComponent>(blinkyUPtr.get()) };
+		blinkyUPtr->AddComponent<GhostAnimationComponent>(blinkyUPtr.get());
 		GridMovementComponent* gridMoveCompPtr{ blinkyUPtr->AddComponent<GridMovementComponent>(blinkyUPtr.get(), playFieldGridPtr, 100) };
-		BlinkyAIComponent* blinkyAIComponentPtr{ blinkyUPtr->AddComponent<BlinkyAIComponent>(blinkyUPtr.get(), pacmanPtr->GetComponent<amu::TransformComponent>()) };
+		GhostFSMComponent* ghostFSMComponentPtr{ blinkyUPtr->AddComponent<GhostFSMComponent>(blinkyUPtr.get(), pacmanPtr->GetComponent<amu::TransformComponent>()) };
 
-		gridMoveCompPtr->AddObserver(blinkyAIComponentPtr);
+		gridMoveCompPtr->AddObserver(ghostFSMComponentPtr);
 
-		blinkyAIComponentPtr->AddObserver(animComponent);
+		//blinkyAIComponentPtr->AddObserver(animComponent);
 
 		blinkyUPtr->AddCollider(std::make_unique<GhostCollider>(blinkyUPtr.get()));
 
 		PacmanFSMComponent* pmFSMPtr{ pacmanPtr->GetComponent<PacmanFSMComponent>() };
-		pmFSMPtr->AddObserver(blinkyUPtr->GetComponent<BlinkyAIComponent>());
+		pmFSMPtr->AddObserver(ghostFSMComponentPtr);
 
 		scenePtr->Add(std::move(blinkyUPtr));
 	}

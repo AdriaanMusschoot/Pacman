@@ -119,7 +119,7 @@ namespace pacman
 		BaseStatePacman* OnNotify(amu::IObserver::Event eventType, amu::Subject* subjectPtr, PacmanFSMComponent* ownerPtr) override;
 	private:
 		double m_Timer{ 0.0 };
-		double m_MaxTime{ 10 };
+		double m_MaxTime{ config::MAX_TIME_PICKUP };
 	};
 
 	class PacmanFSMComponent final : public amu::Component, public amu::Subject, public amu::IObserver

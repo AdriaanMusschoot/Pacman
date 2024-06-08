@@ -33,6 +33,7 @@ namespace pacman
 		glm::vec2 const VEC_NEUTRAL{ 0, 0 };
 		glm::vec2 const VEC_INVALID{ -1, -1 };
 
+		double const MAX_TIME_PICKUP{ 10.0 };
 	}
 
 	namespace tags
