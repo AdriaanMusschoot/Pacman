@@ -17,8 +17,8 @@ namespace pacman
 
 		int constexpr SCALE_FACTOR{ 3 };
 					  
-		int constexpr WINDOW_WIDTH{ 224 * SCALE_FACTOR };
-		int constexpr WINDOW_HEIGHT{ 248 * SCALE_FACTOR };
+		int constexpr WINDOW_WIDTH{ 224 * SCALE_FACTOR + 20 };
+		int constexpr WINDOW_HEIGHT{ 248 * SCALE_FACTOR + 20 };
 					  
 		int constexpr ROWS_GRID{ 31 };
 		int constexpr COLS_GRID{ 28 };
@@ -52,6 +52,7 @@ namespace pacman
 		amu::IObserver::Event constexpr PACMAN_EAT_SMALL_PICKUP{ 1 };
 		amu::IObserver::Event constexpr PACMAN_EAT_BIG_PICKUP{ 2 };
 		amu::IObserver::Event constexpr GRID_DIRECTION_CHANGES{ 3 };
+		amu::IObserver::Event constexpr PACMAN_HIT_GHOST{ 4 };
 	}
 
 	namespace resources

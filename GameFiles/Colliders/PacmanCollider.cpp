@@ -4,7 +4,7 @@
 #include "GameTime.h"
 
 pacman::PacmanCollider::PacmanCollider(amu::GameObject* ownerObjectPtr)
-	: CollisionComponent(ownerObjectPtr, std::vector<std::string>{ pacman::tags::PICKUP_SMALL })
+	: CollisionComponent(ownerObjectPtr, std::vector<std::string>{ pacman::tags::PICKUP_SMALL, pacman::tags::PICKUP_BIG, pacman::tags::BLINKY })
 	, Subject(ownerObjectPtr)
 	, m_StatePickupUPtr{ std::make_unique<WaitingStateSmallPickupOverlap>() }
 {
@@ -40,6 +40,10 @@ void pacman::PacmanCollider::OnCollision(amu::CollisionComponent* otherCollider)
 	else if (otherTag == tags::PICKUP_BIG)
 	{
 		NotifyObservers(events::PACMAN_EAT_BIG_PICKUP);
+	}
+	if (otherTag == tags::BLINKY)
+	{
+		NotifyObservers(events::PACMAN_HIT_GHOST);
 	}
 }
 

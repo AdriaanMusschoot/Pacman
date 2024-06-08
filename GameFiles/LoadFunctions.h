@@ -20,10 +20,12 @@
 #include "Components/FPSComponent.h"
 #include "Components/GridMovementComponent.h"
 #include "Components/BlinkyAIComponent.h"
+#include "Components/PacmanLivesComponent.h"
 
 #include "Colliders/PacmanCollider.h"
 #include "Colliders/SmallPickupCollider.h"
 #include "Colliders/BigPickupCollider.h"
+#include "Colliders/GhostCollider.h"
 
 #include "Commands/MovePacmanCommand.h"
 
@@ -72,16 +74,23 @@ namespace pacman
 		using InpMan = amu::InputManager;
 		auto& inputManager = InpMan::GetInstance();
 
+		std::unique_ptr livesDisplayUPtr{ std::make_unique<amu::GameObject>() };
+		livesDisplayUPtr->AddComponent<amu::TransformComponent>(livesDisplayUPtr.get(), glm::vec2{ 0, config::WINDOW_HEIGHT - 20 });
+		livesDisplayUPtr->AddComponent<amu::TextComponent>(livesDisplayUPtr.get(), "X", resources::font::LINGUA, 20);
+		PacmanLivesComponent* pmLivesPtr{ livesDisplayUPtr->AddComponent<PacmanLivesComponent>(livesDisplayUPtr.get()) };
+
 		std::unique_ptr pacmanUPtr{ std::make_unique<amu::GameObject>() };
 		pacmanUPtr->SetTag(pacman::tags::PACMAN);
 
 		pacmanUPtr->AddComponent<amu::TransformComponent>(pacmanUPtr.get(), glm::vec2{ x, y });
 
 		amu::RenderComponent* renderCompPtr{ pacmanUPtr->AddComponent<amu::RenderComponent>(pacmanUPtr.get(), resources::sprites::PACMAN.FilePath) };
-		renderCompPtr->SetSourceRectangle(SDL_Rect{ 0, 0, renderCompPtr->GetSize().x / resources::sprites::PACMAN.Cols, renderCompPtr->GetSize().y / resources::sprites::PACMAN.Rows });
+		renderCompPtr->SetSourceRectangle(SDL_Rect{ renderCompPtr->GetSize().x / resources::sprites::PACMAN.Cols * (resources::sprites::PACMAN.Cols - 1), 0, renderCompPtr->GetSize().x / resources::sprites::PACMAN.Cols, renderCompPtr->GetSize().y / resources::sprites::PACMAN.Rows });
 		PacmanAnimationComponent* pmAnimPtr{ pacmanUPtr->AddComponent<PacmanAnimationComponent>(pacmanUPtr.get()) };
 
 		pacmanUPtr->AddCollider(std::make_unique<PacmanCollider>(pacmanUPtr.get()));
+		PacmanCollider* pmCollider{ dynamic_cast<PacmanCollider*>(pacmanUPtr->GetCollider()) };
+		pmCollider->AddObserver(pmLivesPtr);
 
 		GridMovementComponent* gridMovePtr{ pacmanUPtr->AddComponent<GridMovementComponent>(pacmanUPtr.get(), playFieldGridPtr, 100) };
 		gridMovePtr->AddObserver(pmAnimPtr);
@@ -98,7 +107,10 @@ namespace pacman
 		std::unique_ptr rightCommandUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), config::VEC_RIGHT) };
 		inputManager.AddCommandKeyboard(InpMan::Key::D, InpMan::InputState::Pressed, std::move(rightCommandUPtr));
 
+
 		amu::GameObject* pacmanPtr{ scenePtr->Add(std::move(pacmanUPtr)) };
+
+		scenePtr->Add(std::move(livesDisplayUPtr));
 
 		return pacmanPtr;
 	}
@@ -122,6 +134,8 @@ namespace pacman
 		gridMoveCompPtr->AddObserver(blinkyAIComponentPtr);
 
 		blinkyAIComponentPtr->AddObserver(animComponent);
+
+		blinkyUPtr->AddCollider(std::make_unique<GhostCollider>(blinkyUPtr.get()));
 
 		PacmanCollider* pmColliderPtr{ dynamic_cast<PacmanCollider*>(pacmanPtr->GetCollider()) };
 		pmColliderPtr->AddObserver(blinkyUPtr->GetComponent<BlinkyAIComponent>());

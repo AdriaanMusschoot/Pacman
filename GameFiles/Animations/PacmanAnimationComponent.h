@@ -29,13 +29,13 @@ namespace pacman
 		double m_Timer{};
 		double m_MaxTime{ 0.1 };
 
-		bool m_Stuck{ false };
+		bool m_Stuck{ true };
 
 		int m_CurrentRowIdx{ 0 };
 
 		int const m_ColsPerAnimation{ pacman::resources::sprites::PACMAN.Cols };
 
-		int m_CurrentColIdx{};
+		int m_CurrentColIdx{ 2 };
 
 		int const m_RowIdxRight{ 0 };
 		int const m_RowIdxLeft{ 1 };
