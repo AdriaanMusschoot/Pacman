@@ -44,9 +44,7 @@ void pacman::GridMovementComponent::Update()
 			m_CurrentDirection != m_NewDirection and
 			TileReachable(m_NewDirection))
 		{
-			m_CurrentDirection = m_NewDirection;
-			m_NewDirection = config::VEC_NEUTRAL;
-			NotifyObservers(events::GRID_DIRECTION_CHANGES);
+			NewCurrentDirection(m_NewDirection);
 			return;
 		}
 		if (m_CurrentTile.Type == PlayFieldGridComponent::TileType::Teleport)
@@ -56,8 +54,7 @@ void pacman::GridMovementComponent::Update()
 		}
 		if (not TileReachable(m_CurrentDirection))
 		{
-			m_CurrentDirection = config::VEC_NEUTRAL;
-			m_NewDirection = config::VEC_NEUTRAL;
+			NewCurrentDirection(config::VEC_NEUTRAL);
 			return;
 		}
 	}
@@ -68,18 +65,17 @@ void pacman::GridMovementComponent::Update()
 void pacman::GridMovementComponent::ChangeMovementState(glm::vec2 const& newDirection)
 {	
 	//if Idling go immedeatly no need to wait until you are on a crossing tile
-	std::cout << newDirection.x << ", " << newDirection.y << "\n";
 	if (m_CurrentDirection == config::VEC_NEUTRAL and
 		TileReachable(newDirection))
 	{
-		m_CurrentDirection = newDirection;
+		NewCurrentDirection(newDirection);
 		return;
 	}
 
 	if (newDirection == -m_CurrentDirection and
 		TileReachable(newDirection))
 	{
-		m_CurrentDirection = newDirection;
+		NewCurrentDirection(newDirection);
 		return;
 	}
 
@@ -191,4 +187,11 @@ bool pacman::GridMovementComponent::IsCentered() const
 		}
 	}
 	return false;
+}
+
+void pacman::GridMovementComponent::NewCurrentDirection(glm::vec2 const& newDirection)
+{
+	m_CurrentDirection = newDirection;
+	m_NewDirection = config::VEC_NEUTRAL;
+	NotifyObservers(pacman::events::GRID_DIRECTION_CHANGES);
 }

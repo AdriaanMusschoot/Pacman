@@ -23,7 +23,7 @@ set(PAC_MAN_SOURCE_FILES
   "${GAME_FILES_DIR}/Colliders/BigPickupCollider.cpp"           "${GAME_FILES_DIR}/Colliders/BigPickupCollider.h"
   "${GAME_FILES_DIR}/Colliders/PacmanCollider.cpp"              "${GAME_FILES_DIR}/Colliders/PacmanCollider.h" 
 
-  "${GAME_FILES_DIR}/Animations/GhostAnimationComponent.h"      "${GAME_FILES_DIR}/Animations/GhostAnimationComponent.cpp")
+  "${GAME_FILES_DIR}/Animations/GhostAnimationComponent.h"      "${GAME_FILES_DIR}/Animations/GhostAnimationComponent.cpp" "GameFiles/Animations/PacmanAnimationComponent.h" "GameFiles/Animations/PacmanAnimationComponent.cpp")
 
 add_executable(${TARGET_NAME} ${PAC_MAN_SOURCE_FILES})
 

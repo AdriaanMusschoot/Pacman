@@ -67,6 +67,11 @@ glm::vec2 const& pacman::BlinkyAIComponent::GetGhostPosition()
     return m_TransformPtr->GetWorldPosition();
 }
 
+pacman::GridMovementComponent* pacman::BlinkyAIComponent::GetGridMoveComp() const
+{
+    return m_GridMovementPtr;
+}
+
 pacman::BaseGhostState::Axis pacman::BaseGhostState::GetOptimalAxis(float deltaX, float deltaY) const
 {
     if (std::abs(deltaX) > std::abs(deltaY)) 
@@ -168,8 +173,10 @@ glm::vec2 const& pacman::HuntPacmanState::GetOptimalDirection(BlinkyAIComponent*
     return config::VEC_INVALID;
 }
 
-void pacman::AvoidPacmanState::OnEnter(BlinkyAIComponent*)
+void pacman::AvoidPacmanState::OnEnter(BlinkyAIComponent* ownerPtr)
 {
+    GridMovementComponent* gridCompPtr{ ownerPtr->GetGridMoveComp() };
+    gridCompPtr->ChangeMovementState(-gridCompPtr->GetCurrentDirection());
     m_Timer = 0.0;
 }
 

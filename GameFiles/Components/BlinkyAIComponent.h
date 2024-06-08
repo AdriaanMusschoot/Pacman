@@ -107,6 +107,8 @@ namespace pacman
 			}
 			return nullptr;
 		}
+
+		GridMovementComponent* GetGridMoveComp() const;
 	private:
 		amu::TransformComponent* m_TransformPtr{ nullptr };
 		GridMovementComponent* m_GridMovementPtr{ nullptr };

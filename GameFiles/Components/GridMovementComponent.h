@@ -45,6 +45,7 @@ namespace pacman
 
 		bool TileReachable(glm::vec2 const& direction) const;
 		bool IsCentered() const;
+		void NewCurrentDirection(glm::vec2 const& newDirection);
 	};
 
 }

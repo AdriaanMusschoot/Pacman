@@ -28,6 +28,7 @@
 #include "Commands/MovePacmanCommand.h"
 
 #include "Animations/GhostAnimationComponent.h"
+#include "Animations/PacmanAnimationComponent.h"
 
 #include "Configuration.h"
 
@@ -77,11 +78,13 @@ namespace pacman
 		pacmanUPtr->AddComponent<amu::TransformComponent>(pacmanUPtr.get(), glm::vec2{ x, y });
 
 		amu::RenderComponent* renderCompPtr{ pacmanUPtr->AddComponent<amu::RenderComponent>(pacmanUPtr.get(), resources::sprites::PACMAN.FilePath) };
-		renderCompPtr->SetSourceRectangle(SDL_Rect{ 0, 0, renderCompPtr->GetSize().x, renderCompPtr->GetSize().y });
+		renderCompPtr->SetSourceRectangle(SDL_Rect{ 0, 0, renderCompPtr->GetSize().x / resources::sprites::PACMAN.Cols, renderCompPtr->GetSize().y / resources::sprites::PACMAN.Rows });
+		PacmanAnimationComponent* pmAnimPtr{ pacmanUPtr->AddComponent<PacmanAnimationComponent>(pacmanUPtr.get()) };
 
 		pacmanUPtr->AddCollider(std::make_unique<PacmanCollider>(pacmanUPtr.get()));
 
-		pacmanUPtr->AddComponent<GridMovementComponent>(pacmanUPtr.get(), playFieldGridPtr, 100);
+		GridMovementComponent* gridMovePtr{ pacmanUPtr->AddComponent<GridMovementComponent>(pacmanUPtr.get(), playFieldGridPtr, 100) };
+		gridMovePtr->AddObserver(pmAnimPtr);
 
 		std::unique_ptr upCommandUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), config::VEC_UP)};
 		inputManager.AddCommandKeyboard(InpMan::Key::W, InpMan::InputState::Pressed, std::move(upCommandUPtr));

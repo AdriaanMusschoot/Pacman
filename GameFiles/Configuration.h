@@ -67,7 +67,7 @@ namespace pacman
 				int const Cols;
 			};
 
-			SpriteData const PACMAN{ "Sprites/Pacman.png", 1, 1 };
+			SpriteData const PACMAN{ "Sprites/Pacman.png", 4, 3 };
 			SpriteData const PICKUP_SMALL{ "Sprites/EatableSmall.png", 1, 1 };
 			SpriteData const PICKUP_BIG{ "Sprites/EatableBig.png", 1, 1 };
 			SpriteData const PLAYINGFIELD{ "Sprites/PlayingField.png", 1, 1 };
