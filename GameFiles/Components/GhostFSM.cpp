@@ -3,13 +3,16 @@
 
 pacman::GhostFSMComponent::GhostFSMComponent(amu::GameObject* ownerObjectPtr, amu::TransformComponent* pacmanTransformPtr)
 	: Component(ownerObjectPtr)
+	, Subject(ownerObjectPtr)
 	, m_PacmanTransformPtr{ pacmanTransformPtr }
 {
 	m_TransformPtr = GetComponentOwner()->GetComponent<amu::TransformComponent>();
 	m_GridMovementPtr = GetComponentOwner()->GetComponent<GridMovementComponent>();
+	m_AIPtr = GetComponentOwner()->GetComponent<BlinkyAIComponent>();
+	assert(m_AIPtr);
 	assert(m_GridMovementPtr);
 	m_GridMovementPtr->ChangeMovementState(config::VEC_LEFT);
-
+	m_GridMovementPtr->AddObserver(this);
 
 	m_GhostStateUPtrVec.emplace_back(std::make_unique<HuntingPacmanState>());
 	m_GhostStateUPtrVec.emplace_back(std::make_unique<AvoidingPacmanState>());
@@ -44,29 +47,17 @@ void pacman::GhostFSMComponent::Update()
 
 void pacman::GhostFSMComponent::OnNotify(amu::IObserver::Event eventType, amu::Subject* subjectPtr)
 {
-	if (eventType == events::GHOST_INPUT_REQUIRED)
-	{
-		std::vector<glm::vec2> possibleDirectionVec{ m_GridMovementPtr->PossibleDirections() };
-		glm::vec2 const& optimalDirection{ m_CurrentGhostStatePtr->GetOptimalDirection(possibleDirectionVec, this) };
-		if (optimalDirection != config::VEC_INVALID)
-		{
-			m_GridMovementPtr->ChangeMovementState(optimalDirection);
-			m_PreviousDirection = optimalDirection;
-		}
-		else
-		{
-			auto& safetyDirection = possibleDirectionVec[0];
-			m_GridMovementPtr->ChangeMovementState(safetyDirection);
-			m_PreviousDirection = optimalDirection;
-		}
-	}
-
 	if (BaseGhostState* newStatePtr{ m_CurrentGhostStatePtr->OnNotify(eventType, subjectPtr, this) }; newStatePtr != nullptr)
 	{
 		m_CurrentGhostStatePtr->OnExit(this);
 		m_CurrentGhostStatePtr = newStatePtr;
 		m_CurrentGhostStatePtr->OnEnter(this);
 	}
+}
+
+void pacman::GhostFSMComponent::SetPreviousDirection(glm::vec2 const& direction)
+{
+	m_PreviousDirection = direction;
 }
 
 glm::vec2 const& pacman::GhostFSMComponent::GetPreviousDirection()
@@ -76,50 +67,23 @@ glm::vec2 const& pacman::GhostFSMComponent::GetPreviousDirection()
 
 glm::vec2 const& pacman::GhostFSMComponent::GetPacmanPosition()
 {
-	return m_TransformPtr->GetWorldPosition();
+	return m_PacmanTransformPtr->GetWorldPosition();
 }
 
 glm::vec2 const& pacman::GhostFSMComponent::GetGhostPosition()
 {
-	return m_PacmanTransformPtr->GetWorldPosition();
+	return m_TransformPtr->GetWorldPosition();
 }
 
-pacman::BaseGhostState::Axis pacman::BaseGhostState::GetOptimalAxis(float deltaX, float deltaY) const
+pacman::GridMovementComponent* pacman::GhostFSMComponent::GetGridMove() const
 {
-	if (std::abs(deltaX) > std::abs(deltaY))
-	{
-		return Axis::X;
-	}
-	else
-	{
-		return Axis::Y;
-	}
+	return m_GridMovementPtr;
 }
 
-glm::vec2 pacman::BaseGhostState::GetOptimalHorizontalDirection(float deltaX) const
+pacman::BaseAIComponent* pacman::GhostFSMComponent::GetAI() const
 {
-	if (deltaX > 0)
-	{
-		return config::VEC_RIGHT;
-	}
-	else
-	{
-		return config::VEC_LEFT;
-	}
+	return m_AIPtr;
 }
-
-glm::vec2 pacman::BaseGhostState::GetOptimalVerticalDirection(float deltaY) const
-{
-	if (deltaY > 0)
-	{
-		return config::VEC_DOWN;
-	}
-	else
-	{
-		return config::VEC_UP;
-	}
-}
-
 
 void pacman::HuntingPacmanState::OnEnter(GhostFSMComponent*)
 {
@@ -143,50 +107,37 @@ pacman::BaseGhostState* pacman::HuntingPacmanState::HandleOverlap(amu::Collision
 	return nullptr;
 }
 
-pacman::BaseGhostState* pacman::HuntingPacmanState::OnNotify(amu::IObserver::Event, amu::Subject*, GhostFSMComponent*)
+pacman::BaseGhostState* pacman::HuntingPacmanState::OnNotify(amu::IObserver::Event eventType, amu::Subject*, GhostFSMComponent* ownerPtr)
 {
+	if (eventType == events::PACMAN_EAT_BIG_PICKUP)
+	{
+		return ownerPtr->GetState<AvoidingPacmanState>();
+	}
+	else if (eventType == events::GHOST_INPUT_REQUIRED)
+	{
+		glm::vec2 const& pacmanPos = ownerPtr->GetPacmanPosition();
+		glm::vec2 const& ghostPos = ownerPtr->GetGhostPosition();
+		glm::vec2 const& previousDir = ownerPtr->GetPreviousDirection();
+		GridMovementComponent* gridMovePtr{ ownerPtr->GetGridMove() };
+		std::vector<glm::vec2> possibleDirectionVec{ gridMovePtr->PossibleDirections() };
+		glm::vec2 const& optimalDirection{ ownerPtr->GetAI()->GetOptimalDirectionToPacman(possibleDirectionVec, pacmanPos, ghostPos, previousDir) };
+		if (optimalDirection != config::VEC_INVALID)
+		{
+			gridMovePtr->ChangeMovementState(optimalDirection);
+			ownerPtr->SetPreviousDirection(optimalDirection);
+		}
+		else
+		{
+			auto& safetyDirection = possibleDirectionVec[0];
+			gridMovePtr->ChangeMovementState(safetyDirection);
+			ownerPtr->SetPreviousDirection(optimalDirection);
+		}
+	}
+	else if (eventType == events::GRID_DIRECTION_CHANGES)
+	{
+		ownerPtr->NotifyObservers(events::GRID_DIRECTION_CHANGES);
+	}
 	return nullptr;
-}
-
-glm::vec2 const& pacman::HuntingPacmanState::GetOptimalDirection(std::vector<glm::vec2> const& possibleDirections, GhostFSMComponent* ownerPtr)
-{
-	auto& pacmanPosition = ownerPtr->GetPacmanPosition();
-	auto& ghostPosition = ownerPtr->GetGhostPosition();
-	float deltaX = pacmanPosition.x - ghostPosition.x;
-	float deltaY = pacmanPosition.y - ghostPosition.y;
-
-	if (GetOptimalAxis(deltaX, deltaY) == Axis::X)
-	{
-		m_PreferredDirectionVec[0] = (-GetOptimalVerticalDirection(deltaY));
-		m_PreferredDirectionVec[1] = (-GetOptimalHorizontalDirection(deltaX));
-		m_PreferredDirectionVec[2] = (GetOptimalVerticalDirection(deltaY));
-		m_PreferredDirectionVec[3] = (GetOptimalHorizontalDirection(deltaX));
-	}
-	else
-	{
-		m_PreferredDirectionVec[0] = (-GetOptimalHorizontalDirection(deltaX));
-		m_PreferredDirectionVec[1] = (-GetOptimalVerticalDirection(deltaY));
-		m_PreferredDirectionVec[2] = (GetOptimalHorizontalDirection(deltaX));
-		m_PreferredDirectionVec[3] = (GetOptimalVerticalDirection(deltaY));
-	}
-	for (glm::vec2 const& preferredDirection : m_PreferredDirectionVec)
-	{
-		if (preferredDirection == -ownerPtr->GetPreviousDirection())
-		{
-			continue;
-		}
-
-		if (std::any_of(possibleDirections.begin(), possibleDirections.end(),
-			[&](glm::vec2 const& possibleDirection)
-			{
-				return possibleDirection == preferredDirection;
-			}))
-		{
-			return preferredDirection;
-		}
-	}
-
-	return config::VEC_INVALID;
 }
 
 void pacman::AvoidingPacmanState::OnEnter(GhostFSMComponent* )
@@ -216,49 +167,32 @@ pacman::BaseGhostState* pacman::AvoidingPacmanState::HandleOverlap(amu::Collisio
 	return nullptr;
 }
 
-pacman::BaseGhostState* pacman::AvoidingPacmanState::OnNotify(amu::IObserver::Event , amu::Subject* , GhostFSMComponent* )
+pacman::BaseGhostState* pacman::AvoidingPacmanState::OnNotify(amu::IObserver::Event eventType, amu::Subject* , GhostFSMComponent* ownerPtr)
 {
+	if (eventType == events::PACMAN_EAT_BIG_PICKUP)
+	{
+		m_Timer = 0.0;
+		return nullptr;
+	}
+	if (eventType == events::GHOST_INPUT_REQUIRED)
+	{
+		glm::vec2 const& pacmanPos = ownerPtr->GetPacmanPosition();
+		glm::vec2 const& ghostPos = ownerPtr->GetGhostPosition();
+		glm::vec2 const& previousDir = ownerPtr->GetPreviousDirection();
+		GridMovementComponent* gridMovePtr{ ownerPtr->GetGridMove() };
+		std::vector<glm::vec2> possibleDirectionVec{ gridMovePtr->PossibleDirections() };
+		glm::vec2 const& optimalDirection{ ownerPtr->GetAI()->GetOptimalDirectionFromPacman(possibleDirectionVec, pacmanPos, ghostPos, previousDir) };
+		if (optimalDirection != config::VEC_INVALID)
+		{
+			gridMovePtr->ChangeMovementState(optimalDirection);
+			ownerPtr->SetPreviousDirection(optimalDirection);
+		}
+		else
+		{
+			auto& safetyDirection = possibleDirectionVec[0];
+			gridMovePtr->ChangeMovementState(safetyDirection);
+			ownerPtr->SetPreviousDirection(optimalDirection);
+		}
+	}
 	return nullptr;
-}
-
-glm::vec2 const& pacman::AvoidingPacmanState::GetOptimalDirection(std::vector<glm::vec2> const& possibleDirections, GhostFSMComponent* ownerPtr)
-{
-	auto& pacmanPosition = ownerPtr->GetPacmanPosition();
-	auto& ghostPosition = ownerPtr->GetGhostPosition();
-	float deltaX = pacmanPosition.x - ghostPosition.x;
-	float deltaY = pacmanPosition.y - ghostPosition.y;
-
-
-	if (GetOptimalAxis(deltaX, deltaY) == Axis::X)
-	{
-		m_PreferredDirectionVec[0] = (GetOptimalHorizontalDirection(deltaX));
-		m_PreferredDirectionVec[1] = (GetOptimalVerticalDirection(deltaY));
-		m_PreferredDirectionVec[2] = (-GetOptimalHorizontalDirection(deltaX));
-		m_PreferredDirectionVec[3] = (-GetOptimalVerticalDirection(deltaY));
-	}
-	else
-	{
-		m_PreferredDirectionVec[0] = (GetOptimalVerticalDirection(deltaY));
-		m_PreferredDirectionVec[1] = (GetOptimalHorizontalDirection(deltaX));
-		m_PreferredDirectionVec[2] = (-GetOptimalVerticalDirection(deltaY));
-		m_PreferredDirectionVec[3] = (-GetOptimalHorizontalDirection(deltaX));
-	}
-	for (glm::vec2 const& preferredDirection : m_PreferredDirectionVec)
-	{
-		if (preferredDirection == -ownerPtr->GetPreviousDirection())
-		{
-			continue;
-		}
-
-		if (std::any_of(possibleDirections.begin(), possibleDirections.end(),
-			[&](glm::vec2 const& possibleDirection)
-			{
-				return possibleDirection == preferredDirection;
-			}))
-		{
-			return preferredDirection;
-		}
-	}
-
-	return config::VEC_INVALID;
 }

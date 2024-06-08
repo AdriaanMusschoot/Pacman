@@ -3,6 +3,7 @@
 
 #include "Component.h"
 #include "GridMovementComponent.h"
+#include "BlinkyAIComponent.h"
 
 namespace pacman
 {
@@ -12,12 +13,6 @@ namespace pacman
 	class BaseGhostState
 	{
 	public:
-		enum class Axis
-		{
-			X,
-			Y
-		};
-
 		BaseGhostState() = default;
 		virtual ~BaseGhostState() = default;
 
@@ -30,13 +25,6 @@ namespace pacman
 		virtual BaseGhostState* HandleOverlap(amu::CollisionComponent* otherColliderPtr, GhostFSMComponent* ownerPtr) = 0;
 		virtual BaseGhostState* OnNotify(amu::IObserver::Event eventType, amu::Subject* subjectPtr, GhostFSMComponent* ownerPtr) = 0;
 
-		virtual glm::vec2 const& GetOptimalDirection(std::vector<glm::vec2> const& possibleDirections, GhostFSMComponent* ownerPtr) = 0;
-
-		Axis GetOptimalAxis(float deltaX, float deltaY) const;
-		glm::vec2 GetOptimalHorizontalDirection(float deltaX) const;
-		glm::vec2 GetOptimalVerticalDirection(float deltaY) const;
-	protected:
-		std::vector<glm::vec2> m_PreferredDirectionVec{ 4 };
 	private:
 	};
 
@@ -54,8 +42,6 @@ namespace pacman
 
 		BaseGhostState* HandleOverlap(amu::CollisionComponent* otherColliderPtr, GhostFSMComponent* ownerPtr) override;
 		BaseGhostState* OnNotify(amu::IObserver::Event eventType, amu::Subject* subjectPtr, GhostFSMComponent* ownerPtr) override;
-
-		glm::vec2 const& GetOptimalDirection(std::vector<glm::vec2> const& possibleDirections, GhostFSMComponent* ownerPtr) override;
 
 	private:
 	};
@@ -75,13 +61,12 @@ namespace pacman
 		BaseGhostState* HandleOverlap(amu::CollisionComponent* otherColliderPtr, GhostFSMComponent* ownerPtr) override;
 		BaseGhostState* OnNotify(amu::IObserver::Event eventType, amu::Subject* subjectPtr, GhostFSMComponent* ownerPtr) override;
 
-		glm::vec2 const& GetOptimalDirection(std::vector<glm::vec2> const& possibleDirections, GhostFSMComponent* ownerPtr) override;
 	private:
 		double m_Timer{ 0.0 };
 		double m_MaxTime{ config::MAX_TIME_PICKUP };
 	};
 
-	class GhostFSMComponent final : public amu::Component, public amu::IObserver
+	class GhostFSMComponent final : public amu::Component, public amu::IObserver, public amu::Subject
 	{
 	public:
 		GhostFSMComponent(amu::GameObject* ownerObjectPtr, amu::TransformComponent* pacmanTransformPtr);
@@ -112,10 +97,13 @@ namespace pacman
 			return nullptr;
 		}
 
+		void SetPreviousDirection(glm::vec2 const& direction);
 		glm::vec2 const& GetPreviousDirection();
 		glm::vec2 const& GetPacmanPosition();
 		glm::vec2 const& GetGhostPosition();
 
+		GridMovementComponent* GetGridMove() const;
+		BaseAIComponent* GetAI() const;
 	private:
 		GridMovementComponent* m_GridMovementPtr{ nullptr };
 
@@ -128,6 +116,8 @@ namespace pacman
 		BaseGhostState* m_CurrentGhostStatePtr{ nullptr };
 
 		glm::vec2 m_PreviousDirection{ 0, 0 };
+
+		BaseAIComponent* m_AIPtr{};
 	};
 
 }

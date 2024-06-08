@@ -96,14 +96,17 @@ namespace pacman
 
 		amu::RenderComponent* renderCompPtr{ blinkyUPtr->AddComponent<amu::RenderComponent>(blinkyUPtr.get(), resources::sprites::BLINKY.FilePath) };
 		renderCompPtr->SetSourceRectangle(SDL_Rect{ 0, 0, renderCompPtr->GetSize().x / resources::sprites::BLINKY.Cols, renderCompPtr->GetSize().y / resources::sprites::BLINKY.Rows });
-		//GhostAnimationComponent* animComponent{ blinkyUPtr->AddComponent<GhostAnimationComponent>(blinkyUPtr.get()) };
-		blinkyUPtr->AddComponent<GhostAnimationComponent>(blinkyUPtr.get());
+		GhostAnimationComponent* animComponent{ blinkyUPtr->AddComponent<GhostAnimationComponent>(blinkyUPtr.get()) };
+
 		GridMovementComponent* gridMoveCompPtr{ blinkyUPtr->AddComponent<GridMovementComponent>(blinkyUPtr.get(), playFieldGridPtr, 100) };
+
+		blinkyUPtr->AddComponent<BlinkyAIComponent>(blinkyUPtr.get());
+
 		GhostFSMComponent* ghostFSMComponentPtr{ blinkyUPtr->AddComponent<GhostFSMComponent>(blinkyUPtr.get(), pacmanPtr->GetComponent<amu::TransformComponent>()) };
 
 		gridMoveCompPtr->AddObserver(ghostFSMComponentPtr);
 
-		//blinkyAIComponentPtr->AddObserver(animComponent);
+		ghostFSMComponentPtr->AddObserver(animComponent);
 
 		blinkyUPtr->AddCollider(std::make_unique<GhostCollider>(blinkyUPtr.get()));
 
