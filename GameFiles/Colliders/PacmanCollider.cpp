@@ -5,7 +5,6 @@
 
 pacman::PacmanCollider::PacmanCollider(amu::GameObject* ownerObjectPtr)
 	: CollisionComponent(ownerObjectPtr, std::vector<std::string>{ pacman::tags::PICKUP_SMALL, pacman::tags::PICKUP_BIG, pacman::tags::BLINKY })
-	, Subject(ownerObjectPtr)
 {
 	m_PacmanFSMPtr = GetComponentOwner()->GetComponent<PacmanFSMComponent>();
 }

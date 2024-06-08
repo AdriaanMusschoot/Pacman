@@ -92,11 +92,10 @@ namespace pacman
 		GridMovementComponent* gridMovePtr{ pacmanUPtr->AddComponent<GridMovementComponent>(pacmanUPtr.get(), playFieldGridPtr, 100) };
 		gridMovePtr->AddObserver(pmAnimPtr);
 
-		pacmanUPtr->AddComponent<PacmanFSMComponent>(pacmanUPtr.get());
+		PacmanFSMComponent* fsmComponentPtr{ pacmanUPtr->AddComponent<PacmanFSMComponent>(pacmanUPtr.get()) };
+		fsmComponentPtr->AddObserver(pmLivesPtr);
 
 		pacmanUPtr->AddCollider(std::make_unique<PacmanCollider>(pacmanUPtr.get()));
-		PacmanCollider* pmCollider{ dynamic_cast<PacmanCollider*>(pacmanUPtr->GetCollider()) };
-		pmCollider->AddObserver(pmLivesPtr);
 
 		std::unique_ptr upCommandUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), config::VEC_UP)};
 		inputManager.AddCommandKeyboard(InpMan::Key::W, InpMan::InputState::Pressed, std::move(upCommandUPtr));
@@ -139,8 +138,8 @@ namespace pacman
 
 		blinkyUPtr->AddCollider(std::make_unique<GhostCollider>(blinkyUPtr.get()));
 
-		PacmanCollider* pmColliderPtr{ dynamic_cast<PacmanCollider*>(pacmanPtr->GetCollider()) };
-		pmColliderPtr->AddObserver(blinkyUPtr->GetComponent<BlinkyAIComponent>());
+		PacmanFSMComponent* pmFSMPtr{ pacmanPtr->GetComponent<PacmanFSMComponent>() };
+		pmFSMPtr->AddObserver(blinkyUPtr->GetComponent<BlinkyAIComponent>());
 		scenePtr->Add(std::move(blinkyUPtr));
 	}
 

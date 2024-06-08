@@ -10,6 +10,5 @@ void pacman::GhostCollider::OnCollision(amu::CollisionComponent* otherCollider)
 {
 	if (otherCollider->GetComponentOwner()->GetTag() == tags::PACMAN)
 	{
-		std::cout << "Colliding w/ pacman\n";
 	}
 }

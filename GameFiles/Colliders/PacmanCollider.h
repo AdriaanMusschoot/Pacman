@@ -6,7 +6,7 @@
 #include <iostream>
 namespace pacman
 {
-	class PacmanCollider final : public amu::CollisionComponent, public amu::Subject
+	class PacmanCollider final : public amu::CollisionComponent
 	{
 	public:
 		PacmanCollider(amu::GameObject* ownerObjectPtr);

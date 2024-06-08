@@ -17,8 +17,8 @@ namespace pacman
 		virtual void OnEnter() = 0;
 		virtual void OnExit() = 0;
 
-		virtual std::unique_ptr<BaseStatePickupOverlap> Update(double elapsedSec) = 0;
-		virtual std::unique_ptr<BaseStatePickupOverlap> HandleOverlap() = 0;
+		virtual BaseStatePickupOverlap* Update(double elapsedSec, PacmanFSMComponent* ownerPtr) = 0;
+		virtual BaseStatePickupOverlap* HandleOverlap(PacmanFSMComponent* ownerPtr) = 0;
 	private:
 	};
 
@@ -31,8 +31,8 @@ namespace pacman
 		void OnExit() override {}
 		void OnEnter() override {}
 
-		std::unique_ptr<BaseStatePickupOverlap> Update(double elapsedSec) override;
-		std::unique_ptr<BaseStatePickupOverlap> HandleOverlap() override;;
+		BaseStatePickupOverlap* Update(double elapsedSec, PacmanFSMComponent* ownerPtr) override;
+		BaseStatePickupOverlap* HandleOverlap(PacmanFSMComponent* ownerPtr) override;
 	private:
 	};
 
@@ -45,8 +45,8 @@ namespace pacman
 		void OnEnter() override;
 		void OnExit() override;
 
-		std::unique_ptr<BaseStatePickupOverlap> Update(double elapsedSec) override;
-		std::unique_ptr<BaseStatePickupOverlap> HandleOverlap() override;;
+		BaseStatePickupOverlap* Update(double elapsedSec, PacmanFSMComponent* ownerPtr) override;
+		BaseStatePickupOverlap* HandleOverlap(PacmanFSMComponent* ownerPtr) override;
 	private:
 		double m_Timer{};
 		double m_MaxTime{ 0.3 };
@@ -78,7 +78,7 @@ namespace pacman
 		virtual void OnExit(PacmanFSMComponent* ownerPtr) override;
 
 		void HandleInput(glm::vec2 const& direction, PacmanFSMComponent* ownerPtr) override;
-		BaseStatePacman* Update(double, PacmanFSMComponent*) override;
+		BaseStatePacman* Update(double elapsedSec, PacmanFSMComponent* ownerPtr) override;
 
 		BaseStatePacman* HandleOverlap(amu::CollisionComponent* otherColliderPtr, PacmanFSMComponent* ownerPtr) override;
 	private:
@@ -94,9 +94,17 @@ namespace pacman
 		virtual void OnExit(PacmanFSMComponent* ownerPtr) override;
 
 		void HandleInput(glm::vec2 const& direction, PacmanFSMComponent* ownerPtr) override;
-		BaseStatePacman* Update(double, PacmanFSMComponent*) override;
+		BaseStatePacman* Update(double elapsedSec, PacmanFSMComponent* ownerPtr) override;
 
 		BaseStatePacman* HandleOverlap(amu::CollisionComponent* otherColliderPtr, PacmanFSMComponent* ownerPtr) override;
+	private:
+	};
+
+	class EvilState final : public BaseStatePacman
+	{
+	public:
+		EvilState() = default;
+		virtual ~EvilState() = default;
 	private:
 	};
 
@@ -119,7 +127,7 @@ namespace pacman
 		template<typename T>
 		T* GetState()
 		{
-			for (const auto& state : m_PMStatesUPtr)
+			for (auto const& state : m_PMStatesUPtrVec)
 			{
 				if (auto const& neededState = dynamic_cast<T*>(state.get()); neededState != nullptr)
 				{
@@ -129,15 +137,34 @@ namespace pacman
 			return nullptr;
 		}
 
+		template<typename T>
+		T* GetPickupState()
+		{
+			for (auto const& state : m_PickupStatesUPtrVec)
+			{
+				if (auto const& neededState = dynamic_cast<T*>(state.get()); neededState != nullptr)
+				{
+					return neededState;
+				}
+			}
+			return nullptr;
+		}
+
+		BaseStatePickupOverlap* GetCurrentPickupState();
+
+		void SetCurrentPickupState(BaseStatePickupOverlap* newStatePtr);
+
 		GridMovementComponent* GetGridMove();
 	private:
 		GridMovementComponent* m_GridMoveCompPtr{ nullptr };
 
-		std::vector<std::unique_ptr<BaseStatePacman>> m_PMStatesUPtr{};
+		std::vector<std::unique_ptr<BaseStatePacman>> m_PMStatesUPtrVec{};
+
+		std::vector<std::unique_ptr<BaseStatePickupOverlap>> m_PickupStatesUPtrVec{};
 
 		BaseStatePacman* m_CurrentStatePtr{ nullptr };
 
-		std::unique_ptr<BaseStatePickupOverlap> m_StatePickupUPtr{};
+		BaseStatePickupOverlap* m_CurrentStatePickupPtr{ nullptr };
 	};
 
 }

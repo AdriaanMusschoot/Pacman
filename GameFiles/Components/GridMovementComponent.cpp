@@ -64,7 +64,7 @@ void pacman::GridMovementComponent::Update()
 
 void pacman::GridMovementComponent::ChangeMovementState(glm::vec2 const& newDirection)
 {	
-	//if Idling go immedeatly no need to wait until you are on a crossing tile
+	//if idling go immedeatly no need to wait until you are on a crossing tile
 	if (m_CurrentDirection == config::VEC_NEUTRAL and
 		TileReachable(newDirection))
 	{
@@ -74,6 +74,12 @@ void pacman::GridMovementComponent::ChangeMovementState(glm::vec2 const& newDire
 
 	if (newDirection == -m_CurrentDirection and
 		TileReachable(newDirection))
+	{
+		NewCurrentDirection(newDirection);
+		return;
+	}
+
+	if (newDirection == config::VEC_NEUTRAL)
 	{
 		NewCurrentDirection(newDirection);
 		return;
