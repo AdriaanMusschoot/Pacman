@@ -17,16 +17,18 @@ set(PAC_MAN_SOURCE_FILES
   "${GAME_FILES_DIR}/Components/GridMovementComponent.cpp"      "${GAME_FILES_DIR}/Components/GridMovementComponent.h"
   "${GAME_FILES_DIR}/Components/BlinkyAIComponent.cpp"          "${GAME_FILES_DIR}/Components/BlinkyAIComponent.h"  
   "${GAME_FILES_DIR}/Components/PacmanLivesComponent.h"         "${GAME_FILES_DIR}/Components/PacmanLivesComponent.cpp"
+  "${GAME_FILES_DIR}/Components/PacmanFSM.h"                    "${GAME_FILES_DIR}/Components/PacmanFSM.cpp"
                
   "${GAME_FILES_DIR}/Commands/MovePacmanCommand.cpp"            "${GAME_FILES_DIR}/Commands/MovePacmanCommand.h"
            
   "${GAME_FILES_DIR}/Colliders/SmallPickupCollider.cpp"         "${GAME_FILES_DIR}/Colliders/SmallPickupCollider.h"
   "${GAME_FILES_DIR}/Colliders/BigPickupCollider.cpp"           "${GAME_FILES_DIR}/Colliders/BigPickupCollider.h"
   "${GAME_FILES_DIR}/Colliders/PacmanCollider.cpp"              "${GAME_FILES_DIR}/Colliders/PacmanCollider.h" 
+  "${GAME_FILES_DIR}/Colliders/GhostCollider.h"                 "${GAME_FILES_DIR}/Colliders/GhostCollider.cpp" 
 
   "${GAME_FILES_DIR}/Animations/GhostAnimationComponent.h"      "${GAME_FILES_DIR}/Animations/GhostAnimationComponent.cpp" 
   "${GAME_FILES_DIR}/Animations/PacmanAnimationComponent.h"     "${GAME_FILES_DIR}/Animations/PacmanAnimationComponent.cpp" 
- "GameFiles/Colliders/GhostCollider.h" "GameFiles/Colliders/GhostCollider.cpp")
+)
 
 add_executable(${TARGET_NAME} ${PAC_MAN_SOURCE_FILES})
 

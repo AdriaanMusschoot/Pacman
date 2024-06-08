@@ -2,7 +2,7 @@
 #define PM_MOVE_PACMAN_COMMAND_H
 #include "Configuration.h"
 #include "GameObjectCommands.h"
-#include "Components/GridMovementComponent.h"
+#include "Components/PacmanFSM.h"
 
 namespace pacman
 {
@@ -20,7 +20,7 @@ namespace pacman
 
 		void Execute() override;
 	private:
-		GridMovementComponent* m_GridMovementPtr{ nullptr };
+		PacmanFSMComponent* m_PacmanFSM{ nullptr };
 		glm::vec2 m_Direction{ 0, 0 };
 	};
 

@@ -21,6 +21,7 @@
 #include "Components/GridMovementComponent.h"
 #include "Components/BlinkyAIComponent.h"
 #include "Components/PacmanLivesComponent.h"
+#include "Components/PacmanFSM.h"
 
 #include "Colliders/PacmanCollider.h"
 #include "Colliders/SmallPickupCollider.h"
@@ -88,12 +89,14 @@ namespace pacman
 		renderCompPtr->SetSourceRectangle(SDL_Rect{ renderCompPtr->GetSize().x / resources::sprites::PACMAN.Cols * (resources::sprites::PACMAN.Cols - 1), 0, renderCompPtr->GetSize().x / resources::sprites::PACMAN.Cols, renderCompPtr->GetSize().y / resources::sprites::PACMAN.Rows });
 		PacmanAnimationComponent* pmAnimPtr{ pacmanUPtr->AddComponent<PacmanAnimationComponent>(pacmanUPtr.get()) };
 
+		GridMovementComponent* gridMovePtr{ pacmanUPtr->AddComponent<GridMovementComponent>(pacmanUPtr.get(), playFieldGridPtr, 100) };
+		gridMovePtr->AddObserver(pmAnimPtr);
+
+		pacmanUPtr->AddComponent<PacmanFSMComponent>(pacmanUPtr.get());
+
 		pacmanUPtr->AddCollider(std::make_unique<PacmanCollider>(pacmanUPtr.get()));
 		PacmanCollider* pmCollider{ dynamic_cast<PacmanCollider*>(pacmanUPtr->GetCollider()) };
 		pmCollider->AddObserver(pmLivesPtr);
-
-		GridMovementComponent* gridMovePtr{ pacmanUPtr->AddComponent<GridMovementComponent>(pacmanUPtr.get(), playFieldGridPtr, 100) };
-		gridMovePtr->AddObserver(pmAnimPtr);
 
 		std::unique_ptr upCommandUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), config::VEC_UP)};
 		inputManager.AddCommandKeyboard(InpMan::Key::W, InpMan::InputState::Pressed, std::move(upCommandUPtr));
@@ -106,7 +109,6 @@ namespace pacman
 
 		std::unique_ptr rightCommandUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), config::VEC_RIGHT) };
 		inputManager.AddCommandKeyboard(InpMan::Key::D, InpMan::InputState::Pressed, std::move(rightCommandUPtr));
-
 
 		amu::GameObject* pacmanPtr{ scenePtr->Add(std::move(pacmanUPtr)) };
 
