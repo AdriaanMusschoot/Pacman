@@ -11,6 +11,8 @@
 #include "SoundSystem.h"
 #include "InputManager.h"
 
+#include "MuteSoundCommand.h"
+
 #include "RenderComponent.h"
 #include "TextComponent.h"
 #include "TransformComponent.h"
@@ -73,6 +75,7 @@ namespace pacman
 		fsmComponentPtr->AddObserver(pmScorePtr);
 
 		pmAnimPtr->AddObserver(fsmComponentPtr);
+
 		pacmanUPtr->AddCollider(std::make_unique<PacmanCollider>(pacmanUPtr.get()));
 
 		std::unique_ptr upCommandKeyUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), config::VEC_UP) };
@@ -135,6 +138,9 @@ namespace pacman
 		PacmanFSMComponent* pmFSMPtr{ pacmanPtr->GetComponent<PacmanFSMComponent>() };
 		pmFSMPtr->AddObserver(ghostFSMComponentPtr);
 
+		PacmanAnimationComponent* pmAnimPtr{ pacmanPtr->GetComponent<PacmanAnimationComponent>() };
+		pmAnimPtr->AddObserver(ghostFSMComponentPtr);
+
 		scenePtr->Add(std::move(blinkyUPtr));
 	}
 
@@ -165,6 +171,9 @@ namespace pacman
 
 		PacmanFSMComponent* pmFSMPtr{ pacmanPtr->GetComponent<PacmanFSMComponent>() };
 		pmFSMPtr->AddObserver(ghostFSMComponentPtr);
+
+		PacmanAnimationComponent* pmAnimPtr{ pacmanPtr->GetComponent<PacmanAnimationComponent>() };
+		pmAnimPtr->AddObserver(ghostFSMComponentPtr);
 
 		scenePtr->Add(std::move(pinkyUPtr));
 	}
@@ -197,6 +206,9 @@ namespace pacman
 		PacmanFSMComponent* pmFSMPtr{ pacmanPtr->GetComponent<PacmanFSMComponent>() };
 		pmFSMPtr->AddObserver(ghostFSMComponentPtr);
 
+		PacmanAnimationComponent* pmAnimPtr{ pacmanPtr->GetComponent<PacmanAnimationComponent>() };
+		pmAnimPtr->AddObserver(ghostFSMComponentPtr);
+
 		scenePtr->Add(std::move(inkyUPtr));
 	}
 
@@ -227,6 +239,9 @@ namespace pacman
 
 		PacmanFSMComponent* pmFSMPtr{ pacmanPtr->GetComponent<PacmanFSMComponent>() };
 		pmFSMPtr->AddObserver(ghostFSMComponentPtr);
+
+		PacmanAnimationComponent* pmAnimPtr{ pacmanPtr->GetComponent<PacmanAnimationComponent>() };
+		pmAnimPtr->AddObserver(ghostFSMComponentPtr);
 
 		scenePtr->Add(std::move(inkyUPtr));
 	}
@@ -374,6 +389,9 @@ namespace pacman
 		
 		std::unique_ptr upCommandUPtr{ std::make_unique<StartGameCommand>() };
 		inputManager.AddCommandKeyboard(SDL_SCANCODE_F1, InpMan::InputState::Pressed, std::move(upCommandUPtr));
+
+		std::unique_ptr muteCommandPtr{ std::make_unique<amu::MuteSoundCommand>() };
+		inputManager.AddCommandKeyboard(SDL_SCANCODE_F2, InpMan::InputState::Pressed, std::move(muteCommandPtr));
 	}
 
 	void LoadHighscoreScene(amu::Scene* scenePtr)

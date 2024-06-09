@@ -28,7 +28,9 @@ set(PAC_MAN_SOURCE_FILES
 
   "${GAME_FILES_DIR}/Animations/GhostAnimationComponent.h"      "${GAME_FILES_DIR}/Animations/GhostAnimationComponent.cpp" 
   "${GAME_FILES_DIR}/Animations/PacmanAnimationComponent.h"     "${GAME_FILES_DIR}/Animations/PacmanAnimationComponent.cpp" 
- "GameFiles/Components/GhostFSM.h" "GameFiles/Components/GhostFSM.cpp" "GameFiles/Components/ScoreComponent.h" "GameFiles/Components/ScoreComponent.cpp" "GameFiles/Commands/StartGameCommand.h" "GameFiles/Commands/StartGameCommand.cpp")
+ "${GAME_FILES_DIR}/Components/GhostFSM.h" "GameFiles/Components/GhostFSM.cpp" "GameFiles/Components/ScoreComponent.h" 
+ "${GAME_FILES_DIR}/Components/ScoreComponent.cpp" "GameFiles/Commands/StartGameCommand.h" "GameFiles/Commands/StartGameCommand.cpp"
+)
 
 add_executable(${TARGET_NAME} ${PAC_MAN_SOURCE_FILES})
 

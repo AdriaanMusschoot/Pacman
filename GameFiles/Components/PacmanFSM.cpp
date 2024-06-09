@@ -19,6 +19,8 @@ pacman::PacmanFSMComponent::PacmanFSMComponent(amu::GameObject* ownerObjectPtr)
 	m_PMStatesUPtrVec.emplace_back(std::make_unique<EvilState>());
 
 	m_CurrentStatePtr = GetState<CollectingState>();
+
+	m_SpawnPos = GetComponentOwner()->GetComponent<amu::TransformComponent>()->GetWorldPosition();
 }
 
 void pacman::PacmanFSMComponent::HandleInput(glm::vec2 const& direction)
@@ -48,6 +50,14 @@ void pacman::PacmanFSMComponent::Update()
 
 void pacman::PacmanFSMComponent::OnNotify(Event eventType, amu::Subject* subjectPtr)
 {
+	if (eventType == events::PACMAN_DYING_ANIM_FINISHED)
+	{
+		GetComponentOwner()->GetComponent<amu::TransformComponent>()->SetLocalPosition(m_SpawnPos);
+		m_CurrentStatePtr->OnExit(this);
+		m_CurrentStatePtr = GetState<CollectingState>();
+		m_CurrentStatePtr->OnEnter(this);
+	}
+
 	if (BaseStatePacman* newState{ m_CurrentStatePtr->OnNotify(eventType, subjectPtr, this) }; newState != nullptr)
 	{
 		m_CurrentStatePtr->OnExit(this);

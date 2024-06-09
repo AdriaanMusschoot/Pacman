@@ -19,6 +19,8 @@ pacman::GhostFSMComponent::GhostFSMComponent(amu::GameObject* ownerObjectPtr, am
 	m_GhostStateUPtrVec.emplace_back(std::make_unique<EatenByPacmanState>());
 
 	m_CurrentGhostStatePtr = GetState<HuntingPacmanState>();
+
+	m_SpawnPos = m_TransformPtr->GetWorldPosition();
 }
 
 void pacman::GhostFSMComponent::HandleInput(glm::vec2 const& direction)
@@ -48,6 +50,17 @@ void pacman::GhostFSMComponent::Update()
 
 void pacman::GhostFSMComponent::OnNotify(amu::IObserver::Event eventType, amu::Subject* subjectPtr)
 {
+	if (eventType == events::PACMAN_DYING_ANIM_FINISHED)
+	{
+		m_CurrentGhostStatePtr->OnExit(this);
+		m_CurrentGhostStatePtr = GetState<HuntingPacmanState>();
+		m_CurrentGhostStatePtr->OnEnter(this);
+		m_TransformPtr->SetLocalPosition(m_SpawnPos);
+		m_GridMovementPtr->Spawn(m_SpawnPos);
+		m_GridMovementPtr->ChangeMovementState(config::VEC_NEUTRAL);
+		m_GridMovementPtr->ChangeMovementState(config::VEC_LEFT);
+	}
+
 	if (BaseGhostState* newStatePtr{ m_CurrentGhostStatePtr->OnNotify(eventType, subjectPtr, this) }; newStatePtr != nullptr)
 	{
 		m_CurrentGhostStatePtr->OnExit(this);

@@ -138,6 +138,8 @@ namespace pacman
 		glm::vec2 m_PreviousDirection{ 0, 0 };
 
 		BaseAIComponent* m_AIPtr{};
+
+		glm::vec2 m_SpawnPos{ };
 	};
 
 }

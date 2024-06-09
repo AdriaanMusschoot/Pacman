@@ -181,6 +181,8 @@ namespace pacman
 		BaseStatePacman* m_CurrentStatePtr{ nullptr };
 
 		BaseStatePickupOverlap* m_CurrentStatePickupPtr{ nullptr };
+
+		glm::vec2 m_SpawnPos{};
 	};
 
 }

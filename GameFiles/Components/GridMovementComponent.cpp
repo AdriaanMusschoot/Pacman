@@ -146,6 +146,12 @@ std::int64_t pacman::GridMovementComponent::ChangeSpeed(std::int64_t const& newS
 	return speed;
 }
 
+void pacman::GridMovementComponent::Spawn(glm::vec2 const& spawnPos)
+{
+	m_CurrentPosition = spawnPos;
+	m_CurrentTile = m_PlayFieldGridPtr->GetTile(m_CurrentPosition);
+}
+
 bool pacman::GridMovementComponent::TileReachable(glm::vec2 const& direction) const
 {
 	glm::vec2 tileToCheckPos
