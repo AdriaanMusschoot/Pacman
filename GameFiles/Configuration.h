@@ -33,7 +33,7 @@ namespace pacman
 		glm::vec2 const VEC_NEUTRAL{ 0, 0 };
 		glm::vec2 const VEC_INVALID{ -1, -1 };
 
-		double const MAX_TIME_PICKUP{ 10.0 };
+		double constexpr MAX_TIME_PICKUP{ 10.0 };
 		int constexpr RETURN_TO_SPAWN_SPEED{ 300 };
 		int constexpr PACMAN_SPEED{ 180 };
 		int constexpr GHOST_SPEED{ 150 };
@@ -46,6 +46,9 @@ namespace pacman
 		std::string const PICKUP_SMALL{ "PickupSmall" };
 		std::string const PICKUP_BIG{ "PickupBig" };
 		std::string const GHOST{ "Ghost" };
+		std::string const MAIN_SCENE{ "Pacman Scene" };
+		std::string const MENU_SCENE{ "Menu Scene" };
+		std::string const HIGHSCORE_SCENE{ "Highscore Scene" };
 
 	}
 
@@ -65,6 +68,7 @@ namespace pacman
 		amu::IObserver::Event constexpr PACMAN_EAT_GHOST{ 10 };
 		amu::IObserver::Event constexpr PACMAN_COLLECT{ 11 };
 		amu::IObserver::Event constexpr GHOST_RUSHING_TO_SPAWN{ 12 };
+		amu::IObserver::Event constexpr PACMAN_ATE_ALL{ 13 };
 
 	}
 
@@ -106,6 +110,7 @@ namespace pacman
 				std::string const PICKUP_SMALL{ "small" };
 				std::string const PICKUP_BIG{ "big" };
 				std::string const GHOST_SPAWN{ "blinky" };
+				std::string const PACMAN_SPAWN{ "spawn" };
 
 			}
 

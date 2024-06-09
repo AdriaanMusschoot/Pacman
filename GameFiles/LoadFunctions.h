@@ -23,29 +23,37 @@
 #include "Components/PacmanLivesComponent.h"
 #include "Components/PacmanFSM.h"
 #include "Components/GhostFSM.h"
+#include "Components/ScoreComponent.h"
 
 #include "Colliders/PacmanCollider.h"
 #include "Colliders/GhostCollider.h"
 
 #include "Commands/MovePacmanCommand.h"
+#include "Commands/StartGameCommand.h"
 
 #include "Animations/GhostAnimationComponent.h"
 #include "Animations/PacmanAnimationComponent.h"
 
 #include "Configuration.h"
+#include "Xinput.h"
 
 namespace pacman
 {
-	amu::GameObject* LoadPacman(amu::Scene* scenePtr, PlayFieldGridComponent* playFieldGridPtr, float x, float y)
+	amu::GameObject* LoadPlayerOne(amu::Scene* scenePtr, PlayFieldGridComponent* playFieldGridPtr, float x, float y)
 	{
 		using InpMan = amu::InputManager;
 		auto& inputManager = InpMan::GetInstance();
 
 		std::unique_ptr livesDisplayUPtr{ std::make_unique<amu::GameObject>() };
-		livesDisplayUPtr->AddComponent<amu::TransformComponent>(livesDisplayUPtr.get(), glm::vec2{ 20, config::WINDOW_HEIGHT - 20 });
+		livesDisplayUPtr->AddComponent<amu::TransformComponent>(livesDisplayUPtr.get(), glm::vec2{ config::WINDOW_WIDTH - 20, config::WINDOW_HEIGHT - 20 });
 		livesDisplayUPtr->AddComponent<amu::TextComponent>(livesDisplayUPtr.get(), "3", resources::font::LINGUA, 20);
 		PacmanLivesComponent* pmLivesPtr{ livesDisplayUPtr->AddComponent<PacmanLivesComponent>(livesDisplayUPtr.get()) };
 
+		std::unique_ptr scoreDisplayUPtr{ std::make_unique<amu::GameObject>() };
+		scoreDisplayUPtr->AddComponent<amu::TransformComponent>(scoreDisplayUPtr.get(), glm::vec2{ 20, config::WINDOW_HEIGHT - 20 });
+		scoreDisplayUPtr->AddComponent<amu::TextComponent>(scoreDisplayUPtr.get(), "0", resources::font::LINGUA, 20);
+		ScoreComponent* pmScorePtr{ scoreDisplayUPtr->AddComponent<ScoreComponent>(scoreDisplayUPtr.get()) };
+		pmScorePtr->AddObserver(playFieldGridPtr);
 		std::unique_ptr pacmanUPtr{ std::make_unique<amu::GameObject>() };
 		pacmanUPtr->SetTag(pacman::tags::PACMAN);
 
@@ -62,25 +70,39 @@ namespace pacman
 		PacmanFSMComponent* fsmComponentPtr{ pacmanUPtr->AddComponent<PacmanFSMComponent>(pacmanUPtr.get()) };
 		fsmComponentPtr->AddObserver(pmAnimPtr);
 		fsmComponentPtr->AddObserver(pmLivesPtr);
+		fsmComponentPtr->AddObserver(pmScorePtr);
 
 		pmAnimPtr->AddObserver(fsmComponentPtr);
 		pacmanUPtr->AddCollider(std::make_unique<PacmanCollider>(pacmanUPtr.get()));
 
-		std::unique_ptr upCommandUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), config::VEC_UP)};
-		inputManager.AddCommandKeyboard(InpMan::Key::W, InpMan::InputState::Pressed, std::move(upCommandUPtr));
+		std::unique_ptr upCommandKeyUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), config::VEC_UP) };
+		inputManager.AddCommandKeyboard(SDL_SCANCODE_W, InpMan::InputState::Pressed, std::move(upCommandKeyUPtr));
 
-		std::unique_ptr downCommandUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), config::VEC_DOWN) };
-		inputManager.AddCommandKeyboard(InpMan::Key::S, InpMan::InputState::Pressed, std::move(downCommandUPtr));
+		std::unique_ptr downCommandKeyUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), config::VEC_DOWN) };
+		inputManager.AddCommandKeyboard(SDL_SCANCODE_S, InpMan::InputState::Pressed, std::move(downCommandKeyUPtr));
 
-		std::unique_ptr leftCommandUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), config::VEC_LEFT) };
-		inputManager.AddCommandKeyboard(InpMan::Key::A, InpMan::InputState::Pressed, std::move(leftCommandUPtr));
+		std::unique_ptr leftCommandKeyUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), config::VEC_LEFT) };
+		inputManager.AddCommandKeyboard(SDL_SCANCODE_A, InpMan::InputState::Pressed, std::move(leftCommandKeyUPtr));
 
-		std::unique_ptr rightCommandUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), config::VEC_RIGHT) };
-		inputManager.AddCommandKeyboard(InpMan::Key::D, InpMan::InputState::Pressed, std::move(rightCommandUPtr));
+		std::unique_ptr rightCommandKeyUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), config::VEC_RIGHT) };
+		inputManager.AddCommandKeyboard(SDL_SCANCODE_D, InpMan::InputState::Pressed, std::move(rightCommandKeyUPtr));
+
+		std::unique_ptr upCommandControllerUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), config::VEC_UP)};
+		inputManager.AddCommandController(0, XINPUT_GAMEPAD_DPAD_UP, InpMan::InputState::Pressed, std::move(upCommandControllerUPtr));
+
+		std::unique_ptr downCommandControllerUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), config::VEC_DOWN) };
+		inputManager.AddCommandController(0, XINPUT_GAMEPAD_DPAD_DOWN, InpMan::InputState::Pressed, std::move(downCommandControllerUPtr));
+
+		std::unique_ptr leftCommandControllerUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), config::VEC_LEFT) };
+		inputManager.AddCommandController(0, XINPUT_GAMEPAD_DPAD_LEFT, InpMan::InputState::Pressed, std::move(leftCommandControllerUPtr));
+
+		std::unique_ptr rightCommandControllerUPtr{ std::make_unique<MovePacmanCommand>(pacmanUPtr.get(), config::VEC_RIGHT) };
+		inputManager.AddCommandController(0, XINPUT_GAMEPAD_DPAD_RIGHT, InpMan::InputState::Pressed, std::move(rightCommandControllerUPtr));
 
 		amu::GameObject* pacmanPtr{ scenePtr->Add(std::move(pacmanUPtr)) };
 
 		scenePtr->Add(std::move(livesDisplayUPtr));
+		scenePtr->Add(std::move(scoreDisplayUPtr));
 
 		return pacmanPtr;
 	}
@@ -224,6 +246,7 @@ namespace pacman
 	{
 		using namespace config;
 		std::unique_ptr gridLayoutUPtr{ std::make_unique<amu::GameObject>() };
+		gridLayoutUPtr->AddComponent<amu::TransformComponent>(gridLayoutUPtr.get(), glm::vec2{ 0, 0 });
 		gridLayoutUPtr->AddComponent<PlayFieldGridComponent>(gridLayoutUPtr.get(), ROWS_GRID, COLS_GRID, CELL_HEIGHT, CELL_WIDTH);
 		auto* gridLayoutComponent = gridLayoutUPtr->GetComponent<PlayFieldGridComponent>();
 
@@ -237,7 +260,30 @@ namespace pacman
 		std::smatch matches{};
 		std::string line{};
 
-		amu::GameObject* pacmanPtr{ LoadPacman(scenePtr, gridLayoutComponent, 36, 36) };
+		amu::GameObject* pacmanPtr{ nullptr };
+		int nrPlayersSpawned{ 0 };
+		while (std::getline(gridLayoutFile, line))
+		{
+			namespace rgx = resources::file::regex;
+			if (std::regex_match(line, matches, validLineExpression))
+			{
+				const std::int64_t rowIdx{ std::stoi(matches[2].str()) };
+				const std::int64_t colIdx{ std::stoi(matches[3].str()) };
+
+				if (matches[5] == rgx::PACMAN_SPAWN)
+				{
+					glm::vec2 spawnPos{ colIdx * CELL_WIDTH + CELL_WIDTH / 2, rowIdx * CELL_HEIGHT + CELL_HEIGHT / 2 };
+					if (nrPlayersSpawned == 0)
+					{
+						pacmanPtr = LoadPlayerOne(scenePtr, gridLayoutComponent, spawnPos.x, spawnPos.y);
+						++nrPlayersSpawned;
+					}
+				}
+			}
+		}
+
+		gridLayoutFile.clear();
+		gridLayoutFile.seekg(0);
 
 		while (std::getline(gridLayoutFile, line))
 		{
@@ -281,6 +327,7 @@ namespace pacman
 				{
 					SpawnGhosts(scenePtr, gridLayoutComponent, pacmanPtr, rowIdx, colIdx);
 				}
+
 			}
 			else
 			{
@@ -314,6 +361,35 @@ namespace pacman
 		scenePtr->Add(std::move(fpsCounterUPtr));
 	}
 
+	void LoadMenuScene(amu::Scene* scenePtr)
+	{
+		std::unique_ptr menuTextUPtr{ std::make_unique<amu::GameObject>() };
+		menuTextUPtr->AddComponent<amu::TransformComponent>(menuTextUPtr.get(), glm::vec2{ config::WINDOW_WIDTH / 2 , config::WINDOW_HEIGHT / 2 });
+		menuTextUPtr->AddComponent<amu::TextComponent>(menuTextUPtr.get(), "MENU", resources::font::LINGUA, 50);
+
+		scenePtr->Add(std::move(menuTextUPtr));
+
+		using InpMan = amu::InputManager;
+		auto& inputManager = InpMan::GetInstance();
+		
+		std::unique_ptr upCommandUPtr{ std::make_unique<StartGameCommand>() };
+		inputManager.AddCommandKeyboard(SDL_SCANCODE_F1, InpMan::InputState::Pressed, std::move(upCommandUPtr));
+	}
+
+	void LoadHighscoreScene(amu::Scene* scenePtr)
+	{
+		std::unique_ptr menuTextUPtr{ std::make_unique<amu::GameObject>() };
+		menuTextUPtr->AddComponent<amu::TransformComponent>(menuTextUPtr.get(), glm::vec2{ config::WINDOW_WIDTH / 2 , config::WINDOW_HEIGHT / 2 });
+		menuTextUPtr->AddComponent<amu::TextComponent>(menuTextUPtr.get(), "ENDING", resources::font::LINGUA, 50);
+
+		scenePtr->Add(std::move(menuTextUPtr));
+
+		using InpMan = amu::InputManager;
+		auto& inputManager = InpMan::GetInstance();
+		
+		std::unique_ptr upCommandUPtr{ std::make_unique<StartGameCommand>() };
+		inputManager.AddCommandKeyboard(SDL_SCANCODE_F1, InpMan::InputState::Pressed, std::move(upCommandUPtr));
+	}
 }
 
 #endif

@@ -142,9 +142,9 @@ void pacman::PlayFieldGridComponent::OnNotify(Event eventType, amu::Subject* sub
 		AddPickupSpawnLocation(subjectOwnerPtr->GetComponent<amu::TransformComponent>()->GetWorldPosition(), subjectOwnerPtr->GetTag());
 	}
 
-	if (eventType == events::PACMAN_DYING_ANIM_FINISHED)
+	if (eventType == events::PACMAN_DYING_ANIM_FINISHED || eventType == events::PACMAN_ATE_ALL)
 	{
-		amu::Scene* currScenePtr = amu::SceneManager::GetInstance().GetCurrentScene();
+		amu::Scene* currScenePtr = amu::SceneManager::GetInstance().GetSceneByName(tags::MAIN_SCENE);
 		for (auto& [loc, tag]: m_PickupRespawnSpawnLocationVec)
 		{
 			if (tag == tags::PICKUP_SMALL)
