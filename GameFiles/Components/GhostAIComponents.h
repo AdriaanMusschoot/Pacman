@@ -79,5 +79,21 @@ namespace pacman
 		float m_DistanceToCheck{};
 	};
 
+	class ClydeAIComponent final : public BaseAIComponent
+	{
+	public:
+		ClydeAIComponent(amu::GameObject* gameObjectPtr);
+		virtual ~ClydeAIComponent() override = default;
+
+		ClydeAIComponent(ClydeAIComponent const&) = delete;
+		ClydeAIComponent(ClydeAIComponent&&) = delete;
+		ClydeAIComponent& operator=(ClydeAIComponent const&) = delete;
+		ClydeAIComponent& operator=(ClydeAIComponent&&) = delete;
+
+		glm::vec2 const& GetOptimalDirectionToPacman(std::vector<glm::vec2> const& possibleDirections, GhostFSMComponent* fsmPtr) override;
+		glm::vec2 const& GetOptimalDirectionFromPacman(std::vector<glm::vec2> const& possibleDirections, GhostFSMComponent* fsmPtr) override;
+	private:
+	};
+
 }
 #endif //PM_BLINKY_AI_COMPONENT

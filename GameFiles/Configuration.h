@@ -34,7 +34,9 @@ namespace pacman
 		glm::vec2 const VEC_INVALID{ -1, -1 };
 
 		double const MAX_TIME_PICKUP{ 10.0 };
-		int constexpr RETURN_TO_SPAWN_SPEED{ 180 };
+		int constexpr RETURN_TO_SPAWN_SPEED{ 300 };
+		int constexpr PACMAN_SPEED{ 180 };
+		int constexpr GHOST_SPEED{ 150 };
 	}
 
 	namespace tags
@@ -43,7 +45,7 @@ namespace pacman
 		std::string const PACMAN{ "Pacman" };
 		std::string const PICKUP_SMALL{ "PickupSmall" };
 		std::string const PICKUP_BIG{ "PickupBig" };
-		std::string const GHOST{ "Blinky" };
+		std::string const GHOST{ "Ghost" };
 
 	}
 
@@ -85,6 +87,8 @@ namespace pacman
 			SpriteData const PLAYINGFIELD{ "Sprites/PlayingField.png", 1, 1 };
 			SpriteData const BLINKY{ "Sprites/Blinky.png", 1, 16 };
 			SpriteData const PINKY{ "Sprites/Pinky.png", 1, 16 };
+			SpriteData const INKY{ "Sprites/Inky.png", 1, 16 };
+			SpriteData const CLYDE{ "Sprites/Clyde.png", 1, 16 };
 
 		}
 

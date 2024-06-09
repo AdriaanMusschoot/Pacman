@@ -56,7 +56,7 @@ namespace pacman
 		PacmanAnimationComponent* pmAnimPtr{ pacmanUPtr->AddComponent<PacmanAnimationComponent>(pacmanUPtr.get()) };
 		pmAnimPtr->AddObserver(playFieldGridPtr);
 
-		GridMovementComponent* gridMovePtr{ pacmanUPtr->AddComponent<GridMovementComponent>(pacmanUPtr.get(), playFieldGridPtr, 120) };
+		GridMovementComponent* gridMovePtr{ pacmanUPtr->AddComponent<GridMovementComponent>(pacmanUPtr.get(), playFieldGridPtr, config::PACMAN_SPEED) };
 		gridMovePtr->AddObserver(pmAnimPtr);
 
 		PacmanFSMComponent* fsmComponentPtr{ pacmanUPtr->AddComponent<PacmanFSMComponent>(pacmanUPtr.get()) };
@@ -98,7 +98,7 @@ namespace pacman
 		renderCompPtr->SetSourceRectangle(SDL_Rect{ 0, 0, renderCompPtr->GetSize().x / resources::sprites::BLINKY.Cols, renderCompPtr->GetSize().y / resources::sprites::BLINKY.Rows });
 		GhostAnimationComponent* animComponent{ blinkyUPtr->AddComponent<GhostAnimationComponent>(blinkyUPtr.get()) };
 
-		GridMovementComponent* gridMoveCompPtr{ blinkyUPtr->AddComponent<GridMovementComponent>(blinkyUPtr.get(), playFieldGridPtr, 100) };
+		GridMovementComponent* gridMoveCompPtr{ blinkyUPtr->AddComponent<GridMovementComponent>(blinkyUPtr.get(), playFieldGridPtr, GHOST_SPEED) };
 
 		blinkyUPtr->AddComponent<BlinkyAIComponent>(blinkyUPtr.get());
 
@@ -126,10 +126,10 @@ namespace pacman
 		pinkyUPtr->AddComponent<amu::TransformComponent>(pinkyUPtr.get(), glm::vec2{ col * CELL_WIDTH, row * CELL_HEIGHT + CELL_HEIGHT / 2 });
 
 		amu::RenderComponent* renderCompPtr{ pinkyUPtr->AddComponent<amu::RenderComponent>(pinkyUPtr.get(), resources::sprites::PINKY.FilePath) };
-		renderCompPtr->SetSourceRectangle(SDL_Rect{ 0, 0, renderCompPtr->GetSize().x / resources::sprites::BLINKY.Cols, renderCompPtr->GetSize().y / resources::sprites::BLINKY.Rows });
+		renderCompPtr->SetSourceRectangle(SDL_Rect{ 0, 0, renderCompPtr->GetSize().x / resources::sprites::PINKY.Cols, renderCompPtr->GetSize().y / resources::sprites::PINKY.Rows });
 		GhostAnimationComponent* animComponent{ pinkyUPtr->AddComponent<GhostAnimationComponent>(pinkyUPtr.get()) };
 
-		GridMovementComponent* gridMoveCompPtr{ pinkyUPtr->AddComponent<GridMovementComponent>(pinkyUPtr.get(), playFieldGridPtr, 100) };
+		GridMovementComponent* gridMoveCompPtr{ pinkyUPtr->AddComponent<GridMovementComponent>(pinkyUPtr.get(), playFieldGridPtr, GHOST_SPEED) };
 
 		pinkyUPtr->AddComponent<InkyPinkyAIComponent>(pinkyUPtr.get(), 50.f);
 
@@ -147,11 +147,77 @@ namespace pacman
 		scenePtr->Add(std::move(pinkyUPtr));
 	}
 
+	void SpawnInky(amu::Scene* scenePtr, PlayFieldGridComponent* playFieldGridPtr, amu::GameObject* pacmanPtr, std::int64_t const& row, std::int64_t const& col)
+	{
+		using namespace config;
+
+		std::unique_ptr inkyUPtr{ std::make_unique<amu::GameObject>() };
+		inkyUPtr->SetTag(tags::GHOST);
+
+		inkyUPtr->AddComponent<amu::TransformComponent>(inkyUPtr.get(), glm::vec2{ col * CELL_WIDTH, row * CELL_HEIGHT + CELL_HEIGHT / 2 });
+
+		amu::RenderComponent* renderCompPtr{ inkyUPtr->AddComponent<amu::RenderComponent>(inkyUPtr.get(), resources::sprites::INKY.FilePath) };
+		renderCompPtr->SetSourceRectangle(SDL_Rect{ 0, 0, renderCompPtr->GetSize().x / resources::sprites::INKY.Cols, renderCompPtr->GetSize().y / resources::sprites::INKY.Rows });
+		GhostAnimationComponent* animComponent{ inkyUPtr->AddComponent<GhostAnimationComponent>(inkyUPtr.get()) };
+
+		GridMovementComponent* gridMoveCompPtr{ inkyUPtr->AddComponent<GridMovementComponent>(inkyUPtr.get(), playFieldGridPtr, GHOST_SPEED) };
+
+		inkyUPtr->AddComponent<InkyPinkyAIComponent>(inkyUPtr.get(), 100.f);
+
+		GhostFSMComponent* ghostFSMComponentPtr{ inkyUPtr->AddComponent<GhostFSMComponent>(inkyUPtr.get(), pacmanPtr) };
+
+		gridMoveCompPtr->AddObserver(ghostFSMComponentPtr);
+
+		ghostFSMComponentPtr->AddObserver(animComponent);
+
+		inkyUPtr->AddCollider(std::make_unique<GhostCollider>(inkyUPtr.get()));
+
+		PacmanFSMComponent* pmFSMPtr{ pacmanPtr->GetComponent<PacmanFSMComponent>() };
+		pmFSMPtr->AddObserver(ghostFSMComponentPtr);
+
+		scenePtr->Add(std::move(inkyUPtr));
+	}
+
+	void SpawnClyde(amu::Scene* scenePtr, PlayFieldGridComponent* playFieldGridPtr, amu::GameObject* pacmanPtr, std::int64_t const& row, std::int64_t const& col)
+	{
+		using namespace config;
+
+		std::unique_ptr inkyUPtr{ std::make_unique<amu::GameObject>() };
+		inkyUPtr->SetTag(tags::GHOST);
+
+		inkyUPtr->AddComponent<amu::TransformComponent>(inkyUPtr.get(), glm::vec2{ col * CELL_WIDTH, row * CELL_HEIGHT + CELL_HEIGHT / 2 });
+
+		amu::RenderComponent* renderCompPtr{ inkyUPtr->AddComponent<amu::RenderComponent>(inkyUPtr.get(), resources::sprites::CLYDE.FilePath) };
+		renderCompPtr->SetSourceRectangle(SDL_Rect{ 0, 0, renderCompPtr->GetSize().x / resources::sprites::CLYDE.Cols, renderCompPtr->GetSize().y / resources::sprites::CLYDE.Rows });
+		GhostAnimationComponent* animComponent{ inkyUPtr->AddComponent<GhostAnimationComponent>(inkyUPtr.get()) };
+
+		GridMovementComponent* gridMoveCompPtr{ inkyUPtr->AddComponent<GridMovementComponent>(inkyUPtr.get(), playFieldGridPtr, GHOST_SPEED) };
+
+		inkyUPtr->AddComponent<ClydeAIComponent>(inkyUPtr.get());
+
+		GhostFSMComponent* ghostFSMComponentPtr{ inkyUPtr->AddComponent<GhostFSMComponent>(inkyUPtr.get(), pacmanPtr) };
+
+		gridMoveCompPtr->AddObserver(ghostFSMComponentPtr);
+
+		ghostFSMComponentPtr->AddObserver(animComponent);
+
+		inkyUPtr->AddCollider(std::make_unique<GhostCollider>(inkyUPtr.get()));
+
+		PacmanFSMComponent* pmFSMPtr{ pacmanPtr->GetComponent<PacmanFSMComponent>() };
+		pmFSMPtr->AddObserver(ghostFSMComponentPtr);
+
+		scenePtr->Add(std::move(inkyUPtr));
+	}
+
 	void SpawnGhosts(amu::Scene* scenePtr, PlayFieldGridComponent* playFieldGridPtr, amu::GameObject* pacmanPtr, std::int64_t const& row, std::int64_t const& col)
 	{
 		SpawnBlinky(scenePtr, playFieldGridPtr, pacmanPtr, row, col);
 
 		SpawnPinky(scenePtr, playFieldGridPtr, pacmanPtr, row, col);
+		
+		SpawnInky(scenePtr, playFieldGridPtr, pacmanPtr, row, col);
+
+		SpawnClyde(scenePtr, playFieldGridPtr, pacmanPtr, row, col);
 	}
 
 	void PopulatePlayingGrid(amu::Scene* scenePtr)
