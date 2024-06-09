@@ -15,7 +15,7 @@ set(PAC_MAN_SOURCE_FILES
   "${GAME_FILES_DIR}/Components/FPSComponent.cpp"               "${GAME_FILES_DIR}/Components/FPSComponent.h"
   "${GAME_FILES_DIR}/Components/PlayFieldGridComponent.cpp"     "${GAME_FILES_DIR}/Components/PlayFieldGridComponent.h"
   "${GAME_FILES_DIR}/Components/GridMovementComponent.cpp"      "${GAME_FILES_DIR}/Components/GridMovementComponent.h"
-  "GameFiles/Components/GhostAIComponents.cpp"          "GameFiles/Components/GhostAIComponents.h"  
+  "${GAME_FILES_DIR}/Components/GhostAIComponents.cpp"          "${GAME_FILES_DIR}/Components/GhostAIComponents.h"  
   "${GAME_FILES_DIR}/Components/PacmanLivesComponent.h"         "${GAME_FILES_DIR}/Components/PacmanLivesComponent.cpp"
   "${GAME_FILES_DIR}/Components/PacmanFSM.h"                    "${GAME_FILES_DIR}/Components/PacmanFSM.cpp"
                
@@ -28,8 +28,9 @@ set(PAC_MAN_SOURCE_FILES
 
   "${GAME_FILES_DIR}/Animations/GhostAnimationComponent.h"      "${GAME_FILES_DIR}/Animations/GhostAnimationComponent.cpp" 
   "${GAME_FILES_DIR}/Animations/PacmanAnimationComponent.h"     "${GAME_FILES_DIR}/Animations/PacmanAnimationComponent.cpp" 
- "${GAME_FILES_DIR}/Components/GhostFSM.h" "GameFiles/Components/GhostFSM.cpp" "GameFiles/Components/ScoreComponent.h" 
- "${GAME_FILES_DIR}/Components/ScoreComponent.cpp" "GameFiles/Commands/StartGameCommand.h" "GameFiles/Commands/StartGameCommand.cpp"
+  "${GAME_FILES_DIR}/Components/GhostFSM.h"                     "${GAME_FILES_DIR}/Components/GhostFSM.cpp" 
+  "${GAME_FILES_DIR}/Components/ScoreComponent.h"               "${GAME_FILES_DIR}/Components/ScoreComponent.cpp"
+  "${GAME_FILES_DIR}/Commands/StartGameCommand.h"               "${GAME_FILES_DIR}/Commands/StartGameCommand.cpp"
 )
 
 add_executable(${TARGET_NAME} ${PAC_MAN_SOURCE_FILES})
