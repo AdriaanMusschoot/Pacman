@@ -1,18 +1,25 @@
-# Minigin
+Checkout the git repository: https://github.com/AdriaanMusschoot/Programming4
+It contains a submodule for the engine (also linked here: https://github.com/AdriaanMusschoot/Amugen)
 
-Minigin is a very small project using [SDL2](https://www.libsdl.org/) and [glm](https://github.com/g-truc/glm) for 2D c++ game projects. It is in no way a game engine, only a barebone start project where everything sdl related has been set up. It contains glm for vector math, to aleviate the need to write custom vector and matrix classes.
+The game I made is pacman so I modified the engine to work easier for me.
 
-[![Build Status](https://github.com/avadae/minigin/actions/workflows/msbuild.yml/badge.svg)](https://github.com/avadae/msbuild/actions)
-[![GitHub Release](https://img.shields.io/github/v/release/avadae/minigin?logo=github&sort=semver)](https://github.com/avadae/minigin/releases/latest)
+First change I made in my engine, is that I display images centered, this make it a lot easier to reason about positioning and collision.
+The collision itself was then also rather simple: a distance check. It is all that is needed for pacman.
+It requires an instant response of the collision components.
 
-# Goal
+To create an update loop I worked w/ one scene that references one from a vector, this way only one scene is updated and rendered at the time. 
+This allows me to easily switch between existing scene without loading a whole new scene everytime.
 
-Minigin can/may be used as a start project for the exam assignment in the course 'Programming 4' at DAE. In that assignment students need to recreate a popular 80's arcade game with a game engine they need to program themselves. During the course we discuss several game programming patterns, using the book '[Game Programming Patterns](https://gameprogrammingpatterns.com/)' by Robert Nystrom as reading material. 
+For the game clock, the renderer and the input manager and gameclock are a Singleton.
 
-# Disclaimer
+The input manager is not linked to any scenes and simply executes a command on either the gamestate or a specific game object
 
-Minigin is, despite perhaps the suggestion in its name, not a game engine. It is just a very simple sdl2 ready project with some of the scaffolding in place to get started. None of the patterns discussed in the course are used yet (except singleton which use we challenge during the course). It is up to the students to implement their own vision for their engine, apply patterns as they see fit, create their game as efficient as possible.
+Sound is done through a service locator, which was helpfull as I noticed some short comings while creating the game and after upgrading the soundsystem, all could remain through the service locator
 
-# Use
+All loading for resource from the resource manager are stored in an RAII wrapper to maintain object so that this doesn't have to be loaded again and again
 
-Download the latest release of this project and compile/run in visual studio. Since students need to have their work on github too, they can use this repository as a template.
+The most prevelant form of communicating between gameobjects and components is the subject and observer pattern
+
+For example the animation components are always listening to the fsm of their respective ghost/pacman
+
+The response of all the colliders is mostly forward to their respective fsm to handle it
