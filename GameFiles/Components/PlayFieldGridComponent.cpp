@@ -10,7 +10,7 @@ pacman::PlayFieldGridComponent::PlayFieldGridComponent(amu::GameObject* ownerObj
 	, m_RowsGrid{ rowsGrid }
 	, m_ColsGrid{ colsGrid }
 	, m_TileDimensions{ cellWidth, cellHeigth }
-	, m_TileVec{ std::vector<Tile>{ static_cast<std::uint64_t>(m_RowsGrid * m_ColsGrid) } }
+	, m_TileVec{ std::vector<Tile>{ m_RowsGrid * m_ColsGrid } }
 {
 	assert(std::size(m_TileVec) == m_ColsGrid * m_RowsGrid);
 
@@ -18,14 +18,14 @@ pacman::PlayFieldGridComponent::PlayFieldGridComponent(amu::GameObject* ownerObj
 	{
 		for (int colIdx{}; colIdx < m_ColsGrid; ++colIdx)
 		{
-			m_TileVec[GetIndex(rowIdx, colIdx)].Center = glm::vec2{ colIdx * cellWidth + cellWidth / 2, rowIdx * cellHeigth + cellHeigth / 2};
+			m_TileVec[static_cast<int>(GetIndex(rowIdx, colIdx))].Center = glm::vec2{ static_cast<float>(colIdx * cellWidth + cellWidth / 2), static_cast<float>(rowIdx * cellHeigth + cellHeigth / 2)};
 		}
 	}
 }
 
 void pacman::PlayFieldGridComponent::SetTileType(std::uint64_t const& rowIdx, std::uint64_t const& colIdx, std::string_view const& typeString)
 {
-	std::int64_t const idx{ GetIndex(rowIdx, colIdx) };
+	int const idx{ static_cast<int>(GetIndex(rowIdx, colIdx)) };
 	if (typeString == "pathway")
 	{
 		m_TileVec[idx].Type = TileType::Pathway;
@@ -61,7 +61,7 @@ glm::vec2 const& pacman::PlayFieldGridComponent::GetTileDimensions() const
 
 pacman::PlayFieldGridComponent::Tile const& pacman::PlayFieldGridComponent::GetTile(std::uint64_t const& rowIdx, std::uint64_t const& colIdx) const
 {
-	return m_TileVec[GetIndex(rowIdx, colIdx)];
+	return m_TileVec[static_cast<int>(GetIndex(rowIdx, colIdx))];
 }
 
 pacman::PlayFieldGridComponent::Tile const& pacman::PlayFieldGridComponent::GetTile(glm::vec2 const& position) const
