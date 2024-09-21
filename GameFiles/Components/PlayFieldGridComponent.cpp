@@ -10,7 +10,7 @@ pacman::PlayFieldGridComponent::PlayFieldGridComponent(amu::GameObject* ownerObj
 	, m_RowsGrid{ rowsGrid }
 	, m_ColsGrid{ colsGrid }
 	, m_TileDimensions{ cellWidth, cellHeigth }
-	, m_TileVec{ std::vector<Tile>{ m_RowsGrid * m_ColsGrid } }
+	, m_TileVec{ std::vector<Tile>{ static_cast<unsigned int>(m_RowsGrid * m_ColsGrid) } }
 {
 	assert(std::size(m_TileVec) == m_ColsGrid * m_RowsGrid);
 

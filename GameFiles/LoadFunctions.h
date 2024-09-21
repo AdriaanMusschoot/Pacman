@@ -65,6 +65,7 @@ namespace pacman
 		renderCompPtr->SetSourceRectangle(SDL_Rect{ renderCompPtr->GetSize().x / resources::sprites::PACMAN.Cols * (resources::sprites::PACMAN.Cols - 12), 0, renderCompPtr->GetSize().x / resources::sprites::PACMAN.Cols, renderCompPtr->GetSize().y / resources::sprites::PACMAN.Rows });
 		PacmanAnimationComponent* pmAnimPtr{ pacmanUPtr->AddComponent<PacmanAnimationComponent>(pacmanUPtr.get()) };
 		pmAnimPtr->AddObserver(playFieldGridPtr);
+		pmAnimPtr->AddObserver(pmScorePtr);
 
 		GridMovementComponent* gridMovePtr{ pacmanUPtr->AddComponent<GridMovementComponent>(pacmanUPtr.get(), playFieldGridPtr, config::PACMAN_SPEED) };
 		gridMovePtr->AddObserver(pmAnimPtr);

@@ -12,11 +12,13 @@ void pacman::ScoreComponent::OnNotify(Event eventType, amu::Subject*)
 	if (eventType == events::PACMAN_EAT_SMALL_PICKUP)
 	{
 		++m_NumberOfPickups;
+		std::cout << m_NumberOfPickups << "\n";
 		m_Score += m_SmallPickupScore;
 	}
 	else if (eventType == events::PACMAN_EAT_BIG_PICKUP)
 	{
 		++m_NumberOfPickups;
+		std::cout << m_NumberOfPickups << "\n";
 		m_Score += m_BigPickupScore;
 	}
 	else if (eventType == events::PACMAN_EAT_GHOST)
@@ -38,6 +40,10 @@ void pacman::ScoreComponent::OnNotify(Event eventType, amu::Subject*)
 	{
 		m_NumberOfPickups = 0;
 		NotifyObservers(events::PACMAN_ATE_ALL);
+	}
+	if (eventType == events::PACMAN_DYING_ANIM_FINISHED)
+	{
+		m_NumberOfPickups = 0;
 	}
 	m_ScoreTextPtr->SetText(std::to_string(m_Score));
 }
