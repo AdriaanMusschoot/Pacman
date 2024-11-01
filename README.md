@@ -1,5 +1,4 @@
-Checkout the git repository: https://github.com/AdriaanMusschoot/Programming4
-It contains a submodule for the engine (also linked here: https://github.com/AdriaanMusschoot/Amugen)
+Checkout the git repository: https://github.com/AdriaanMusschoot/Amugen to find the engine submodule and more of an explanation on how to use the engine.
 
 The game I made is pacman so I modified the engine to work easier for me.
 
