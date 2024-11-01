@@ -13,3 +13,5 @@ The finite state machine component of the ghost is registered as an observer to 
 
 An issue I ran into is that the eating sound of pacman didn't perfectly loop upon eating one of the pick ups. So I modified the soundeffect class of the engine so that I could pause and play.
 If pacman then hasn't eaten after a while it will stop making the soundeffect and start playing it again once it picks up another one.
+
+The game is not yet finished but its main goal was to prove that 'Amugen' the game engine worked.
