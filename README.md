@@ -10,3 +10,6 @@ In most cases of my pacman game the collision implementation was forwarded to a 
 The subject/observer was also really usefull to have all components communicate with eachohter without intertwining to much.
 For example the animation components are always listening to the finite state machine component of their respective ghost/pacman to see if they need a different area of the sprite sheet. 
 The finite state machine component of the ghost is registered as an observer to the pacman collider, so when pacman collides with a big pickup the ghosts now that they need to change into their blue scared state.
+
+An issue I ran into is that the eating sound of pacman didn't perfectly loop upon eating one of the pick ups. So I modified the soundeffect class of the engine so that I could pause and play.
+If pacman then hasn't eaten after a while it will stop making the soundeffect and start playing it again once it picks up another one.
