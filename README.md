@@ -1,4 +1,4 @@
-Checkout the git repository: https://github.com/AdriaanMusschoot/Amugen to find the engine submodule and more of an explanation on how to use the engine.
+Checkout this git repository: https://github.com/AdriaanMusschoot/Amugen to find the engine submodule and more of an explanation on how to use the engine.
 
 The game I made is pacman so I modified the engine to work easier for me.
 
